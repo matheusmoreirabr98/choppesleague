@@ -130,7 +130,7 @@ with st.sidebar:
             "🚪 Sair"
         ]
 
-    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
+    pagina_escolhida = st.selectbox(opcoes, key="navegacao_sidebar")
     st.session_state.pagina_atual = pagina_escolhida
 
     st.markdown("---")
@@ -251,6 +251,7 @@ if st.session_state.usuario_logado:
 
     tocar_musica_sidebar()
 
+st.markdown("---")
 
 
 
@@ -326,6 +327,8 @@ def tela_principal(partidas, jogadores):
     st.title("Chopp's League")
     st.success(f"Você está logado como: {st.session_state.get('nome', 'usuário')}")
     st.markdown("Bem-vindo à Choppe's League!")
+
+    st.markdown("---")
 
     col1, col2 = st.columns(2)
 
