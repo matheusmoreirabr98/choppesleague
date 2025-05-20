@@ -16,7 +16,67 @@ from datetime import datetime, timedelta
 
 
 
+import streamlit as st
 
+# Inicializa sessão
+if "usuario_logado" not in st.session_state:
+    st.session_state.usuario_logado = False
+if "pagina_atual" not in st.session_state:
+    st.session_state.pagina_atual = "login"
+
+# --- Funções de telas ---
+def tela_login():
+    st.title("🔐 Login")
+    with st.form("form_login"):
+        email = st.text_input("E-mail")
+        senha = st.text_input("Senha", type="password")
+        submit = st.form_submit_button("Entrar")
+
+        if submit:
+            if email == "admin@teste.com" and senha == "123":
+                st.session_state.usuario_logado = True
+                st.session_state.nome = "Admin"
+                st.session_state.pagina_atual = "🏠 Tela Principal"
+                st.experimental_rerun()
+            else:
+                st.error("Login inválido")
+
+def tela_principal():
+    st.title("🏠 Tela Principal")
+    st.success(f"Bem-vindo, {st.session_state.nome}")
+    st.markdown("Conteúdo da Chopp's League aqui...")
+
+def tela_estatisticas():
+    st.title("📊 Estatísticas")
+    st.write("Conteúdo das estatísticas aqui...")
+
+# --- Sidebar ---
+if st.session_state.usuario_logado:
+    with st.sidebar:
+        st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
+        st.selectbox("Navegar para:", [
+            "🏠 Tela Principal",
+            "📊 Estatísticas",
+            "🚪 Sair"
+        ], key="pagina_atual")
+        st.markdown("---")
+        if st.button("Logout"):
+            for k in list(st.session_state.keys()):
+                del st.session_state[k]
+            st.experimental_rerun()
+
+# --- Roteador de telas ---
+if not st.session_state.usuario_logado:
+    tela_login()
+else:
+    if st.session_state.pagina_atual == "🏠 Tela Principal":
+        tela_principal()
+    elif st.session_state.pagina_atual == "📊 Estatísticas":
+        tela_estatisticas()
+    elif st.session_state.pagina_atual == "🚪 Sair":
+        for k in list(st.session_state.keys()):
+            del st.session_state[k]
+        st.experimental_rerun()
 
 
 
