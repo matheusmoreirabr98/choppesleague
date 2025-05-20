@@ -16,7 +16,6 @@ from datetime import date
 
 
 
-# Config da página
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
 # Sessões iniciais
@@ -26,6 +25,14 @@ if "usuarios" not in st.session_state:
     st.session_state.usuarios = {}
 if "pagina_atual" not in st.session_state:
     st.session_state.pagina_atual = "login"
+if "recuperacao_email" not in st.session_state:
+    st.session_state.recuperacao_email = ""
+if "codigo_recuperacao" not in st.session_state:
+    st.session_state.codigo_recuperacao = ""
+if "codigo_enviado" not in st.session_state:
+    st.session_state.codigo_enviado = False
+if "modo_recuperacao" not in st.session_state:
+    st.session_state.modo_recuperacao = False
 
 # Funções auxiliares
 def email_valido(email):
@@ -39,31 +46,82 @@ def formatar_telefone(numero):
 
 # --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
-    st.title("🔐 Login/Cadastro")
+    st.title("🔐 Login / Cadastro")
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login")
 
+    # LOGIN NORMAL OU RECUPERAÇÃO
     if aba == "Login":
-        with st.form("form_login"):
-            email = st.text_input("E-mail", key="login_email")
-            senha = st.text_input("Senha", type="password", key="login_senha")
-            submit = st.form_submit_button("Entrar")
 
-            if submit:
-                usuarios = st.session_state.usuarios
-                if email in usuarios and usuarios[email]["senha"] == senha:
-                    st.session_state.usuario_logado = True
-                    st.session_state.nome = usuarios[email]["nome"]
-                    st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
-                    st.session_state.pagina_atual = "🏠 Tela Principal"
-                    st.success("Login realizado com sucesso!")
-                    st.experimental_rerun()
-                else:
-                    st.error("E-mail ou senha inválidos.")
+        if not st.session_state.modo_recuperacao:
 
-    else:
+            with st.form("form_login"):
+                email = st.text_input("E-mail", key="login_email")
+                senha = st.text_input("Senha", type="password", key="login_senha")
+                submit = st.form_submit_button("Entrar")
+
+                if submit:
+                    usuarios = st.session_state.usuarios
+                    if email in usuarios and usuarios[email]["senha"] == senha:
+                        st.session_state.usuario_logado = True
+                        st.session_state.nome = usuarios[email]["nome"]
+                        st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
+                        st.session_state.pagina_atual = "🏠 Tela Principal"
+                        st.success("Login realizado com sucesso!")
+                        st.experimental_rerun()
+                    else:
+                        st.error("E-mail ou senha inválidos.")
+
+            st.markdown("---")
+            if st.button("Esqueci minha senha"):
+                st.session_state.modo_recuperacao = True
+                st.experimental_rerun()
+
+        else:
+            with st.form("form_esqueci"):
+                email = st.text_input("Digite seu e-mail", key="rec_email")
+                enviar = st.form_submit_button("Enviar código de recuperação")
+
+                if enviar:
+                    if email in st.session_state.usuarios:
+                        codigo = str(random.randint(100000, 999999))
+                        st.session_state.recuperacao_email = email
+                        st.session_state.codigo_recuperacao = codigo
+                        st.session_state.codigo_enviado = True
+                        st.success(f"Código enviado para o e-mail {email} (simulado: {codigo})")
+                    else:
+                        st.error("E-mail não encontrado.")
+
+            if st.session_state.codigo_enviado:
+                with st.form("form_codigo"):
+                    codigo_digitado = st.text_input("Digite o código recebido", key="codigo_digitado")
+                    nova_senha = st.text_input("Nova senha", type="password", key="nova_senha")
+                    confirmar = st.form_submit_button("Atualizar senha")
+
+                    if confirmar:
+                        if codigo_digitado == st.session_state.codigo_recuperacao:
+                            email = st.session_state.recuperacao_email
+                            st.session_state.usuarios[email]["senha"] = nova_senha
+                            st.success("Senha atualizada com sucesso! Agora faça login.")
+                            # Limpa os dados temporários
+                            st.session_state.codigo_enviado = False
+                            st.session_state.codigo_recuperacao = ""
+                            st.session_state.recuperacao_email = ""
+                            st.session_state.modo_recuperacao = False
+                            st.session_state.pagina_atual = "login"
+                            st.experimental_rerun()
+                        else:
+                            st.error("Código incorreto. Tente novamente.")
+
+            if st.button("🔙 Voltar para login"):
+                st.session_state.modo_recuperacao = False
+                st.session_state.codigo_enviado = False
+                st.experimental_rerun()
+
+    # CADASTRO
+    elif aba == "Cadastro":
         with st.form("form_cadastro"):
             nome = st.text_input("Nome completo", key="cad_nome")
-            posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
+            posicao = st.selectbox("Posição que joga", ["", "Linha", "Goleiro"], key="cad_pos")
             nascimento = st.date_input("Data de nascimento", value=date(2000, 1, 1), key="cad_nasc")
             telefone = st.text_input("Telefone (com DDD)", key="cad_tel")
             email = st.text_input("E-mail", key="cad_email")
