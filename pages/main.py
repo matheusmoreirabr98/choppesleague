@@ -12,11 +12,15 @@ from datetime import datetime
 from datetime import datetime, timedelta
 
 
-from login import tela_login  # importa sua função de login da página login.py
 
+
+# Acesso após login
+from login import tela_login  # importa a função da página login
+
+# 🔒 Verifica se está logado. Se não, mostra a tela de login e para tudo.
 if "usuario_logado" not in st.session_state or not st.session_state["usuario_logado"]:
     tela_login()
-    st.stop()  # impede que o restante do main.py seja executado se o usuário não estiver logado
+    st.stop()
 
 
 # Lista de administradores
