@@ -12,14 +12,11 @@ from datetime import datetime
 from datetime import datetime, timedelta
 
 
+from login import tela_login  # importa sua função de login da página login.py
 
-
-
-# Página responsiva
-st.set_page_config(page_title="Sistema", page_icon="🏆", layout="wide")
-
-
-
+if "usuario_logado" not in st.session_state or not st.session_state["usuario_logado"]:
+    tela_login()
+    st.stop()  # impede que o restante do main.py seja executado se o usuário não estiver logado
 
 
 # Lista de administradores
