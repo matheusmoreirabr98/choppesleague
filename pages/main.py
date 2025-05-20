@@ -59,22 +59,7 @@ else:
 
 
 
-# Protege a página contra acesso direto
-if not st.session_state.get("usuario_logado", False):
-    st.error("⛔ Acesso negado. Faça login primeiro.")
-    st.stop()
 
-    # Função de login
-def login(nome_usuario):
-    nome_usuario = nome_usuario.strip().lower()
-    st.session_state["nome"] = nome_usuario
-    st.session_state["usuario_logado"] = True
-    st.session_state["tipo_usuario"] = "admin" if nome_usuario in ADMINS else "usuario"
-
-# Protege a página contra acesso direto
-if not st.session_state.get("usuario_logado", False):
-    st.error("⛔ Acesso negado. Faça login primeiro.")
-    st.stop()
 
 
 
