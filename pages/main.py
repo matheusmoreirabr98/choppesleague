@@ -15,9 +15,6 @@ from datetime import datetime, timedelta
 
 
 
-
-import streamlit as st
-
 # Inicializa sessão
 if "usuario_logado" not in st.session_state:
     st.session_state.usuario_logado = False
