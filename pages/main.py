@@ -139,8 +139,9 @@ with st.sidebar:
     
 
 # Confirmação de logout (uma única vez)
-if "confirmar_logout" not in st.session_state:
-    st.session_state.confirmar_logout = False
+with st.sidebar:
+    if "confirmar_logout" not in st.session_state:
+        st.session_state.confirmar_logout = False
 
 st.markdown("---")
 
@@ -326,8 +327,7 @@ import streamlit as st
 import os
 
 def tela_principal(partidas, jogadores):
-    st.title("Chopp's League")
-    st.success(f"Você está logado como: {st.session_state.get('nome', 'usuário')}")
+    st.success(f"Jogador: {st.session_state.get('nome', 'usuário')}")
     st.markdown("Bem-vindo à Choppe's League!")
 
     st.markdown("---")
