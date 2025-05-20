@@ -140,17 +140,35 @@ with st.sidebar:
 
 # --- ROTEADOR ---
 def tela_principal():
-    pass  # Nenhum conteúdo visível automático
-def registrar_partidas(p): return p
-def tela_jogadores(j): return j
+    pass
+
+def registrar_partidas(p):
+    return p
+
+def tela_jogadores(j):
+    return j
+
 def tela_sorteio():
-    pass  # Nenhum conteúdo visível automático
-def tela_presenca_login(): st.info("✅ Presença")
-def tela_avaliacao_pos_jogo(): st.info("🏅 Avaliação")
-def tela_galeria_momentos(): st.info("📸 Galeria")
-def tela_forum(): st.info("💬 Fórum")
-def tela_comunicado(): st.info("📣 Comunicado")
-def tela_regras(): st.info("📜 Regras")
+    pass
+
+def tela_presenca_login():
+    pass
+
+def tela_avaliacao_pos_jogo():
+    pass
+
+def tela_galeria_momentos():
+    pass
+
+def tela_forum():
+    pass
+
+def tela_comunicado():
+    pass
+
+def tela_regras():
+    pass
+
 
 partidas = st.session_state.get("partidas", [])
 jogadores = st.session_state.get("jogadores", [])
