@@ -47,7 +47,10 @@ def tela_login():
                     st.session_state["cadastro"] = {
                         "nome": nome,
                         "email": email,
-                        "senha": senha
+                        "senha": senha,
+                        "telefone": telefone_formatado,
+                        "nascimento": nascimento,
+                        "posicao": posicao
                     }
                     st.session_state["usuario_cadastrado"] = True
                     st.success("Cadastro realizado com sucesso! Agora faça login.")
@@ -67,8 +70,12 @@ def tela_login():
                 ):
                     st.session_state["usuario_logado"] = True
                     st.session_state["nome"] = cadastro.get("nome")
-                    st.success("Login realizado com sucesso!")
-                    st.markdown("✅ Login realizado com sucesso! [Clique aqui para continuar](./main)", unsafe_allow_html=True)
+                    st.session_state["telefone"] = cadastro.get("telefone", "")
+                    st.session_state["email"] = cadastro.get("email", "")
+                    st.success("✅ Login realizado com sucesso! Redirecionando...")
+
+                    # Redirecionamento simulado
+                    st.markdown("### 👉 Vá para o menu lateral e escolha uma das opções para começar.")
                 else:
                     st.warning("E-mail ou senha incorretos.")
 
@@ -77,5 +84,8 @@ tela_login()
 
 # Menu lateral
 with st.sidebar:
-    image = Image.open("./imagens/logo.png")
-    st.image(image, caption="Chopp's League", use_container_width=True)
+    try:
+        image = Image.open("./imagens/logo.png")
+        st.image(image, caption="Chopp's League", use_container_width=True)
+    except:
+        st.warning("Logo não encontrada.")
