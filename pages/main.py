@@ -56,7 +56,7 @@ def tela_login():
                     st.session_state.nome = usuarios[email]["nome"]
                     st.session_state.pagina_atual = "🏠 Tela Principal"
                     st.success("Login realizado com sucesso!")
-                    st.experimental_rerun()
+                    st.stop()
                 else:
                     st.error("E-mail ou senha inválidos.")
 
