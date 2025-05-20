@@ -14,8 +14,13 @@ from datetime import datetime, timedelta
 
 
 
-# Acesso após login
-# Função de login
+
+# Protege a página contra acesso direto
+if not st.session_state.get("usuario_logado", False):
+    st.error("⛔ Acesso negado. Faça login primeiro.")
+    st.stop()7
+
+    # Função de login
 def login(nome_usuario):
     nome_usuario = nome_usuario.strip().lower()
     st.session_state["nome"] = nome_usuario
