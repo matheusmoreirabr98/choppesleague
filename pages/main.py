@@ -168,8 +168,8 @@ with cols[1]:
         st.session_state.usuarios = usuarios
         st.session_state.pagina_atual = "login"
         st.experimental_rerun()
-        
-st.markdown("---")
+
+    st.markdown("---")
 
 # --- ROTEADOR ---
 def tela_principal():
