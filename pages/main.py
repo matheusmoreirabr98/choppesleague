@@ -15,12 +15,20 @@ from datetime import datetime, timedelta
 
 
 # Acesso após login
-from login import tela_login  # importa a função da página login
+# Função de login
+def login(nome_usuario):
+    nome_usuario = nome_usuario.strip().lower()
+    st.session_state["nome"] = nome_usuario
+    st.session_state["usuario_logado"] = True
+    st.session_state["tipo_usuario"] = "admin" if nome_usuario in ADMINS else "usuario"
 
-# 🔒 Verifica se está logado. Se não, mostra a tela de login e para tudo.
-if "usuario_logado" not in st.session_state or not st.session_state["usuario_logado"]:
-    tela_login()
+# Protege a página contra acesso direto
+if not st.session_state.get("usuario_logado", False):
+    st.error("⛔ Acesso negado. Faça login primeiro.")
     st.stop()
+
+
+
 
 
 # Lista de administradores
