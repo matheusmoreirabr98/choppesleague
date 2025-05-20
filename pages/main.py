@@ -140,13 +140,6 @@ with st.sidebar:
 
 # Confirmação de logout (uma única vez)
 with st.sidebar:
-    st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
-    st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
-
-    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
-    st.session_state.pagina_atual = pagina_escolhida
-
-    st.markdown("---")
 
     # Confirmação de logout
     if "confirmar_logout" not in st.session_state:
