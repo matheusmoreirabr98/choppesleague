@@ -136,33 +136,33 @@ with st.sidebar:
     st.markdown("---")
     
     # Estilo centralizado para o botão de logout
-    st.markdown(
-        "<div style='text-align: center;'>"
-        "<button style='background-color: #ff4b4b; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;' "
-        "onclick='document.getElementById(\"confirm_logout\").style.display=\"block\"'>🚪 Logout</button>"
-        "</div>",
-        unsafe_allow_html=True
-    )
+# Confirmação de logout (uma única vez)
+if "confirmar_logout" not in st.session_state:
+    st.session_state.confirmar_logout = False
 
-    # Confirmação via componentes nativos
-    if "confirmar_logout" not in st.session_state:
-        st.session_state.confirmar_logout = False
+st.markdown("---")
 
-    # Botão invisível que ativa confirmação
-    if st.session_state.confirmar_logout or st.button("🚪 Logout", key="real_logout_btn"):
-        st.session_state.confirmar_logout = True
-        st.warning("Tem certeza que deseja sair?")
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("❌ Cancelar"):
-                st.session_state.confirmar_logout = False
-        with col2:
-            if st.button("✅ Confirmar saída"):
-                for k in list(st.session_state.keys()):
-                    del st.session_state[k]
-                st.session_state.usuario_logado = False
-                st.session_state.pagina_atual = "login"
-                st.experimental_rerun()
+# Centraliza o botão com colunas
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    if not st.session_state.confirmar_logout:
+        if st.button("🚪 Logout", key="logout_btn"):
+            st.session_state.confirmar_logout = True
+
+# Se estiver em processo de confirmação
+if st.session_state.confirmar_logout:
+    st.warning("Tem certeza que deseja sair?")
+    col_a, col_b = st.columns(2)
+    with col_a:
+        if st.button("❌ Cancelar", key="cancelar_logout"):
+            st.session_state.confirmar_logout = False
+    with col_b:
+        if st.button("✅ Confirmar saída", key="confirmar_logout"):
+            for k in list(st.session_state.keys()):
+                del st.session_state[k]
+            st.session_state.usuario_logado = False
+            st.session_state.pagina_atual = "login"
+            st.experimental_rerun()
 
 # --- ROTEADOR ---
 def tela_principal():
