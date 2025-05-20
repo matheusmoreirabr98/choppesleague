@@ -130,8 +130,8 @@ with st.sidebar:
             "🚪 Sair"
         ]
 
-    pagina = st.selectbox("Navegar para:", opcoes, key="pagina_escolhida")
-    st.session_state.pagina_atual = pagina
+    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
+    st.session_state.pagina_atual = pagina_escolhida
 
     if st.button("Logout"):
         for k in list(st.session_state.keys()):
@@ -861,32 +861,7 @@ def tocar_musica_sidebar():
 
 
 
-# Sidebar e navegação
-if "pagina_atual" not in st.session_state:
-    st.session_state.pagina_atual = "🏠 Tela Principal"
 
-with st.sidebar:
-    st.image(Image.open("./imagens/logo.png"), caption="Chopp's League", use_container_width=True)
-    
-    st.selectbox("Navegue pelo app:", [
-        "🏠 Tela Principal",
-        "📊 Registrar Partida",
-        "👟 Estatísticas dos Jogadores",
-        "🎲 Sorteio de Times",
-        "✅ Confirmar Presença/Ausência",
-        "🏅 Avaliação Pós-Jogo",
-        "📸 Galeria de Momentos",
-        "💬 Fórum",
-        "📣 Comunicado à Gestão",
-        "📜 Regras Choppe's League",
-        "🚪 Sair"
-    ], key="pagina_atual")
-    
-    st.markdown("---")
-    st.markdown(f"👤 Jogador: **{st.session_state.get('nome', 'Não identificado')}**")
-    st.markdown("---")
-
-    tocar_musica_sidebar()
 
 
 
