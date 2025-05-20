@@ -1,0 +1,9 @@
+[[pages]]
+path = "cadastrologin.py"
+name = "Cadastro/Login"
+icon = "👤"
+
+[[pages]]
+path = "pages/main.py"
+name = "Sistema"
+icon = "🏆"
