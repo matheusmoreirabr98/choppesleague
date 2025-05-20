@@ -86,11 +86,14 @@ def tela_login():
             )
 
             st.markdown("""
-                <style>
-                #fake-button {display: none;}
-                </style>
+                <div id="hidden-button" style="display: none;">
+                    <form action="#" method="post">
+                        <button type="submit" name="fake-button">Fake</button>
+                    </form>
+                </div>
             """, unsafe_allow_html=True)
 
+            # Checa se o botão foi clicado com o nome correto
             if st.button("fake", key="fake-button"):
                 st.session_state.modo_recuperacao = True
                 st.experimental_rerun()
