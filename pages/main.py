@@ -139,38 +139,44 @@ with st.sidebar:
     
 
 # --- Confirmação de logout ---
-    with st.sidebar:
 # Inicializa controle de logout apenas uma vez
-        if "confirmar_logout" not in st.session_state:
-            st.session_state.confirmar_logout = False
+if "confirmar_logout" not in st.session_state:
+    st.session_state.confirmar_logout = False
 
-        # SIDEBAR - botão logout
-        if not st.session_state.confirmar_logout:
-            col1, col2, col3 = st.sidebar.columns([1, 2, 1])
-            with col2:
-                if st.button("🚪 Logout", key="botao_logout"):
-                    st.session_state.confirmar_logout = True
-                    st.experimental_rerun()  # força atualização imediata
-        else:
-            st.sidebar.warning("Tem certeza que deseja sair?")
-            
-            col1, col2 = st.sidebar.columns(2)
+# FLAGS de ação
+logout_clicado = False
+cancelar_clicado = False
+confirmar_clicado = False
 
-            with col1:
-                if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
-                    st.session_state.confirmar_logout = False
-                    st.experimental_rerun()  # esconde imediatamente
+# SIDEBAR - botão logout
+with st.sidebar:
+    if not st.session_state.confirmar_logout:
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("🚪 Logout", key="botao_logout"):
+                st.session_state.confirmar_logout = True
+                logout_clicado = True
+    else:
+        st.warning("Tem certeza que deseja sair?")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
+                st.session_state.confirmar_logout = False
+                cancelar_clicado = True
+        with col2:
+            if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
+                usuarios = st.session_state.get("usuarios", {})
+                st.session_state.clear()
+                st.session_state.usuario_logado = False
+                st.session_state.usuarios = usuarios
+                st.session_state.pagina_atual = "login"
+                confirmar_clicado = True
 
-            with col2:
-                if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
-                    usuarios = st.session_state.get("usuarios", {})
-                    st.session_state.clear()
-                    st.session_state.usuario_logado = False
-                    st.session_state.usuarios = usuarios
-                    st.session_state.pagina_atual = "login"
-                    st.experimental_rerun()
+st.markdown("---")
 
-    st.markdown("---")
+# Essas chamadas precisam estar fora do `with`
+if logout_clicado or cancelar_clicado or confirmar_clicado:
+    st.experimental_rerun()
 
 # --- ROTEADOR ---
 def tela_principal():
