@@ -130,8 +130,8 @@ with st.sidebar:
             "🚪 Sair"
         ]
 
-    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
-    st.session_state.pagina_atual = pagina_escolhida
+    pagina = st.selectbox("Navegar para:", opcoes, key="pagina_escolhida")
+    st.session_state.pagina_atual = pagina
 
     if st.button("Logout"):
         for k in list(st.session_state.keys()):
