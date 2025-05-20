@@ -258,8 +258,6 @@ if st.session_state.usuario_logado:
 
     tocar_musica_sidebar()
 
-st.markdown("---")
-
 
 
 
