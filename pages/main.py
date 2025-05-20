@@ -139,7 +139,6 @@ with st.sidebar:
         st.experimental_rerun()
 
 # --- ROTEADOR ---
-def tela_principal(): st.success("🏠 Tela Principal carregada")
 def registrar_partidas(p): return p
 def tela_jogadores(j): return j
 def tela_sorteio(): st.info("🎲 Sorteio")
