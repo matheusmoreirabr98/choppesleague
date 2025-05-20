@@ -73,7 +73,7 @@ def tela_login():
             if submit:
                 if not nome or not posicao or not telefone or not email or not senha:
                     st.warning("Preencha todos os campos.")
-                elif posicao == "Selecione":
+                elif posicao == "":
                     st.warning("Selecione a posição.")
                 elif not email_valido(email):
                     st.warning("E-mail inválido.")
