@@ -133,14 +133,6 @@ with st.sidebar:
     pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
     st.session_state.pagina_atual = pagina_escolhida
 
-# SIDEBAR
-with st.sidebar:
-    st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
-    st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
-
-    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
-    st.session_state.pagina_atual = pagina_escolhida
-
     st.markdown("---")
     
     # Estilo centralizado para o botão de logout
