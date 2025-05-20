@@ -85,15 +85,15 @@ def tela_login():
                 unsafe_allow_html=True
             )
 
-        st.markdown("""
-            <style>
-            #fake-button {display: none;}
-            </style>
-        """, unsafe_allow_html=True)
+            st.markdown("""
+                <style>
+                #fake-button {display: none;}
+                </style>
+            """, unsafe_allow_html=True)
 
-        if st.button("fake", key="fake-button"):
-            st.session_state.modo_recuperacao = True
-            st.experimental_rerun()
+            if st.button("fake", key="fake-button"):
+                st.session_state.modo_recuperacao = True
+                st.experimental_rerun()
 
         else:
             with st.form("form_esqueci"):
