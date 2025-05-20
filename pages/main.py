@@ -164,8 +164,7 @@ with st.sidebar:
                 st.session_state.usuario_logado = False
                 st.session_state.pagina_atual = "login"
                 st.experimental_rerun()
-
-st.markdown("---")
+                st.markdown("---")
 
 # --- ROTEADOR ---
 def tela_principal():
