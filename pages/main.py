@@ -185,22 +185,23 @@ elif pag == "🚪 Sair":
 
 
 
-# Música ambiente
-def tocar_musica_sidebar():
-    caminho_musica = "audio/musica.mp3"
-    if os.path.exists(caminho_musica):
-        with open(caminho_musica, "rb") as f:
-            audio_bytes = f.read()
-        audio_base64 = base64.b64encode(audio_bytes).decode()
-        st.sidebar.markdown(f"""
-            <p style='text-align: center; font-weight: bold;'>🎵 Música Ambiente</p>
-            <audio controls style="width: 100%;">
-                <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-                Seu navegador não suporta áudio.
-            </audio>
-        """, unsafe_allow_html=True)
-    else:
-        st.sidebar.warning("🔇 Música não encontrada.")
+# Música ambiente (apenas se logado)
+if st.session_state.usuario_logado:
+    def tocar_musica_sidebar():
+        caminho_musica = "audio/musica.mp3"
+        if os.path.exists(caminho_musica):
+            with open(caminho_musica, "rb") as f:
+                audio_bytes = f.read()
+            audio_base64 = base64.b64encode(audio_bytes).decode()
+            st.sidebar.markdown(f"""
+                <p style='text-align: center; font-weight: bold;'>🎵 Música Ambiente</p>
+                <audio controls style="width: 100%;">
+                    <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+                    Seu navegador não suporta áudio.
+                </audio>
+            """, unsafe_allow_html=True)
+        else:
+            st.sidebar.warning("🔇 Música não encontrada.")
 
     tocar_musica_sidebar()
 
