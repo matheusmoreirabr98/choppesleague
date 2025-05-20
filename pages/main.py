@@ -165,6 +165,8 @@ with st.sidebar:
                 st.session_state.pagina_atual = "login"
                 st.experimental_rerun()
 
+st.markdown("---")
+
 # --- ROTEADOR ---
 def tela_principal():
     pass
@@ -325,7 +327,7 @@ import streamlit as st
 import os
 
 def tela_principal(partidas, jogadores):
-    st.markdown("Bem-vindo à Choppe's League!")
+    st.markdown("<h2 style='font-weight: bold;'>Bem-vindo à Choppe's League!</h2>", unsafe_allow_html=True)
 
     st.markdown("---")
 
