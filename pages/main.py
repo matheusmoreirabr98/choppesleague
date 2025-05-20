@@ -85,59 +85,59 @@ def tela_login():
                 unsafe_allow_html=True
             )
 
-            st.markdown("""
-                <div id="hidden-button" style="display: none;">
-                    <form action="#" method="post">
-                        <button type="submit" name="fake-button">Fake</button>
-                    </form>
-                </div>
-            """, unsafe_allow_html=True)
+                st.markdown("""
+                    <div id="hidden-button" style="display: none;">
+                        <form action="#" method="post">
+                            <button type="submit" name="fake-button">Fake</button>
+                        </form>
+                    </div>
+                """, unsafe_allow_html=True)
 
-            # Checa se o botão foi clicado com o nome correto
-            if st.button("fake", key="fake-button"):
-                st.session_state.modo_recuperacao = True
-                st.experimental_rerun()
-
-            else:
-                with st.form("form_esqueci"):
-                    email = st.text_input("Digite seu e-mail", key="rec_email")
-                    enviar = st.form_submit_button("Enviar código de recuperação")
-
-                    if enviar:
-                        if email in st.session_state.usuarios:
-                            codigo = str(random.randint(100000, 999999))
-                            st.session_state.recuperacao_email = email
-                            st.session_state.codigo_recuperacao = codigo
-                            st.session_state.codigo_enviado = True
-                            st.success(f"Código enviado para o e-mail {email} (simulado: {codigo})")
-                        else:
-                            st.error("E-mail não encontrado.")
-
-                if st.session_state.codigo_enviado:
-                    with st.form("form_codigo"):
-                        codigo_digitado = st.text_input("Digite o código recebido", key="codigo_digitado")
-                        nova_senha = st.text_input("Nova senha", type="password", key="nova_senha")
-                        confirmar = st.form_submit_button("Atualizar senha")
-
-                        if confirmar:
-                            if codigo_digitado == st.session_state.codigo_recuperacao:
-                                email = st.session_state.recuperacao_email
-                                st.session_state.usuarios[email]["senha"] = nova_senha
-                                st.success("Senha atualizada com sucesso! Agora faça login.")
-                                # Limpa os dados temporários
-                                st.session_state.codigo_enviado = False
-                                st.session_state.codigo_recuperacao = ""
-                                st.session_state.recuperacao_email = ""
-                                st.session_state.modo_recuperacao = False
-                                st.session_state.pagina_atual = "login"
-                                st.experimental_rerun()
-                            else:
-                                st.error("Código incorreto. Tente novamente.")
-
-                if st.button("🔙 Voltar para login"):
-                    st.session_state.modo_recuperacao = False
-                    st.session_state.codigo_enviado = False
+                # Checa se o botão foi clicado com o nome correto
+                if st.button("fake", key="fake-button"):
+                    st.session_state.modo_recuperacao = True
                     st.experimental_rerun()
+
+                else:
+                    with st.form("form_esqueci"):
+                        email = st.text_input("Digite seu e-mail", key="rec_email")
+                        enviar = st.form_submit_button("Enviar código de recuperação")
+
+                        if enviar:
+                            if email in st.session_state.usuarios:
+                                codigo = str(random.randint(100000, 999999))
+                                st.session_state.recuperacao_email = email
+                                st.session_state.codigo_recuperacao = codigo
+                                st.session_state.codigo_enviado = True
+                                st.success(f"Código enviado para o e-mail {email} (simulado: {codigo})")
+                            else:
+                                st.error("E-mail não encontrado.")
+
+                    if st.session_state.codigo_enviado:
+                        with st.form("form_codigo"):
+                            codigo_digitado = st.text_input("Digite o código recebido", key="codigo_digitado")
+                            nova_senha = st.text_input("Nova senha", type="password", key="nova_senha")
+                            confirmar = st.form_submit_button("Atualizar senha")
+
+                            if confirmar:
+                                if codigo_digitado == st.session_state.codigo_recuperacao:
+                                    email = st.session_state.recuperacao_email
+                                    st.session_state.usuarios[email]["senha"] = nova_senha
+                                    st.success("Senha atualizada com sucesso! Agora faça login.")
+                                    # Limpa os dados temporários
+                                    st.session_state.codigo_enviado = False
+                                    st.session_state.codigo_recuperacao = ""
+                                    st.session_state.recuperacao_email = ""
+                                    st.session_state.modo_recuperacao = False
+                                    st.session_state.pagina_atual = "login"
+                                    st.experimental_rerun()
+                                else:
+                                    st.error("Código incorreto. Tente novamente.")
+
+                    if st.button("🔙 Voltar para login"):
+                        st.session_state.modo_recuperacao = False
+                        st.session_state.codigo_enviado = False
+                        st.experimental_rerun()
 
     # CADASTRO
     elif aba == "Cadastro":
