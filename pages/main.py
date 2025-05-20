@@ -139,8 +139,8 @@ with st.sidebar:
     
 
 # --- Confirmação de logout ---
-if "confirmar_logout" not in st.session_state:
-    st.session_state.confirmar_logout = False
+    if "confirmar_logout" not in st.session_state:
+        st.session_state.confirmar_logout = False
 
 st.sidebar.markdown("---")
 
