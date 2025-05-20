@@ -15,7 +15,14 @@ from datetime import datetime, timedelta
 
 
 
-# --- Inicializa sessão ---
+import streamlit as st
+import re
+from datetime import date
+
+# Configuração da página
+st.set_page_config(page_title="Chopp's League", page_icon="🍻")
+
+# Inicializa sessão
 if "usuario_logado" not in st.session_state:
     st.session_state.usuario_logado = False
 if "pagina_atual" not in st.session_state:
@@ -23,16 +30,16 @@ if "pagina_atual" not in st.session_state:
 if "usuarios" not in st.session_state:
     st.session_state.usuarios = {}
 
-# --- Função para formatar telefone ---
+# Função para formatar número de telefone
 def formatar_telefone(numero):
     numeros = re.sub(r'\D', '', numero)
     if len(numeros) == 11:
         return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
     return numero
 
-# --- Tela de Login/Cadastro ---
+# Tela de Login/Cadastro (exibida apenas se não logado)
 def tela_login():
-    st.title("🔐 Login ou Cadastro")
+    st.title("🔐 Acesso ao Sistema")
 
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"])
 
@@ -53,7 +60,7 @@ def tela_login():
                 else:
                     st.error("E-mail ou senha inválidos.")
 
-    else:  # Cadastro
+    else:
         with st.form("form_cadastro"):
             nome = st.text_input("Nome completo")
             posicao = st.selectbox("Posição que joga", ["", "Linha", "Goleiro"])
@@ -80,44 +87,45 @@ def tela_login():
                     }
                     st.success("Cadastro realizado com sucesso! Agora faça login.")
 
-# --- Tela Principal ---
+# Telas principais
 def tela_principal():
     st.title("🏠 Tela Principal")
     st.success(f"Bem-vindo, {st.session_state.nome}!")
-    st.markdown("Conteúdo da Chopp's League aqui...")
+    st.markdown("Conteúdo da Choppe's League aqui...")
 
-# --- Tela de Estatísticas ---
 def tela_estatisticas():
     st.title("📊 Estatísticas")
     st.write("Conteúdo das estatísticas aqui...")
 
-# --- Sidebar (se logado) ---
-if st.session_state.usuario_logado:
-    with st.sidebar:
-        st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
-        st.selectbox("Navegar para:", [
-            "🏠 Tela Principal",
-            "📊 Estatísticas",
-            "🚪 Sair"
-        ], key="pagina_atual")
-        st.markdown("---")
-        if st.button("Logout"):
-            for k in list(st.session_state.keys()):
-                del st.session_state[k]
-            st.experimental_rerun()
-
-# --- Roteador de Telas ---
+# Exibe apenas o login se o usuário não estiver logado
 if not st.session_state.usuario_logado:
     tela_login()
-else:
-    if st.session_state.pagina_atual == "🏠 Tela Principal":
-        tela_principal()
-    elif st.session_state.pagina_atual == "📊 Estatísticas":
-        tela_estatisticas()
-    elif st.session_state.pagina_atual == "🚪 Sair":
+    st.stop()  # Impede o restante da página de ser carregado se não estiver logado
+
+# MENU LATERAL – visível apenas se logado
+with st.sidebar:
+    st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
+    st.selectbox("Navegar para:", [
+        "🏠 Tela Principal",
+        "📊 Estatísticas",
+        "🚪 Sair"
+    ], key="pagina_atual")
+    st.markdown("---")
+    if st.button("Logout"):
         for k in list(st.session_state.keys()):
             del st.session_state[k]
         st.experimental_rerun()
+
+# Roteador de Telas (só acessível após login)
+if st.session_state.pagina_atual == "🏠 Tela Principal":
+    tela_principal()
+elif st.session_state.pagina_atual == "📊 Estatísticas":
+    tela_estatisticas()
+elif st.session_state.pagina_atual == "🚪 Sair":
+    for k in list(st.session_state.keys()):
+        del st.session_state[k]
+    st.experimental_rerun()
+
 
 
 
