@@ -64,7 +64,7 @@ def tela_login():
         with st.form("form_cadastro"):
             nome = st.text_input("Nome completo", key="cad_nome")
             posicao = st.selectbox("Posição que joga", ["", "Linha", "Goleiro"], key="cad_pos")
-            nascimento = st.date_input("Data de nascimento", value=date(1, 1, 2000), key="cad_nasc")
+            nascimento = st.date_input("Data de nascimento", value=date(2000, 1, 1), key="cad_nasc")
             telefone = st.text_input("Telefone (com DDD)", key="cad_tel")
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
