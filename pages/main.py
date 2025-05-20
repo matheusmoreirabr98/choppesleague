@@ -150,7 +150,7 @@ with st.sidebar:
         if not st.session_state.confirmar_logout:
             if st.button("🚪 Logout", key="logout_btn"):
                 st.session_state.confirmar_logout = True
-
+    st.markdown("---")c
     if st.session_state.confirmar_logout:
         st.warning("Tem certeza que deseja sair?")
         col_a, col_b = st.columns(2)
@@ -164,7 +164,6 @@ with st.sidebar:
                 st.session_state.usuario_logado = False
                 st.session_state.pagina_atual = "login"
                 st.experimental_rerun()
-                st.markdown("---")
 
 # --- ROTEADOR ---
 def tela_principal():
