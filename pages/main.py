@@ -13,6 +13,50 @@ from datetime import datetime, timedelta
 
 
 
+# Inicializa variáveis de sessão
+if "usuario_logado" not in st.session_state:
+    st.session_state.usuario_logado = False
+
+if "pagina_atual" not in st.session_state:
+    st.session_state.pagina_atual = "login"
+
+# Função de login
+def tela_login():
+    st.title("🔐 Login")
+
+    with st.form("form_login"):
+        email = st.text_input("E-mail")
+        senha = st.text_input("Senha", type="password")
+        submit = st.form_submit_button("Entrar")
+
+        if submit:
+            # Aqui você validaria com banco ou sessão salva
+            if email == "admin@teste.com" and senha == "123":
+                st.session_state.usuario_logado = True
+                st.session_state.nome = "Admin"
+                st.session_state.pagina_atual = "main"
+                st.experimental_rerun()
+            else:
+                st.error("Credenciais inválidas")
+
+# Tela principal (só aparece se estiver logado)
+def tela_main():
+    st.title("🏠 Bem-vindo à Chopp's League")
+    st.success(f"Logado como: {st.session_state.get('nome', 'Usuário')}")
+
+    if st.button("🚪 Logout"):
+        for k in list(st.session_state.keys()):
+            del st.session_state[k]
+        st.experimental_rerun()
+
+# Roteador manual
+if not st.session_state.usuario_logado:
+    tela_login()
+else:
+    tela_main()
+
+
+
 
 
 # Protege a página contra acesso direto
