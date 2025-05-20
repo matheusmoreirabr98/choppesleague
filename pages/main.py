@@ -138,34 +138,38 @@ with st.sidebar:
     st.markdown("---")
     
 
-# Confirmação de logout (uma única vez)
+# Confirmação de logout (inicialização segura)
 if "confirmar_logout" not in st.session_state:
     st.session_state.confirmar_logout = False
 
 st.markdown("---")
 
-# Centraliza o botão com colunas
+# Centraliza botão de logout
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     if not st.session_state.confirmar_logout:
         if st.button("🚪 Logout", key="btn_logout"):
             st.session_state.confirmar_logout = True
 
-# Se estiver em processo de confirmação
+# Exibe confirmação se necessário
 if st.session_state.confirmar_logout:
     st.warning("Tem certeza que deseja sair?")
-    col_a, col_b = st.columns(2)
+    col_a, col_b, col_c = st.columns([1, 1, 1])
     with col_a:
         if st.button("❌ Cancelar", key="cancelar_logout"):
             st.session_state.confirmar_logout = False
     with col_b:
-        if st.button("✅ Confirmar", key="botao_confirmar_logout"):
-            for k in list(st.session_state.keys()):
-                del st.session_state[k]
+        if st.button("✅ Confirmar saída", key="botao_confirmar_logout"):
+            # Mantém apenas dados essenciais (não apague tudo sem critério)
+            nome = st.session_state.get("nome", "")
+            usuarios = st.session_state.get("usuarios", {})
+            
+            st.session_state.clear()
             st.session_state.usuario_logado = False
             st.session_state.pagina_atual = "login"
+            st.session_state.nome = nome  # opcional
+            st.session_state.usuarios = usuarios  # importante manter cadastros
             st.experimental_rerun()
-
 
 # --- ROTEADOR ---
 def tela_principal():
