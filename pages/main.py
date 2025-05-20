@@ -71,27 +71,27 @@ def tela_login():
                     else:
                         st.error("E-mail ou senha inválidos.")
 
-            # Botão centralizado: "Esqueci minha senha"
-            st.markdown(
-                """
-                <div style="display: flex; justify-content: center; margin-top: 1rem;">
-                    <button onclick="document.getElementById('fake-button').click()" 
-                            style="background: none; border: none; color: #1f77b4; 
-                                text-decoration: underline; font-size: 15px; cursor: pointer;">
-                        Esqueci minha senha
-                    </button>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+                # Botão centralizado: "Esqueci minha senha"
+                st.markdown(
+                    """
+                    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                        <button onclick="document.getElementById('fake-button').click()" 
+                                style="background: none; border: none; color: #1f77b4; 
+                                    text-decoration: underline; font-size: 15px; cursor: pointer;">
+                            Esqueci minha senha
+                        </button>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-            st.markdown("""
-                <div id="hidden-button" style="display: none;">
-                    <form action="#" method="post">
-                        <button type="submit" name="fake-button">Fake</button>
-                    </form>
-                </div>
-            """, unsafe_allow_html=True)
+                st.markdown("""
+                    <div id="hidden-button" style="display: none;">
+                        <form action="#" method="post">
+                            <button type="submit" name="fake-button">Fake</button>
+                        </form>
+                    </div>
+                """, unsafe_allow_html=True)
 
             # Checa se o botão foi clicado com o nome correto
             if st.button("fake", key="fake-button"):
