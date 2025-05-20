@@ -39,7 +39,7 @@ def formatar_telefone(numero):
 
 # --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
-    st.title("🔐 Acesso ao Sistema")
+    st.title("🔐 Login/Cadastro")
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login")
 
     if aba == "Login":
