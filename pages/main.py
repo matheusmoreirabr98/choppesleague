@@ -159,7 +159,7 @@ else:
             st.session_state.confirmar_logout = False
 
     with col_b:
-        if st.button("✅ Confirmar saída", key="confirmar_logout_btn"):
+        if st.button("✅ Confirmar", key="confirmar_logout_btn"):
             # Guarda dados essenciais antes de limpar sessão
             usuarios = st.session_state.get("usuarios", {})
 
