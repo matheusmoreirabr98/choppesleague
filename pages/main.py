@@ -139,16 +139,16 @@ with st.sidebar:
         st.experimental_rerun()
 
 # --- ROTEADOR ---
-def tela_principal(): st.success()
+def tela_principal(): st.success("🏠 Tela Principal carregada")
 def registrar_partidas(p): return p
 def tela_jogadores(j): return j
-def tela_sorteio(): st.info()
-def tela_presenca_login(): st.info()
-def tela_avaliacao_pos_jogo(): st.info()
-def tela_galeria_momentos(): st.info()
-def tela_forum(): st.info()
-def tela_comunicado(): st.info()
-def tela_regras(): st.info()
+def tela_sorteio()
+def tela_presenca_login(): st.info("✅ Presença")
+def tela_avaliacao_pos_jogo(): st.info("🏅 Avaliação")
+def tela_galeria_momentos(): st.info("📸 Galeria")
+def tela_forum(): st.info("💬 Fórum")
+def tela_comunicado(): st.info("📣 Comunicado")
+def tela_regras(): st.info("📜 Regras")
 
 partidas = st.session_state.get("partidas", [])
 jogadores = st.session_state.get("jogadores", [])
