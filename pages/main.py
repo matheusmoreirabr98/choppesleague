@@ -71,10 +71,22 @@ def tela_login():
                     else:
                         st.error("E-mail ou senha inválidos.")
 
-            st.markdown("---")
-            if st.button("Esqueci minha senha"):
-                st.session_state.modo_recuperacao = True
-                st.experimental_rerun()
+            st.markdown(
+            """
+            <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                <button onclick="document.getElementById('fake-button').click()" 
+                        style="background: none; border: none; color: #1f77b4; 
+                            text-decoration: underline; font-size: 15px; cursor: pointer;">
+                    Esqueci minha senha
+                </button>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        if st.button("fake", key="fake-button", help="hidden", disabled=True):
+            st.session_state.modo_recuperacao = True
+            st.experimental_rerun()
 
         else:
             with st.form("form_esqueci"):
