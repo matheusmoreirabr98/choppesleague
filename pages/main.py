@@ -150,7 +150,9 @@ with st.sidebar:
         if not st.session_state.confirmar_logout:
             if st.button("🚪 Logout", key="logout_btn"):
                 st.session_state.confirmar_logout = True
-    st.markdown("---")c
+
+    st.markdown("---")
+    
     if st.session_state.confirmar_logout:
         st.warning("Tem certeza que deseja sair?")
         col_a, col_b = st.columns(2)
