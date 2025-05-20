@@ -152,7 +152,7 @@ with st.sidebar:
                 st.session_state.confirmar_logout = True
 
     st.markdown("---")
-    
+
     if st.session_state.confirmar_logout:
         st.warning("Tem certeza que deseja sair?")
         col_a, col_b = st.columns(2)
