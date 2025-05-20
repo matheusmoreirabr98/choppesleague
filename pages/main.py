@@ -135,7 +135,7 @@ with st.sidebar:
 
     st.markdown("---")
     
-    # Estilo centralizado para o botão de logout
+
 # Confirmação de logout (uma única vez)
 if "confirmar_logout" not in st.session_state:
     st.session_state.confirmar_logout = False
@@ -881,35 +881,6 @@ def tela_regras():
 
 
 
-# Tela de logoff
-def tela_logoff():
-    st.title("🚪 Sair da Conta")
-    st.warning("Tem certeza que deseja sair da sua conta?")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("❌ Cancelar"):
-            st.session_state.pagina_atual = "🏠 Tela Principal"
-    with col2:
-        if st.button("✅ Confirmar saída"):
-            for k in list(st.session_state.keys()):
-                del st.session_state[k]
-            st.success("Logout realizado com sucesso!")
-            st.session_state["logoff_realizado"] = True
-            st.experimental_rerun()
-
-    if st.session_state.get("logoff_realizado"):
-        st.markdown("---")
-        st.info("Você foi desconectado.")
-        if st.button("🔐 Voltar para o login"):
-            st.session_state["usuario_logado"] = False
-            st.session_state["pagina_atual"] = "🔐 Login"
-            del st.session_state["logoff_realizado"]
-            st.experimental_rerun()
-
-
-
-
-
 
 # Inicialização de sessão
 if "pagina_atual" not in st.session_state:
@@ -953,5 +924,3 @@ elif st.session_state.pagina_atual == "📣 Comunicado à Gestão":
     tela_comunicado()
 elif st.session_state.pagina_atual == "📜 Regras Choppe's League":
     tela_regras()
-elif st.session_state.pagina_atual == "🚪 Sair":
-    tela_logoff()
