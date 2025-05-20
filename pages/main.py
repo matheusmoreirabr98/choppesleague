@@ -64,7 +64,7 @@ def tela_login():
         with st.form("form_cadastro"):
             nome = st.text_input("Nome completo", key="cad_nome")
             posicao = st.selectbox("Posição que joga", ["", "Linha", "Goleiro"], key="cad_pos")
-            nascimento = st.date_input("Data de nascimento", value=date(2000, 1, 1), key="cad_nasc")
+            nascimento = st.date_input("Data de nascimento", value=date(1, 1, 2000), key="cad_nasc")
             telefone = st.text_input("Telefone (com DDD)", key="cad_tel")
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
@@ -333,7 +333,7 @@ partidas, jogadores = load_data_safe()
 
 # Tela Principal
 def tela_principal(partidas, jogadores):
-    st.markdown("<h2 style='font-weight: bold;'>Bem-vindo à Choppe's League!</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-weight: bold;'>Bem-vindo a Choppe's League!</h2>", unsafe_allow_html=True)
 
     st.markdown("---")
 
