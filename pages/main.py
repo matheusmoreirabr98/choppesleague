@@ -10,14 +10,11 @@ import urllib.parse
 import base64
 from datetime import datetime
 from datetime import datetime, timedelta
-
-
-
-
-
-import streamlit as st
-import re
 from datetime import date
+
+
+
+
 
 # Configuração da página
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
@@ -29,18 +26,23 @@ if "pagina_atual" not in st.session_state:
     st.session_state.pagina_atual = "login"
 if "usuarios" not in st.session_state:
     st.session_state.usuarios = {}
+if "tipo_usuario" not in st.session_state:
+    st.session_state.tipo_usuario = "usuario"  # padrão
 
-# Função para formatar número de telefone
+# Função para validar e formatar telefone
 def formatar_telefone(numero):
     numeros = re.sub(r'\D', '', numero)
     if len(numeros) == 11:
         return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
     return numero
 
-# Tela de Login/Cadastro (exibida apenas se não logado)
+# Validação básica de e-mail
+def email_valido(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+
+# Tela de login/cadastro
 def tela_login():
     st.title("🔐 Acesso ao Sistema")
-
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"])
 
     if aba == "Login":
@@ -54,6 +56,7 @@ def tela_login():
                 if email in usuarios and usuarios[email]["senha"] == senha:
                     st.session_state.usuario_logado = True
                     st.session_state.nome = usuarios[email]["nome"]
+                    st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
                     st.session_state.pagina_atual = "🏠 Tela Principal"
                     st.success("Login realizado com sucesso!")
                     st.stop()
@@ -73,59 +76,112 @@ def tela_login():
             if submit:
                 if not nome or not posicao or not telefone or not email or not senha:
                     st.warning("Preencha todos os campos.")
+                elif not email_valido(email):
+                    st.warning("E-mail inválido.")
                 elif email in st.session_state.usuarios:
                     st.warning("Este e-mail já está cadastrado.")
                 elif len(re.sub(r'\D', '', telefone)) != 11:
                     st.warning("O número de telefone deve conter 11 dígitos.")
                 else:
+                    tipo = "admin" if email == "admin@teste.com" else "usuario"
                     st.session_state.usuarios[email] = {
                         "nome": nome,
                         "posicao": posicao,
                         "nascimento": str(nascimento),
                         "telefone": formatar_telefone(telefone),
-                        "senha": senha
+                        "senha": senha,
+                        "tipo": tipo
                     }
                     st.success("Cadastro realizado com sucesso! Agora faça login.")
 
-# Telas principais
-def tela_principal():
-    st.title("🏠 Tela Principal")
-    st.success(f"Bem-vindo, {st.session_state.nome}!")
-    st.markdown("Conteúdo da Choppe's League aqui...")
+# Telas simuladas (você deve definir as funções reais no seu projeto)
+def tela_principal(p=None, j=None): st.success("🏠 Tela Principal carregada")
+def registrar_partidas(p): return p
+def tela_jogadores(j): return j
+def tela_sorteio(): st.info("🎲 Sorteio")
+def tela_presenca_login(): st.info("✅ Presença")
+def tela_avaliacao_pos_jogo(): st.info("🏅 Avaliação")
+def tela_galeria_momentos(): st.info("📸 Galeria")
+def tela_forum(): st.info("💬 Fórum")
+def tela_comunicado(): st.info("📣 Comunicado")
+def tela_regras(): st.info("📜 Regras")
 
-def tela_estatisticas():
-    st.title("📊 Estatísticas")
-    st.write("Conteúdo das estatísticas aqui...")
-
-# Exibe apenas o login se o usuário não estiver logado
+# Impede acesso às páginas sem login
 if not st.session_state.usuario_logado:
     tela_login()
-    st.stop()  # Impede o restante da página de ser carregado se não estiver logado
+    st.stop()
 
-# MENU LATERAL – visível apenas se logado
+# Sidebar personalizada
 with st.sidebar:
+    st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
     st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
-    st.selectbox("Navegar para:", [
-        "🏠 Tela Principal",
-        "📊 Estatísticas",
-        "🚪 Sair"
-    ], key="pagina_atual")
+
+    # Menu específico para tipo de usuário
+    if st.session_state.tipo_usuario == "admin":
+        opcoes = [
+            "🏠 Tela Principal",
+            "📊 Registrar Partida",
+            "👟 Estatísticas dos Jogadores",
+            "🎲 Sorteio de Times",
+            "✅ Confirmar Presença/Ausência",
+            "🏅 Avaliação Pós-Jogo",
+            "📸 Galeria de Momentos",
+            "💬 Fórum",
+            "📣 Comunicado à Gestão",
+            "📜 Regras Choppe's League",
+            "🚪 Sair"
+        ]
+    else:
+        opcoes = [
+            "🏠 Tela Principal",
+            "👟 Estatísticas dos Jogadores",
+            "✅ Confirmar Presença/Ausência",
+            "🏅 Avaliação Pós-Jogo",
+            "📸 Galeria de Momentos",
+            "💬 Fórum",
+            "📣 Comunicado à Gestão",
+            "📜 Regras Choppe's League",
+            "🚪 Sair"
+        ]
+
+    st.selectbox("Navegar para:", opcoes, key="pagina_atual")
     st.markdown("---")
+
     if st.button("Logout"):
         for k in list(st.session_state.keys()):
             del st.session_state[k]
         st.experimental_rerun()
 
-# Roteador de Telas (só acessível após login)
-if st.session_state.pagina_atual == "🏠 Tela Principal":
-    tela_principal()
-elif st.session_state.pagina_atual == "📊 Estatísticas":
-    tela_estatisticas()
-elif st.session_state.pagina_atual == "🚪 Sair":
+# Roteador principal
+partidas = st.session_state.get("partidas", [])
+jogadores = st.session_state.get("jogadores", [])
+
+pag = st.session_state.pagina_atual
+
+if pag == "🏠 Tela Principal":
+    tela_principal(partidas, jogadores)
+elif pag == "📊 Registrar Partida":
+    partidas = registrar_partidas(partidas)
+elif pag == "👟 Estatísticas dos Jogadores":
+    jogadores = tela_jogadores(jogadores)
+elif pag == "🎲 Sorteio de Times":
+    tela_sorteio()
+elif pag == "✅ Confirmar Presença/Ausência":
+    tela_presenca_login()
+elif pag == "🏅 Avaliação Pós-Jogo":
+    tela_avaliacao_pos_jogo()
+elif pag == "📸 Galeria de Momentos":
+    tela_galeria_momentos()
+elif pag == "💬 Fórum":
+    tela_forum()
+elif pag == "📣 Comunicado à Gestão":
+    tela_comunicado()
+elif pag == "📜 Regras Choppe's League":
+    tela_regras()
+elif pag == "🚪 Sair":
     for k in list(st.session_state.keys()):
         del st.session_state[k]
     st.experimental_rerun()
-
 
 
 
