@@ -133,10 +133,44 @@ with st.sidebar:
     pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
     st.session_state.pagina_atual = pagina_escolhida
 
-    if st.button("Logout"):
-        for k in list(st.session_state.keys()):
-            del st.session_state[k]
-        st.experimental_rerun()
+# SIDEBAR
+with st.sidebar:
+    st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
+    st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
+
+    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
+    st.session_state.pagina_atual = pagina_escolhida
+
+    st.markdown("---")
+    
+    # Estilo centralizado para o botão de logout
+    st.markdown(
+        "<div style='text-align: center;'>"
+        "<button style='background-color: #ff4b4b; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;' "
+        "onclick='document.getElementById(\"confirm_logout\").style.display=\"block\"'>🚪 Logout</button>"
+        "</div>",
+        unsafe_allow_html=True
+    )
+
+    # Confirmação via componentes nativos
+    if "confirmar_logout" not in st.session_state:
+        st.session_state.confirmar_logout = False
+
+    # Botão invisível que ativa confirmação
+    if st.session_state.confirmar_logout or st.button("🚪 Logout", key="real_logout_btn"):
+        st.session_state.confirmar_logout = True
+        st.warning("Tem certeza que deseja sair?")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("❌ Cancelar"):
+                st.session_state.confirmar_logout = False
+        with col2:
+            if st.button("✅ Confirmar saída"):
+                for k in list(st.session_state.keys()):
+                    del st.session_state[k]
+                st.session_state.usuario_logado = False
+                st.session_state.pagina_atual = "login"
+                st.experimental_rerun()
 
 # --- ROTEADOR ---
 def tela_principal():
