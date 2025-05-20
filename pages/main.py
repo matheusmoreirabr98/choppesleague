@@ -138,38 +138,36 @@ with st.sidebar:
     st.markdown("---")
     
 
-# Confirmação de logout (inicialização segura)
-with st.sidebar:   
-    if "confirmar_logout" not in st.session_state:
-        st.session_state.confirmar_logout = False
+# --- Confirmação de logout ---
+if "confirmar_logout" not in st.session_state:
+    st.session_state.confirmar_logout = False
 
-st.markdown("---")
+st.sidebar.markdown("---")
 
-# Centraliza botão de logout
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    if not st.session_state.confirmar_logout:
-        if st.button("🚪 Logout", key="btn_logout"):
+if not st.session_state.confirmar_logout:
+    # Botão vermelho centralizado
+    col1, col2, col3 = st.sidebar.columns([1, 2, 1])
+    with col2:
+        if st.button("🚪 Logout", key="botao_logout"):
             st.session_state.confirmar_logout = True
-
-# Exibe confirmação se necessário
-if st.session_state.confirmar_logout:
-    st.warning("Tem certeza que deseja sair?")
-    col_a, col_b, col_c = st.columns([1, 1, 1])
+else:
+    st.sidebar.warning("Tem certeza que deseja sair?")
+    
+    col_a, col_b, col_c = st.sidebar.columns([1, 1, 1])
     with col_a:
         if st.button("❌ Cancelar", key="cancelar_logout"):
             st.session_state.confirmar_logout = False
+
     with col_b:
-        if st.button("✅ Confirmar saída", key="botao_confirmar_logout"):
-            # Mantém apenas dados essenciais (não apague tudo sem critério)
-            nome = st.session_state.get("nome", "")
+        if st.button("✅ Confirmar saída", key="confirmar_logout_btn"):
+            # Guarda dados essenciais antes de limpar sessão
             usuarios = st.session_state.get("usuarios", {})
-            
+
+            # Limpa o estado com segurança
             st.session_state.clear()
             st.session_state.usuario_logado = False
+            st.session_state.usuarios = usuarios
             st.session_state.pagina_atual = "login"
-            st.session_state.nome = nome  # opcional
-            st.session_state.usuarios = usuarios  # importante manter cadastros
             st.experimental_rerun()
 
 # --- ROTEADOR ---
