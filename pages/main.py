@@ -16,39 +16,36 @@ from datetime import date
 
 
 
-# Configuração da página
+# Config da página
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
-# Inicializa sessão
+# Sessões iniciais
 if "usuario_logado" not in st.session_state:
     st.session_state.usuario_logado = False
-if "pagina_atual" not in st.session_state:
-    st.session_state.pagina_atual = "login"
 if "usuarios" not in st.session_state:
     st.session_state.usuarios = {}
-if "tipo_usuario" not in st.session_state:
-    st.session_state.tipo_usuario = "usuario"  # padrão
+if "pagina_atual" not in st.session_state:
+    st.session_state.pagina_atual = "login"
 
-# Função para validar e formatar telefone
+# Funções auxiliares
+def email_valido(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+
 def formatar_telefone(numero):
     numeros = re.sub(r'\D', '', numero)
     if len(numeros) == 11:
         return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
     return numero
 
-# Validação básica de e-mail
-def email_valido(email):
-    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
-
-# Tela de login/cadastro
+# --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
     st.title("🔐 Acesso ao Sistema")
-    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"])
+    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login")
 
     if aba == "Login":
         with st.form("form_login"):
-            email = st.text_input("E-mail")
-            senha = st.text_input("Senha", type="password")
+            email = st.text_input("E-mail", key="login_email")
+            senha = st.text_input("Senha", type="password", key="login_senha")
             submit = st.form_submit_button("Entrar")
 
             if submit:
@@ -59,18 +56,18 @@ def tela_login():
                     st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
                     st.session_state.pagina_atual = "🏠 Tela Principal"
                     st.success("Login realizado com sucesso!")
-                    st.stop()
+                    st.experimental_rerun()
                 else:
                     st.error("E-mail ou senha inválidos.")
 
     else:
         with st.form("form_cadastro"):
-            nome = st.text_input("Nome completo")
-            posicao = st.selectbox("Posição que joga", ["", "Linha", "Goleiro"])
-            nascimento = st.date_input("Data de nascimento", value=date(2000, 1, 1))
-            telefone = st.text_input("Telefone (com DDD)")
-            email = st.text_input("E-mail")
-            senha = st.text_input("Senha", type="password")
+            nome = st.text_input("Nome completo", key="cad_nome")
+            posicao = st.selectbox("Posição que joga", ["", "Linha", "Goleiro"], key="cad_pos")
+            nascimento = st.date_input("Data de nascimento", value=date(2000, 1, 1), key="cad_nasc")
+            telefone = st.text_input("Telefone (com DDD)", key="cad_tel")
+            email = st.text_input("E-mail", key="cad_email")
+            senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
 
             if submit:
@@ -81,7 +78,7 @@ def tela_login():
                 elif email in st.session_state.usuarios:
                     st.warning("Este e-mail já está cadastrado.")
                 elif len(re.sub(r'\D', '', telefone)) != 11:
-                    st.warning("O número de telefone deve conter 11 dígitos.")
+                    st.warning("Telefone deve conter 11 dígitos.")
                 else:
                     tipo = "admin" if email == "admin@teste.com" else "usuario"
                     st.session_state.usuarios[email] = {
@@ -92,31 +89,20 @@ def tela_login():
                         "senha": senha,
                         "tipo": tipo
                     }
-                    st.success("Cadastro realizado com sucesso! Agora faça login.")
+                    st.success("Cadastro realizado! Agora faça login.")
+                    st.session_state.pagina_atual = "login"
+                    st.experimental_rerun()
 
-# Telas simuladas (você deve definir as funções reais no seu projeto)
-def tela_principal(p=None, j=None): st.success("🏠 Tela Principal carregada")
-def registrar_partidas(p): return p
-def tela_jogadores(j): return j
-def tela_sorteio(): st.info("🎲 Sorteio")
-def tela_presenca_login(): st.info("✅ Presença")
-def tela_avaliacao_pos_jogo(): st.info("🏅 Avaliação")
-def tela_galeria_momentos(): st.info("📸 Galeria")
-def tela_forum(): st.info("💬 Fórum")
-def tela_comunicado(): st.info("📣 Comunicado")
-def tela_regras(): st.info("📜 Regras")
-
-# Impede acesso às páginas sem login
+# BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
 if not st.session_state.usuario_logado:
     tela_login()
     st.stop()
 
-# Sidebar personalizada
+# --- SIDEBAR ---
 with st.sidebar:
     st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
     st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
 
-    # Menu específico para tipo de usuário
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
             "🏠 Tela Principal",
@@ -144,27 +130,39 @@ with st.sidebar:
             "🚪 Sair"
         ]
 
-    st.selectbox("Navegar para:", opcoes, key="pagina_atual")
-    st.markdown("---")
+    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar")
+    st.session_state.pagina_atual = pagina_escolhida
 
     if st.button("Logout"):
         for k in list(st.session_state.keys()):
             del st.session_state[k]
         st.experimental_rerun()
 
-# Roteador principal
+# --- ROTEADOR ---
+def tela_principal(): st.success("🏠 Tela Principal carregada")
+def registrar_partidas(p): return p
+def tela_jogadores(j): return j
+def tela_sorteio(): st.info("🎲 Sorteio")
+def tela_presenca_login(): st.info("✅ Presença")
+def tela_avaliacao_pos_jogo(): st.info("🏅 Avaliação")
+def tela_galeria_momentos(): st.info("📸 Galeria")
+def tela_forum(): st.info("💬 Fórum")
+def tela_comunicado(): st.info("📣 Comunicado")
+def tela_regras(): st.info("📜 Regras")
+
 partidas = st.session_state.get("partidas", [])
 jogadores = st.session_state.get("jogadores", [])
 
 pag = st.session_state.pagina_atual
 
+# Exibe as páginas conforme tipo
 if pag == "🏠 Tela Principal":
-    tela_principal(partidas, jogadores)
-elif pag == "📊 Registrar Partida":
+    tela_principal()
+elif pag == "📊 Registrar Partida" and st.session_state.tipo_usuario == "admin":
     partidas = registrar_partidas(partidas)
 elif pag == "👟 Estatísticas dos Jogadores":
     jogadores = tela_jogadores(jogadores)
-elif pag == "🎲 Sorteio de Times":
+elif pag == "🎲 Sorteio de Times" and st.session_state.tipo_usuario == "admin":
     tela_sorteio()
 elif pag == "✅ Confirmar Presença/Ausência":
     tela_presenca_login()
