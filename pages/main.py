@@ -15,39 +15,83 @@ from datetime import datetime, timedelta
 
 
 
-# Inicializa sessão
+# --- Inicializa sessão ---
 if "usuario_logado" not in st.session_state:
     st.session_state.usuario_logado = False
 if "pagina_atual" not in st.session_state:
     st.session_state.pagina_atual = "login"
+if "usuarios" not in st.session_state:
+    st.session_state.usuarios = {}
 
-# --- Funções de telas ---
+# --- Função para formatar telefone ---
+def formatar_telefone(numero):
+    numeros = re.sub(r'\D', '', numero)
+    if len(numeros) == 11:
+        return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
+    return numero
+
+# --- Tela de Login/Cadastro ---
 def tela_login():
-    st.title("🔐 Login")
-    with st.form("form_login"):
-        email = st.text_input("E-mail")
-        senha = st.text_input("Senha", type="password")
-        submit = st.form_submit_button("Entrar")
+    st.title("🔐 Login ou Cadastro")
 
-        if submit:
-            if email == "admin@teste.com" and senha == "123":
-                st.session_state.usuario_logado = True
-                st.session_state.nome = "Admin"
-                st.session_state.pagina_atual = "🏠 Tela Principal"
-                st.experimental_rerun()
-            else:
-                st.error("Login inválido")
+    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"])
 
+    if aba == "Login":
+        with st.form("form_login"):
+            email = st.text_input("E-mail")
+            senha = st.text_input("Senha", type="password")
+            submit = st.form_submit_button("Entrar")
+
+            if submit:
+                usuarios = st.session_state.usuarios
+                if email in usuarios and usuarios[email]["senha"] == senha:
+                    st.session_state.usuario_logado = True
+                    st.session_state.nome = usuarios[email]["nome"]
+                    st.session_state.pagina_atual = "🏠 Tela Principal"
+                    st.success("Login realizado com sucesso!")
+                    st.experimental_rerun()
+                else:
+                    st.error("E-mail ou senha inválidos.")
+
+    else:  # Cadastro
+        with st.form("form_cadastro"):
+            nome = st.text_input("Nome completo")
+            posicao = st.selectbox("Posição que joga", ["", "Linha", "Goleiro"])
+            nascimento = st.date_input("Data de nascimento", value=date(2000, 1, 1))
+            telefone = st.text_input("Telefone (com DDD)")
+            email = st.text_input("E-mail")
+            senha = st.text_input("Senha", type="password")
+            submit = st.form_submit_button("Cadastrar")
+
+            if submit:
+                if not nome or not posicao or not telefone or not email or not senha:
+                    st.warning("Preencha todos os campos.")
+                elif email in st.session_state.usuarios:
+                    st.warning("Este e-mail já está cadastrado.")
+                elif len(re.sub(r'\D', '', telefone)) != 11:
+                    st.warning("O número de telefone deve conter 11 dígitos.")
+                else:
+                    st.session_state.usuarios[email] = {
+                        "nome": nome,
+                        "posicao": posicao,
+                        "nascimento": str(nascimento),
+                        "telefone": formatar_telefone(telefone),
+                        "senha": senha
+                    }
+                    st.success("Cadastro realizado com sucesso! Agora faça login.")
+
+# --- Tela Principal ---
 def tela_principal():
     st.title("🏠 Tela Principal")
-    st.success(f"Bem-vindo, {st.session_state.nome}")
+    st.success(f"Bem-vindo, {st.session_state.nome}!")
     st.markdown("Conteúdo da Chopp's League aqui...")
 
+# --- Tela de Estatísticas ---
 def tela_estatisticas():
     st.title("📊 Estatísticas")
     st.write("Conteúdo das estatísticas aqui...")
 
-# --- Sidebar ---
+# --- Sidebar (se logado) ---
 if st.session_state.usuario_logado:
     with st.sidebar:
         st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
@@ -62,7 +106,7 @@ if st.session_state.usuario_logado:
                 del st.session_state[k]
             st.experimental_rerun()
 
-# --- Roteador de telas ---
+# --- Roteador de Telas ---
 if not st.session_state.usuario_logado:
     tela_login()
 else:
