@@ -71,22 +71,23 @@ def tela_login():
                     else:
                         st.error("E-mail ou senha inválidos.")
 
+            # Botão centralizado: "Esqueci minha senha"
             st.markdown(
-            """
-            <div style="display: flex; justify-content: center; margin-top: 1rem;">
-                <button onclick="document.getElementById('fake-button').click()" 
-                        style="background: none; border: none; color: #1f77b4; 
-                            text-decoration: underline; font-size: 15px; cursor: pointer;">
-                    Esqueci minha senha
-                </button>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+                """
+                <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                    <button onclick="document.getElementById('fake-button').click()" 
+                            style="background: none; border: none; color: #1f77b4; 
+                                text-decoration: underline; font-size: 15px; cursor: pointer;">
+                        Esqueci minha senha
+                    </button>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-        if st.button("fake", key="fake-button", help="hidden", disabled=True):
-            st.session_state.modo_recuperacao = True
-            st.experimental_rerun()
+            if st.button("fake", key="fake-button", help="hidden", disabled=True):
+                st.session_state.modo_recuperacao = True
+                st.experimental_rerun()
 
         else:
             with st.form("form_esqueci"):
@@ -163,6 +164,7 @@ def tela_login():
                     }
                     st.success("Cadastro realizado! Agora faça login.")
                     st.session_state.pagina_atual = "login"
+                    st.experimental_rerun()
 
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
 if not st.session_state.usuario_logado:
