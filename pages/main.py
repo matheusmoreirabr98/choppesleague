@@ -98,12 +98,12 @@ if not st.session_state.usuario_logado:
     tela_login()
     st.stop()
 
-    st.markdown("---")
-
 # --- SIDEBAR ---
 with st.sidebar:
     st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
     st.markdown(f"👤 Logado como: **{st.session_state.nome}**")
+
+    st.markdown("---")
 
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
