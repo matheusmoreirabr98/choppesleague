@@ -123,13 +123,20 @@ def tela_login():
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
 
-                senha_type = "text" if st.session_state.mostrar_senha_login else "password"
+                st.markdown("Senha", unsafe_allow_html=True)
+                components.html("""
+                <div class="senha-container">
+                    <input id="senhaInput" type="password" placeholder="Digite sua senha">
+                    <button class="senha-toggle" onclick="toggleSenha()">👁</button>
+                </div>
 
-                senha = st.text_input(
-                    "Senha",
-                    type=senha_type,
-                    key="login_senha"
-                )
+                <script>
+                    function toggleSenha() {
+                        var input = document.getElementById("senhaInput");
+                        input.type = input.type === "password" ? "text" : "password";
+                    }
+                </script>
+                """, height=70)
 
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
                 submit = st.form_submit_button("Entrar")
