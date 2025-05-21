@@ -260,11 +260,7 @@ def tela_login():
                             "tipo": tipo
                         }
                         st.success("Cadastro realizado! Agora faça login.")
-                        st.session_state.update({"aba_login": "Login", "pagina_atual": "login"})
-                        st.experimental_rerun()
-
-
-# BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
+                        
 if not st.session_state.usuario_logado:
     tela_login()
     st.stop()
