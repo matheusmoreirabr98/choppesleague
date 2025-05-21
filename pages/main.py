@@ -57,6 +57,33 @@ st.markdown("""
                 padding-right: 12px !important;
                 box-sizing: border-box;
             }
+
+
+            .senha-container {
+                position: relative;
+                width: 100%;
+            }
+
+            .senha-container input {
+                width: 100%;
+                padding: 10px;
+                padding-right: 40px; /* espaço pro botão não sobrepor o texto */
+                font-size: 16px;
+                box-sizing: border-box;
+            }
+
+            .senha-toggle {
+                position: absolute;
+                top: 50%;
+                right: 10px;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                font-size: 18px;
+                cursor: pointer;
+                padding: 0;
+                line-height: 1;
+            }
         </style>
     </div>
 """, unsafe_allow_html=True)
