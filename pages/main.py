@@ -12,6 +12,24 @@ from datetime import datetime, timedelta, date
 
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
+# CSS para centralizar toda a tela
+st.markdown("""
+    <style>
+        .main .block-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        div.stForm button[kind="primary"] {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Sessões iniciais
 if "usuario_logado" not in st.session_state:
     st.session_state.usuario_logado = False
@@ -54,17 +72,6 @@ def tela_login():
 
                 # espaço entre campos e botão
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
-
-                # botão centralizado no mesmo alinhamento dos campos
-                st.markdown("""
-                    <style>
-                        div.stForm button[kind="primary"] {
-                            display: block;
-                            margin-left: auto;
-                            margin-right: auto;
-                        }
-                    </style>
-                """, unsafe_allow_html=True)
 
                 submit = st.form_submit_button("Entrar")
 
