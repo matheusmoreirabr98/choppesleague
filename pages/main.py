@@ -330,7 +330,7 @@ if st.session_state.pagina_atual == "👤 Meu Perfil":
 
     if not nome or not email or email not in usuarios:
         st.error("Usuário não identificado ou sessão inválida.")
-        st.rerun()
+        st.stop()
     usuario = usuarios[email]
 
     # Exibindo informações do perfil
