@@ -142,4 +142,13 @@ def tela_login():
                     }
                     st.success("Cadastro realizado! Agora faça login.")
                     st.session_state.pagina_atual = "login"
-                st.experimental_rerun()
+                    st.experimental_rerun()
+                    
+# BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
+if not st.session_state.usuario_logado:
+    tela_login()
+    st.stop()
+else:
+    st.title(st.session_state.pagina_atual)
+    st.success(f"Bem-vindo, {st.session_state.nome}!")
+    # aqui você pode chamar outras funções ou páginas, como tela_principal(), etc.
