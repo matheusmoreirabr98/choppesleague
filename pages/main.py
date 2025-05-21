@@ -167,12 +167,12 @@ def tela_login():
                 st.session_state.modo_recuperacao = True
                 st.rerun()
 
-            else:
+            if st.session_state.modo_recuperacao:
                 with st.form("form_esqueci"):
-                        email = st.text_input("E-mail cadastrado", key="rec_email_final")
-                        palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
-                        nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
-                        confirmar = st.form_submit_button("Atualizar senha")
+                    email = st.text_input("E-mail cadastrado", key="rec_email_final")
+                    palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
+                    nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
+                    confirmar = st.form_submit_button("Atualizar senha")
 
                 if confirmar:
                     usuarios = st.session_state.usuarios
