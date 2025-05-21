@@ -60,6 +60,9 @@ def tela_login():
                             flex-direction: column;
                             align-items: center;
                         }
+                        div.stForm button[kind="primary"] {
+                            width: 200px; /* opcional: define largura para melhor centralização visual */
+                        }
                     </style>
                 """, unsafe_allow_html=True)
 
