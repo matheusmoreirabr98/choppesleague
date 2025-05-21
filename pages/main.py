@@ -54,16 +54,8 @@ def tela_login():
 
                 # Centraliza o botão Entrar visualmente dentro do formulário
 
-                submit = st.form_submit_button("Entrar")
 
-                st.markdown("""
-                        <div style='text-align: center;
-                            stForm button[kind="primary"] {
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                    </style>
-                """, unsafe_allow_html=True)
+                submit = st.form_submit_button("Entrar")
 
                 if submit:
                     usuarios = st.session_state.usuarios
