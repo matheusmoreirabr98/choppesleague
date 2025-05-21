@@ -21,7 +21,7 @@ st.markdown("""
             align-items: center;
             justify-content: flex-start;
             padding: 2rem 1rem;
-            max-width: 480px;
+            max-width: 100%;
             margin: auto;
             word-break: break-word;
             overflow-wrap: break-word;
@@ -35,6 +35,8 @@ st.markdown("""
             }
             input, textarea, select, button {
                 font-size: 16px !important;
+                width: 100% !important;
+                box-sizing: border-box;
             }
             label, .stMarkdown p {
                 font-size: 15px !important;
@@ -46,6 +48,23 @@ st.markdown("""
             display: block;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .senha-container {
+            position: relative;
+        }
+        .senha-container input {
+            padding-right: 2.5rem;
+        }
+        .senha-toggle {
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -65,6 +84,8 @@ if "codigo_enviado" not in st.session_state:
     st.session_state.codigo_enviado = False
 if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
+if "mostrar_senha_login" not in st.session_state:
+    st.session_state.mostrar_senha_login = False
 
 # Funções auxiliares
 def email_valido(email):
@@ -79,7 +100,7 @@ def formatar_telefone(numero):
 # --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
     st.title("🔐 Login / Cadastro")
-    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login")
+    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
     # LOGIN NORMAL OU RECUPERAÇÃO
     if aba == "Login":
@@ -88,11 +109,18 @@ def tela_login():
 
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
-                senha = st.text_input("Senha", type="password", key="login_senha")
 
-                # espaço entre campos e botão
+                senha_type = "text" if st.session_state.mostrar_senha_login else "password"
+                senha_html = f'''
+                    <div class="senha-container">
+                        <input id="senha_login" name="senha" type="{senha_type}" placeholder="Senha" class="stTextInput">
+                        <button type="button" class="senha-toggle" onclick="var input = document.getElementById('senha_login'); input.type = input.type === 'password' ? 'text' : 'password'; this.textContent = input.type === 'password' ? '👁' : '🙈';">👁</button>
+                    </div>
+                '''
+                st.markdown(senha_html, unsafe_allow_html=True)
+                senha = st.text_input("", type=senha_type, key="login_senha", label_visibility="collapsed")
+
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
-
                 submit = st.form_submit_button("Entrar")
 
                 if submit:
@@ -107,7 +135,6 @@ def tela_login():
                     else:
                         st.error("E-mail ou senha inválidos.")
 
-            # Botão "Esqueci minha senha" centralizado com estilo de link
             st.markdown("""
                 <div style='text-align: center; margin-top: 1rem;'>
                     <form action="#" method="post">
