@@ -52,7 +52,18 @@ def tela_login():
                 email = st.text_input("E-mail", key="login_email")
                 senha = st.text_input("Senha", type="password", key="login_senha")
 
+                # Centraliza o botão Entrar visualmente dentro do formulário
 
+                submit = st.form_submit_button("Entrar")
+
+                st.markdown("""
+                        <div style='text-align: center;
+                            stForm button[kind="primary"] {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                    </style>
+                """, unsafe_allow_html=True)
 
                 if submit:
                     usuarios = st.session_state.usuarios
