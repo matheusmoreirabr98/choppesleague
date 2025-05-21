@@ -118,20 +118,6 @@ def tela_login():
                     key="login_senha"
                 )
 
-                # Botão mostrar/ocultar (fora do campo, mas no mesmo formulário)
-                if st.checkbox("👁 Mostrar senha", key="mostrar_senha_checkbox"):
-                    st.session_state.mostrar_senha_login = True
-                else:
-                    st.session_state.mostrar_senha_login = False
-                senha_html = f'''
-                    <div class="senha-container">
-                        <input id="senha_login" name="senha" type="{senha_type}" placeholder="Senha" class="stTextInput">
-                        <button type="button" class="senha-toggle" onclick="var input = document.getElementById('senha_login'); input.type = input.type === 'password' ? 'text' : 'password'; this.textContent = input.type === 'password' ? '👁' : '🙈';">👁</button>
-                    </div>
-                '''
-                st.markdown(senha_html, unsafe_allow_html=True)
-                senha = st.text_input("", type=senha_type, key="login_senha", label_visibility="collapsed")
-
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
                 submit = st.form_submit_button("Entrar")
 
