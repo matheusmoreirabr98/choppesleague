@@ -173,7 +173,7 @@ def tela_login():
                     email = st.text_input("Digite seu e-mail", key="rec_email")
                     enviar = st.form_submit_button("Enviar código de recuperação")
 
-                    if enviar or st.button("Reenviar código"):
+                    if enviar:
                         if email in st.session_state.usuarios:
                             codigo = str(random.randint(100000, 999999))
                             st.session_state.recuperacao_email = email
@@ -182,6 +182,18 @@ def tela_login():
                             st.success(f"Código gerado para o e-mail {email}")
                             st.info("⚠️ Este é um ambiente de teste: o código não será enviado por e-mail.")
                         else:
+                            st.error("E-mail não encontrado.")
+
+                if st.session_state.codigo_enviado:
+                    st.button("Reenviar código")
+                    if email in st.session_state.usuarios:
+                            codigo = str(random.randint(100000, 999999))
+                            st.session_state.recuperacao_email = email
+                            st.session_state.codigo_recuperacao = codigo
+                            st.session_state.codigo_enviado = True
+                            st.success(f"Código gerado para o e-mail {email}")
+                            st.info("⚠️ Este é um ambiente de teste: o código não será enviado por e-mail.")
+                    else:
                             st.error("E-mail não encontrado.")
 
                 if st.session_state.codigo_enviado:
