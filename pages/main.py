@@ -251,8 +251,8 @@ def tela_login():
 if not st.session_state.usuario_logado:
     tela_login()
 else:
-    # Exibe a mensagem de boas-vindas somente na Tela Principal
-    if st.session_state.pagina_atual == "🏠 Tela Principal":
+    # Exibe a mensagem de boas-vindas SOMENTE na Tela Principal
+    if st.session_state.get("pagina_atual") == "🏠 Tela Principal":
         st.success(f"Bem-vindo, {st.session_state.nome}!")
 
     # SIDEBAR
