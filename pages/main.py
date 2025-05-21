@@ -142,4 +142,4 @@ def tela_login():
                     }
                     st.success("Cadastro realizado! Agora faça login.")
                     st.session_state.pagina_atual = "login"
-    st.experimental_rerun()
+            st.experimental_rerun()
