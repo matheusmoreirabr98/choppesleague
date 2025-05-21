@@ -110,6 +110,19 @@ def tela_login():
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
 
+                senha_type = "text" if st.session_state.mostrar_senha_login else "password"
+
+                senha = st.text_input(
+                    "Senha",
+                    type=senha_type,
+                    key="login_senha"
+                )
+
+                # Botão mostrar/ocultar (fora do campo, mas no mesmo formulário)
+                if st.checkbox("👁 Mostrar senha", key="mostrar_senha_checkbox"):
+                    st.session_state.mostrar_senha_login = True
+                else:
+                    st.session_state.mostrar_senha_login = False
                 senha_html = f'''
                     <div class="senha-container">
                         <input id="senha_login" name="senha" type="{senha_type}" placeholder="Senha" class="stTextInput">
