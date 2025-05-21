@@ -35,19 +35,23 @@ st.markdown("""
                     padding: 1.5rem 1rem;
                     width: 100%;
                     max-width: 100vw;
-                }
-                input, textarea, select, button {
-                    font-size: 16px !important;
-                    width: 100% !important;
-                    box-sizing: border-box;
-                }
+
                 label, .stMarkdown p {
                     font-size: 15px !important;
                     word-break: break-word;
                 }
             }
 
+            div.stForm button[kind="primary"] {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
 
+            input[type="password"] {
+                padding-right: 12px !important;
+                box-sizing: border-box;
+            }
         </style>
     </div>
 """, unsafe_allow_html=True)
