@@ -338,7 +338,7 @@ if st.session_state.pagina_atual == "👤 Meu Perfil":
     with st.container():
         # Adiciona um estilo personalizado para centralizar
         st.markdown("""
-        <div style="text-align: center; padding: 20px;">
+        <div style="text-align: left; padding: 20px;">
             <h3>📋 Informações Cadastradas</h3>
             <div style="font-size: 18px; line-height: 1.6;">
                 <p><strong>Nome completo:</strong> {}</p>
