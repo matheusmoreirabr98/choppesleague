@@ -1,4 +1,3 @@
-
 import streamlit as st
 import requests
 from io import BytesIO
@@ -70,28 +69,31 @@ def tela_login():
             st.markdown(
                 """
                 <div style="display: flex; justify-content: center; margin-top: 1rem;">
-                    <button onclick="document.getElementById('botao-fake').click()" 
+                    <button onclick="document.getElementById('fake-button-hidden').click()" 
                             style="background: none; border: none; color: #1f77b4; 
                                 text-decoration: underline; font-size: 15px; cursor: pointer;">
                         Esqueci minha senha
                     </button>
                 </div>
-                <style>
-                    div[data-testid="stButton"] > button[data-testid="baseButton"] {
-                        display: none;
-                    }
-                </style>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const fakeBtn = document.querySelector('button[data-testid="baseButton-fake-button"]');
-                        if (fakeBtn) fakeBtn.style.display = 'none';
-                    });
-                </script>
                 """,
                 unsafe_allow_html=True
             )
 
-            if st.button("fake", key="fake-button"):
+            # Botão escondido funcional
+            hide_button = """
+                <style>
+                    #fake-button-hidden { display: none; }
+                </style>
+                <script>
+                    const btn = window.parent.document.querySelector('button[kind="secondary"]');
+                    if (btn && btn.innerText === 'fake') {
+                        btn.style.display = 'none';
+                    }
+                </script>
+            """
+            st.markdown(hide_button, unsafe_allow_html=True)
+
+            if st.button("fake", key="fake-button-hidden"):
                 st.session_state.modo_recuperacao = True
                 st.experimental_rerun()
 
