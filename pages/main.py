@@ -312,12 +312,25 @@ with st.sidebar:
         ]
 
     pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
-    if st.session_state.pagina_atual != "👤 Meu Perfil":
+
+    # Aqui, a página atual só muda se for "🏠 Tela Principal", ou a página selecionada no menu
+    if pagina_escolhida == "🏠 Tela Principal":
+        st.session_state.pagina_atual = "🏠 Tela Principal"
+    else:
         st.session_state.pagina_atual = pagina_escolhida
 
+
 # Quando a página for "Meu Perfil", exibe as informações do usuário
-if st.session_state.pagina_atual == "👤 Meu Perfil":
+# Quando a página for "🏠 Tela Principal"
+if st.session_state.pagina_atual == "🏠 Tela Principal":
+    st.title("🏠 Tela Principal")
+    st.markdown("Bem-vindo à Tela Principal!")
+
+# Quando a página for "👤 Meu Perfil"
+elif st.session_state.pagina_atual == "👤 Meu Perfil":
     st.title("👤 Meu Perfil")
+    # Coloque aqui o conteúdo da página "Meu Perfil" como já está.
+
 
     tipo_usuario = st.session_state.get("tipo_usuario")
     nome = st.session_state.get("nome")
