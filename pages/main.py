@@ -261,8 +261,7 @@ with st.sidebar:
     # Botão de Meu Perfil (na Sidebar)
     if st.button("👤 Meu Perfil", use_container_width=True):
         st.session_state.pagina_atual = "👤 Meu Perfil"  # Define a página atual como "Meu Perfil"
-        st.experimental_rerun()  # Força o rerun para atualizar a página
-
+    
     # Adicionando o botão de Logout abaixo do botão Meu Perfil
     if st.session_state.usuario_logado:
         if st.button("🚪 Logout", use_container_width=True):
@@ -371,4 +370,5 @@ if st.session_state.pagina_atual == "👤 Meu Perfil":
         st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
         if st.button("🔙 Voltar para Tela Principal"):
             st.session_state.pagina_atual = "🏠 Tela Principal"
-            st.experimental_rerun()  # Força o rerun para voltar à tela principal
+            # Não é necessário usar o rerun, a atualização da variável de estado já deve ser suficiente
+
