@@ -264,7 +264,6 @@ with st.sidebar:
 
     # Adicionando o botão de Logout abaixo do botão Meu Perfil
     if st.session_state.usuario_logado:
-        st.markdown("---")
         if st.button("🚪 Logout", use_container_width=True):
             st.session_state.confirmar_logout = True
             logout_clicado = True
