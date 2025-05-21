@@ -57,7 +57,7 @@ def tela_login():
                     <style>
                         div.stForm button[kind="primary"] {
                             display: block;
-                            margin: top;
+                            margin-top: 1rem;
                         }
                     </style>
                 """, unsafe_allow_html=True)
