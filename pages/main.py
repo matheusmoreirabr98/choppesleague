@@ -76,7 +76,7 @@ def tela_login():
                     else:
                         st.error("E-mail ou senha inválidos.")
 
-            # Botão "Esqueci minha senha" centralizado abaixo do formulário
+            # Botão "Esqueci minha senha" centralizado com estilo de link
             st.markdown("""
                 <div style='text-align: center; margin-top: 1rem;'>
                     <form action="#" method="post">
@@ -85,6 +85,9 @@ def tela_login():
                         </button>
                     </form>
                 </div>
+                <style>
+                    button[data-testid="btn_hidden_recovery"] { display: none; }
+                </style>
             """, unsafe_allow_html=True)
 
             if st.button("", key="btn_hidden_recovery", disabled=True):
