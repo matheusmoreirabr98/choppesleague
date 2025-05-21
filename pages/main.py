@@ -19,7 +19,6 @@ st.markdown("""
     <div style="max-width: 400px; margin: auto;">
         <style>
             .main .block-container {
-                display: right;
                 flex-direction: column;
                 align-items: center;
                 justify-content: flex-start;
