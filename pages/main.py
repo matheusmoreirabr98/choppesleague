@@ -61,7 +61,7 @@ def tela_login():
                             align-items: center;
                         }
                         div.stForm button[kind="primary"] {
-                            width: 200px; /* opcional: define largura para melhor centralização visual */
+                            width: 200px;
                         }
                     </style>
                 """, unsafe_allow_html=True)
