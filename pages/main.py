@@ -51,6 +51,17 @@ def tela_login():
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
                 senha = st.text_input("Senha", type="password", key="login_senha")
+
+                # Centraliza o botão Entrar
+                st.markdown("""
+                    <style>
+                    div.stButton > button:first-child {
+                        display: block;
+                        margin: 0 auto;
+                    }
+                    </style>
+                """, unsafe_allow_html=True)
+
                 submit = st.form_submit_button("Entrar")
 
                 if submit:
@@ -66,7 +77,17 @@ def tela_login():
                         st.error("E-mail ou senha inválidos.")
 
             # Botão "Esqueci minha senha" centralizado abaixo do formulário
-            if st.button("Esqueci minha senha"):
+            st.markdown("""
+                <div style='text-align: center; margin-top: 1rem;'>
+                    <form action="#" method="post">
+                        <button onclick="window.parent.postMessage({type: 'streamlit:rerun'}, '*');" style='background: none; border: none; color: #1f77b4; text-decoration: underline; font-size: 15px; cursor: pointer;'>
+                            Esqueci minha senha
+                        </button>
+                    </form>
+                </div>
+            """, unsafe_allow_html=True)
+
+            if st.button("", key="btn_hidden_recovery", disabled=True):
                 st.session_state.modo_recuperacao = True
                 st.experimental_rerun()
 
@@ -143,7 +164,7 @@ def tela_login():
                     st.success("Cadastro realizado! Agora faça login.")
                     st.session_state.pagina_atual = "login"
                     st.experimental_rerun()
-                    
+
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
 if not st.session_state.usuario_logado:
     tela_login()
