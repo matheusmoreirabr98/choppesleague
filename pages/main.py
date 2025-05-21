@@ -224,17 +224,21 @@ def tela_login():
             submit = st.form_submit_button("Cadastrar")
 
             erros = []
-            if not nome or not posicao or not nascimento or not telefone or not email or not senha:
-                erros.append("⚠️ Todos os campos devem ser preenchidos.")
-                erros.append("📅 O campo 'Data de nascimento' deve conter apenas números e '/'.")
-            if not telefone.isdigit():
-                erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
-            if not email_valido(email):
-                erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
-            if erros:
-                for erro in erros:
-                    st.warning(erro)
-                submit = False
+
+            if submit:
+                if not nome or not posicao or not nascimento or not telefone or not email or not senha:
+                    erros.append("⚠️ Todos os campos devem ser preenchidos.")
+                if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
+                    erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
+                if not telefone.isdigit():
+                    erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
+                if not email_valido(email):
+                    erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
+
+                if erros:
+                    for erro in erros:
+                        st.warning(erro)
+                    submit = False
 
             if submit:
                 if not nome or not posicao or not telefone or not email or not senha:
