@@ -99,7 +99,7 @@ def formatar_telefone(numero):
 
 # --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
-    st.subtitle("🔐 Login / Cadastro")
+    st.title("🔐 Login / Cadastro")
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
     # LOGIN NORMAL OU RECUPERAÇÃO
