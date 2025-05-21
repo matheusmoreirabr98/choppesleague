@@ -23,12 +23,22 @@ st.markdown("""
             padding: 2rem 1rem;
             max-width: 480px;
             margin: auto;
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         @media only screen and (max-width: 600px) {
             .main .block-container {
                 padding: 1.5rem 1rem;
                 width: 100%;
+                max-width: 100vw;
+            }
+            input, textarea, select, button {
+                font-size: 16px !important;
+            }
+            label, .stMarkdown p {
+                font-size: 15px !important;
+                word-break: break-word;
             }
         }
 
