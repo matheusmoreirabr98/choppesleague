@@ -195,12 +195,12 @@ def tela_login():
                     enviar = st.form_submit_button("Enviar código de recuperação")
 
                     if enviar:
-                    if email in st.session_state.usuarios:
-                        codigo = str(random.randint(100000, 999999))
-                        st.session_state.recuperacao_email = email
-                        st.session_state.codigo_recuperacao = codigo
-                        st.session_state.codigo_enviado = True
-                        st.success("Código gerado. Agora digite sua palavra-chave para redefinir sua senha.")
+                        if email in st.session_state.usuarios:
+                            codigo = str(random.randint(100000, 999999))
+                            st.session_state.recuperacao_email = email
+                            st.session_state.codigo_recuperacao = codigo
+                            st.session_state.codigo_enviado = True
+                            st.success("Código gerado. Agora digite sua palavra-chave para redefinir sua senha.")
                         else:
                             st.error("E-mail não encontrado.")
 
