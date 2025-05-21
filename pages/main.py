@@ -195,8 +195,8 @@ def tela_login():
         with st.form("form_cadastro"):
             nome = st.text_input("Nome completo", key="cad_nome")
             posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
-            nascimento = st.date_input("Data de nascimento", value=date(2000, 1, 1), key="cad_nasc")
-            telefone = st.text_input("Telefone (com DDD)", key="cad_tel")
+            nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="dd/mm/aaaa"), key="cad_nasc")
+            telefone = st.text_input("Telefone (com DDD)", key="cad_tel", placeholder="apenas números")
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
@@ -232,3 +232,4 @@ else:
     st.title(st.session_state.pagina_atual)
     st.success(f"Bem-vindo, {st.session_state.nome}!")
     # aqui você pode chamar outras funções ou páginas, como tela_principal(), etc.
+
