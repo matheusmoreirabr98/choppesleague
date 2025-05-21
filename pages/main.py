@@ -263,6 +263,7 @@ with st.sidebar:
     # Botão de Meu Perfil (na Sidebar)
     if st.button("👤 Meu Perfil", use_container_width=True):
         st.session_state.pagina_atual = "👤 Meu Perfil"  # Define a página atual como "Meu Perfil"
+        st.rerun()
     
     # Adicionando o botão de Logout abaixo do botão Meu Perfil
     if st.session_state.usuario_logado:
