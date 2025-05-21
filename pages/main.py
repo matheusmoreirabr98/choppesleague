@@ -16,90 +16,70 @@ st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
 # CSS para centralizar e tornar responsiva a tela em diferentes dispositivos
 st.markdown("""
-    <style>
-        .main .block-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 2rem 1rem;
-            max-width: 100%;
-            margin: auto;
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-
-        @media only screen and (max-width: 600px) {
+    <div style="max-width: 400px; margin: auto;">
+        <style>
             .main .block-container {
-                padding: 1.5rem 1rem;
-                width: 100%;
-                max-width: 100vw;
-            }
-            input, textarea, select, button {
-                font-size: 16px !important;
-                width: 100% !important;
-                box-sizing: border-box;
-            }
-            label, .stMarkdown p {
-                font-size: 15px !important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 2rem 1rem;
+                max-width: 100%;
+                margin: auto;
                 word-break: break-word;
+                overflow-wrap: break-word;
             }
-        }
 
-        div.stForm button[kind="primary"] {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    }
-    </style>
-""", unsafe_allow_html=True)
+            @media only screen and (max-width: 600px) {
+                .main .block-container {
+                    padding: 1.5rem 1rem;
+                    width: 100%;
+                    max-width: 100vw;
+                }
+                input, textarea, select, button {
+                    font-size: 16px !important;
+                    width: 100% !important;
+                    box-sizing: border-box;
+                }
+                label, .stMarkdown p {
+                    font-size: 15px !important;
+                    word-break: break-word;
+                }
+            }
 
+            div.stForm button[kind="primary"] {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
 
-import streamlit as st
-import streamlit.components.v1 as components
-
-components.html("""
-<div style="max-width: 400px; margin: auto;">
-  <style>
     .senha-container {
-      position: relative;
-      width: 100%;
+        position: relative;
+        width: 100%;
     }
+
     .senha-container input {
-      width: 100%;
-      padding: 10px;
-      padding-right: 40px; /* espaço para o botão */
-      font-size: 16px;
-      box-sizing: border-box;
+        width: 100%;
+        padding: 10px;
+        padding-right: 40px; /* espaço para o botão */
+        font-size: 16px;
+        box-sizing: border-box;
     }
+
     .senha-toggle {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      padding: 0;
-      line-height: 1;
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
     }
-  </style>
-
-  <div class="senha-container">
-    <input id="senhaInput" type="password" placeholder="Digite sua senha">
-    <button class="senha-toggle" onclick="toggleSenha()">👁️</button>
-  </div>
-
-  <script>
-    function toggleSenha() {
-      var input = document.getElementById("senhaInput");
-      input.type = input.type === "password" ? "text" : "password";
-    }
-  </script>
-</div>
-""", height=100)
+        </style>
+""", unsafe_allow_html=True)
 
 
 # Sessões iniciais
