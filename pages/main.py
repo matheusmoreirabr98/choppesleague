@@ -169,27 +169,27 @@ def tela_login():
 
             else:
                 with st.form("form_esqueci"):
-                    email = st.text_input("E-mail cadastrado", key="rec_email_final")
-                    palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
-                    nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
-                    confirmar = st.form_submit_button("Atualizar senha")
+                        email = st.text_input("E-mail cadastrado", key="rec_email_final")
+                        palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
+                        nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
+                        confirmar = st.form_submit_button("Atualizar senha")
 
-                    if confirmar:
-                        usuarios = st.session_state.usuarios
-                        if email not in usuarios:
-                            st.error("E-mail não encontrado.")
-                        elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
-                            st.error("Palavra-chave incorreta.")
-                        else:
-                            usuarios[email]["senha"] = nova_senha
-                            st.success("Senha atualizada com sucesso! Agora faça login.")
-                            st.session_state.modo_recuperacao = False
-                            st.rerun()
-
-                    if st.button("🔙 Voltar para login"):
+                if confirmar:
+                    usuarios = st.session_state.usuarios
+                    if email not in usuarios:
+                        st.error("E-mail não encontrado.")
+                    elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
+                        st.error("Palavra-chave incorreta.")
+                    else:
+                        usuarios[email]["senha"] = nova_senha
+                        st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
-                        st.session_state.codigo_enviado = False
                         st.rerun()
+
+                if st.button("🔙 Voltar para login"):
+                    st.session_state.modo_recuperacao = False
+                    st.session_state.codigo_enviado = False
+                    st.rerun()
 
         # CADASTRO
         elif aba == "Cadastro":
