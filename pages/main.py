@@ -174,26 +174,22 @@ def tela_login():
                     nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
                     confirmar = st.form_submit_button("Atualizar senha")
 
-                if confirmar:
-                    usuarios = st.session_state.usuarios
-                    if email not in usuarios:
-                        st.error("E-mail não encontrado.")
-                    elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
-                        st.error("Palavra-chave incorreta.")
-                    else:
-                        usuarios[email]["senha"] = nova_senha
-                        st.success("Senha atualizada com sucesso! Agora faça login.")
+                    if confirmar:
+                        usuarios = st.session_state.usuarios
+                        if email not in usuarios:
+                            st.error("E-mail não encontrado.")
+                        elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
+                            st.error("Palavra-chave incorreta.")
+                        else:
+                            usuarios[email]["senha"] = nova_senha
+                            st.success("Senha atualizada com sucesso! Agora faça login.")
+                            st.session_state.modo_recuperacao = False
+                            st.rerun()
+
+                    if st.button("🔙 Voltar para login"):
                         st.session_state.modo_recuperacao = False
+                        st.session_state.codigo_enviado = False
                         st.rerun()
-
-                    
-
-                
-
-                if st.button("🔙 Voltar para login"):
-                    st.session_state.modo_recuperacao = False
-                    st.session_state.codigo_enviado = False
-                    st.rerun()
 
         # CADASTRO
         elif aba == "Cadastro":
