@@ -258,8 +258,8 @@ else:
         st.image("./imagens/logo.png", use_container_width=True)
         st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
 
-        # Botão de Meu Perfil
-        if st.button("👤 Meu Perfil"):
+        # Botão de Meu Perfil (alinhado)
+        if st.button("👤 Meu Perfil", use_container_width=True):
             st.session_state.pagina_atual = "👤 Meu Perfil"
 
         st.markdown("---")
