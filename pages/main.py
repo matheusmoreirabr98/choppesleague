@@ -30,7 +30,7 @@ st.markdown("""
                 overflow-wrap: break-word;
             }
 
-            @media only screen and (max-width: 400px) {
+            @media only screen and (max-width: 600px) {
                 .main .block-container {
                     padding: 1.5rem 1rem;
                     width: 100%;
