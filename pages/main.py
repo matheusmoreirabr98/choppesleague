@@ -266,11 +266,11 @@ if "mostrar_senha_login" not in st.session_state:
 
 
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
-    if not st.session_state.usuario_logado:
-        tela_login()
-        st.stop()
-    else:
-        st.title(st.session_state.pagina_atual)
-        st.success(f"Bem-vindo, {st.session_state.nome}!")
-        # aqui você pode chamar outras funções ou páginas, como tela_principal(), etc.
+if not st.session_state.usuario_logado:
+    tela_login()
+    st.stop()
+else:
+    st.title(st.session_state.pagina_atual)
+    st.success(f"Bem-vindo, {st.session_state.nome}!")
+    # aqui você pode chamar outras funções ou páginas, como tela_principal(), etc.
 
