@@ -53,13 +53,13 @@ st.markdown("""
         }
 
         .senha-container {
-            position: left;
+            position: relative;
         }
         .senha-container input {
             padding-right: 2.5rem;
         }
         .senha-toggle {
-            position: absolute;
+            position: left;
             top: 50%;
             right: 0.75rem;
             transform: translateY(-50%);
