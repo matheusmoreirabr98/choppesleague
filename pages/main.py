@@ -1,3 +1,4 @@
+
 import streamlit as st
 import requests
 from io import BytesIO
@@ -69,24 +70,26 @@ def tela_login():
             st.markdown(
                 """
                 <div style="display: flex; justify-content: center; margin-top: 1rem;">
-                    <button onclick="document.getElementById('fake-button').click()" 
+                    <button onclick="document.getElementById('botao-fake').click()" 
                             style="background: none; border: none; color: #1f77b4; 
                                 text-decoration: underline; font-size: 15px; cursor: pointer;">
                         Esqueci minha senha
                     </button>
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            # CSS para ocultar o botão fake
-            st.markdown("""
                 <style>
-                    button[data-testid="baseButton-fake-button"] {
+                    div[data-testid="stButton"] > button[data-testid="baseButton"] {
                         display: none;
                     }
                 </style>
-            """, unsafe_allow_html=True)
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const fakeBtn = document.querySelector('button[data-testid="baseButton-fake-button"]');
+                        if (fakeBtn) fakeBtn.style.display = 'none';
+                    });
+                </script>
+                """,
+                unsafe_allow_html=True
+            )
 
             if st.button("fake", key="fake-button"):
                 st.session_state.modo_recuperacao = True
