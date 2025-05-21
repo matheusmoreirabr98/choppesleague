@@ -195,13 +195,12 @@ def tela_login():
                     enviar = st.form_submit_button("Enviar código de recuperação")
 
                     if enviar:
-                        if email in st.session_state.usuarios:
-                            codigo = str(random.randint(100000, 999999))
-                            st.session_state.recuperacao_email = email
-                            st.session_state.codigo_recuperacao = codigo
-                            st.session_state.codigo_enviado = True
-                            if enviar_email(email, codigo):
-                                st.success(f"Código enviado para o e-mail {email}")
+                    if email in st.session_state.usuarios:
+                        codigo = str(random.randint(100000, 999999))
+                        st.session_state.recuperacao_email = email
+                        st.session_state.codigo_recuperacao = codigo
+                        st.session_state.codigo_enviado = True
+                        st.success("Código gerado. Agora digite sua palavra-chave para redefinir sua senha.")
                         else:
                             st.error("E-mail não encontrado.")
 
@@ -219,12 +218,15 @@ def tela_login():
 
                 if st.session_state.codigo_enviado:
                     with st.form("form_codigo"):
-                        codigo_digitado = st.text_input("Digite o código recebido", key="codigo_digitado")
+                        palavra_chave_rec = st.text_input("Digite sua palavra-chave", key="palavra_chave_rec")
                         nova_senha = st.text_input("Nova senha", type="password", key="nova_senha")
                         confirmar = st.form_submit_button("Atualizar senha")
 
                         if confirmar:
-                            if codigo_digitado == st.session_state.codigo_recuperacao:
+                            email = st.session_state.recuperacao_email
+                            if palavra_chave_rec != st.session_state.usuarios[email]["palavra_chave"]:
+                                st.error("Palavra-chave incorreta. Tente novamente.")
+                            elif codigo_digitado == st.session_state.codigo_recuperacao:
                                 email = st.session_state.recuperacao_email
                                 st.session_state.usuarios[email]["senha"] = nova_senha
                                 st.success("Senha atualizada com sucesso! Agora faça login.")
@@ -254,6 +256,7 @@ def tela_login():
                 telefone = st.text_input("WhatsApp", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
                 email = st.text_input("E-mail", key="cad_email", autocomplete="email")
                 senha = st.text_input("Senha", type="password", key="cad_senha")
+                palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
                 submit = st.form_submit_button("Cadastrar")
 
                 erros = []
@@ -290,6 +293,7 @@ def tela_login():
                             "nascimento": str(nascimento),
                             "telefone": formatar_telefone(telefone),
                             "senha": senha,
+                            "palavra_chave": palavra_chave,
                             "tipo": tipo
                         }
                         st.success("Cadastro realizado! Agora faça login.")
