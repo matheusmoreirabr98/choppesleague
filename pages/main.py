@@ -253,69 +253,65 @@ if not st.session_state.usuario_logado:
 else:
     st.success(f"Bem-vindo, {st.session_state.nome}!")
 
-    # --- SIDEBAR ---
-    with st.sidebar:
-        st.image("./imagens/logo.png", use_container_width=True)
-        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
+# SIDEBAR
+with st.sidebar:
+    st.image("./imagens/logo.png", use_container_width=True)
+    st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
 
-        # Botão de Meu Perfil (alinhado)
-        if st.button("👤 Meu Perfil", use_container_width=True):
-            st.session_state.pagina_atual = "👤 Meu Perfil"
+    # Botão de Meu Perfil (alinhado)
+    if st.button("👤 Meu Perfil", use_container_width=True):
+        st.session_state.pagina_atual = "👤 Meu Perfil"
 
+    # Adicionando o botão de Logout abaixo do botão Meu Perfil
+    if st.session_state.usuario_logado:
         st.markdown("---")
-
-        pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
-        if st.session_state.pagina_atual != "👤 Meu Perfil":
-            st.session_state.pagina_atual = pagina_escolhida
-
-        # Botão de Logout diretamente abaixo do botão "Meu Perfil"
-        if not st.session_state.confirmar_logout:
-            if st.button("🚪 Logout", key="botao_logout", use_container_width=True):
-                st.session_state.confirmar_logout = True
-                logout_clicado = True
-        else:
-            st.warning("Tem certeza que deseja sair?")
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
-                    st.session_state.confirmar_logout = False
-                    cancelar_clicado = True
-            with col2:
-                if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
-                    usuarios = st.session_state.get("usuarios", {})
-                    st.session_state.clear()
-                    st.session_state.usuario_logado = False
-                    st.session_state.usuarios = usuarios
-                    st.session_state.pagina_atual = "login"
-                    confirmar_clicado = True
-
+        if st.button("🚪 Logout", use_container_width=True):
+            st.session_state.confirmar_logout = True
+            logout_clicado = True
     st.markdown("---")
 
-    # Essas chamadas precisam estar fora do `with`
-    if logout_clicado or cancelar_clicado or confirmar_clicado:
-        st.experimental_rerun()
+    # Verificação de logout
+    if st.session_state.confirmar_logout:
+        st.warning("Tem certeza que deseja sair?")
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("❌ Cancelar", use_container_width=True):
+                st.session_state.confirmar_logout = False
+        with col2:
+            if st.button("✅ Confirmar", use_container_width=True):
+                usuarios = st.session_state.get("usuarios", {})
+                st.session_state.clear()
+                st.session_state.usuario_logado = False
+                st.session_state.usuarios = usuarios
+                st.session_state.pagina_atual = "login"
+                st.experimental_rerun()
 
-        if st.session_state.tipo_usuario == "admin":
-            opcoes = [
-                "🏠 Tela Principal",
-                "📊 Registrar Partida",
-                "👟 Estatísticas dos Jogadores",
-                "🎲 Sorteio de Times",
-                "✅ Confirmar Presença/Ausência",
-                "🏅 Avaliação Pós-Jogo",
-                "📸 Galeria de Momentos",
-                "💬 Fórum",
-                "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League",
-            ]
-        else:
-            opcoes = [
-                "🏠 Tela Principal",
-                "👟 Estatísticas dos Jogadores",
-                "✅ Confirmar Presença/Ausência",
-                "🏅 Avaliação Pós-Jogo",
-                "📸 Galeria de Momentos",
-                "💬 Fórum",
-                "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League",
-            ]
+    # Opções de navegação
+    if st.session_state.tipo_usuario == "admin":
+        opcoes = [
+            "🏠 Tela Principal",
+            "📊 Registrar Partida",
+            "👟 Estatísticas dos Jogadores",
+            "🎲 Sorteio de Times",
+            "✅ Confirmar Presença/Ausência",
+            "🏅 Avaliação Pós-Jogo",
+            "📸 Galeria de Momentos",
+            "💬 Fórum",
+            "📣 Comunicado à Gestão",
+            "📜 Regras Choppe's League",
+        ]
+    else:
+        opcoes = [
+            "🏠 Tela Principal",
+            "👟 Estatísticas dos Jogadores",
+            "✅ Confirmar Presença/Ausência",
+            "🏅 Avaliação Pós-Jogo",
+            "📸 Galeria de Momentos",
+            "💬 Fórum",
+            "📣 Comunicado à Gestão",
+            "📜 Regras Choppe's League",
+        ]
+
+    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
+    if st.session_state.pagina_atual != "👤 Meu Perfil":
+        st.session_state.pagina_atual = pagina_escolhida
