@@ -127,26 +127,6 @@ if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
 
 # Funções auxiliares
-import smtplib
-from email.mime.text import MIMEText
-
-def enviar_email(destinatario, codigo):
-    remetente = "seuemail@gmail.com"
-    senha = "sua_senha_de_aplicativo"
-
-    msg = MIMEText(f"Seu código de recuperação é: {codigo}")
-    msg['Subject'] = "Código de recuperação"
-    msg['From'] = remetente
-    msg['To'] = destinatario
-
-    try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as servidor:
-            servidor.login(remetente, senha)
-            servidor.send_message(msg)
-        return True
-    except Exception as e:
-        st.error(f"Erro ao enviar e-mail: {e}")
-        return False
 
 def email_valido(email):
         return re.match(r"[^@]+@[^@]+\.[^@]+", email)
@@ -205,18 +185,6 @@ def tela_login():
                             st.error("E-mail não encontrado.")
 
                 if st.session_state.codigo_enviado:
-                    if st.button("Reenviar código"):
-                        if email in st.session_state.usuarios:
-                            codigo = str(random.randint(100000, 999999))
-                            st.session_state.recuperacao_email = email
-                            st.session_state.codigo_recuperacao = codigo
-                            st.session_state.codigo_enviado = True
-                            if enviar_email(email, codigo):
-                                st.success(f"Código enviado para o e-mail {email}")
-                        else:
-                            st.error("E-mail não encontrado.")
-
-                if st.session_state.codigo_enviado:
                     with st.form("form_codigo"):
                         palavra_chave_rec = st.text_input("Digite sua palavra-chave", key="palavra_chave_rec")
                         nova_senha = st.text_input("Nova senha", type="password", key="nova_senha")
@@ -253,7 +221,7 @@ def tela_login():
                 nascimento = re.sub(r'\D', '', raw_nascimento)
                 if len(nascimento) >= 5:
                     nascimento = nascimento[:2] + '/' + nascimento[2:4] + ('/' + nascimento[4:8] if len(nascimento) > 4 else '')
-                telefone = st.text_input("WhatsApp", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
+                telefone = st.text_input("WhatsApp - Ex: 3199475512", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
                 email = st.text_input("E-mail", key="cad_email", autocomplete="email")
                 senha = st.text_input("Senha", type="password", key="cad_senha")
                 palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
