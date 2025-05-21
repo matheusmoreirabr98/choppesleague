@@ -257,6 +257,11 @@ else:
     with st.sidebar:
         st.image("./imagens/logo.png", use_container_width=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
+
+        # Botão de Meu Perfil
+        if st.button("👤 Meu Perfil"):
+            st.session_state.pagina_atual = "👤 Meu Perfil"
+
         st.markdown("---")
 
         if st.session_state.tipo_usuario == "admin":
@@ -285,15 +290,18 @@ else:
             ]
 
         pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
-        st.session_state.pagina_atual = pagina_escolhida
+        if st.session_state.pagina_atual != "👤 Meu Perfil":
+            st.session_state.pagina_atual = pagina_escolhida
 
-        # --- MEU PERFIL NO CORPO PRINCIPAL ---
+    # --- PÁGINAS PRINCIPAIS ---
+    if st.session_state.pagina_atual == "👤 Meu Perfil":
         st.title("👤 Meu Perfil")
 
-        # Verifica se o usuário está logado corretamente
         tipo_usuario = st.session_state.get("tipo_usuario")
         nome = st.session_state.get("nome")
-        email = st.session_state.get("login_email") or next((e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None)
+        email = st.session_state.get("login_email") or next(
+            (e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None
+        )
         usuarios = st.session_state.get("usuarios")
 
         if not nome or not email or email not in usuarios:
