@@ -52,6 +52,10 @@ def tela_login():
                 email = st.text_input("E-mail", key="login_email")
                 senha = st.text_input("Senha", type="password", key="login_senha")
 
+                # espaço entre campos e botão
+                st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+
+                # botão centralizado no rodapé
                 col1, col2, col3 = st.columns([1, 2, 1])
                 with col2:
                     submit = st.form_submit_button("Entrar")
