@@ -127,6 +127,27 @@ if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
 
 # Funções auxiliares
+import smtplib
+from email.mime.text import MIMEText
+
+def enviar_email(destinatario, codigo):
+    remetente = "seuemail@gmail.com"
+    senha = "sua_senha_de_aplicativo"
+
+    msg = MIMEText(f"Seu código de recuperação é: {codigo}")
+    msg['Subject'] = "Código de recuperação"
+    msg['From'] = remetente
+    msg['To'] = destinatario
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as servidor:
+            servidor.login(remetente, senha)
+            servidor.send_message(msg)
+        return True
+    except Exception as e:
+        st.error(f"Erro ao enviar e-mail: {e}")
+        return False
+
 def email_valido(email):
         return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
@@ -179,8 +200,8 @@ def tela_login():
                             st.session_state.recuperacao_email = email
                             st.session_state.codigo_recuperacao = codigo
                             st.session_state.codigo_enviado = True
-                            st.success(f"Código gerado para o e-mail {email}")
-                            st.info("⚠️ Este é um ambiente de teste: o código não será enviado por e-mail.")
+                            if enviar_email(email, codigo):
+                                st.success(f"Código enviado para o e-mail {email}")
                         else:
                             st.error("E-mail não encontrado.")
 
@@ -191,8 +212,8 @@ def tela_login():
                             st.session_state.recuperacao_email = email
                             st.session_state.codigo_recuperacao = codigo
                             st.session_state.codigo_enviado = True
-                            st.success(f"Código gerado para o e-mail {email}")
-                            st.info("⚠️ Este é um ambiente de teste: o código não será enviado por e-mail.")
+                            if enviar_email(email, codigo):
+                                st.success(f"Código enviado para o e-mail {email}")
                     else:
                             st.error("E-mail não encontrado.")
 
