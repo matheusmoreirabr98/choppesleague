@@ -52,6 +52,12 @@ st.markdown("""
                 margin-left: auto;
                 margin-right: auto;
             }
+            
+            {
+            input[type="password"] {
+                padding-right: 12px !important;
+                box-sizing: border-box;
+            }
         </style>
     </div>
 """, unsafe_allow_html=True)
