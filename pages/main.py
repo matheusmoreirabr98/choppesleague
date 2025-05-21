@@ -52,34 +52,8 @@ st.markdown("""
                 margin-left: auto;
                 margin-right: auto;
             }
-
-        .senha-container {
-            position: relative;
-            width: 100%;
-        }
-
-        .senha-container input {
-            width: 100%;
-            padding: 10px;
-            padding-right: 40px; /* espaço para o botão */
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .senha-toggle {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-        }
-            </style>
-    """, unsafe_allow_html=True)
+        </style>
+""", unsafe_allow_html=True)
 
 
 # Sessões iniciais
@@ -122,21 +96,7 @@ def tela_login():
 
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
-
-                st.markdown("Senha", unsafe_allow_html=True)
-                components.html("""
-                <div class="senha-container">
-                    <input id="senhaInput" type="password" placeholder="Digite sua senha">
-                    <button class="senha-toggle" onclick="toggleSenha()">👁</button>
-                </div>
-
-                <script>
-                    function toggleSenha() {
-                        var input = document.getElementById("senhaInput");
-                        input.type = input.type === "password" ? "text" : "password";
-                    }
-                </script>
-                """, height=70)
+                senha = st.text_input("Senha", type="password", key="login_senha")
 
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
                 submit = st.form_submit_button("Entrar")
