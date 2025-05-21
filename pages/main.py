@@ -66,21 +66,7 @@ def tela_login():
                         st.error("E-mail ou senha inválidos.")
 
             # Botão "Esqueci minha senha" centralizado abaixo do formulário
-            st.markdown("""
-                <div style='text-align: center; margin-top: 1rem;'>
-                    <form action="#" method="post">
-                        <button type="submit" name="esqueci" style='background: none; border: none; color: #1f77b4; text-decoration: underline; font-size: 15px; cursor: pointer;'>
-                            Esqueci minha senha
-                        </button>
-                    </form>
-                </div>
-            """, unsafe_allow_html=True)
-
-            if 'esqueci' in st.session_state:
-                st.session_state.modo_recuperacao = True
-                st.experimental_rerun()
-            
-            if st.form_submit_button("Esqueci minha senha"):
+            if st.button("Esqueci minha senha"):
                 st.session_state.modo_recuperacao = True
                 st.experimental_rerun()
 
