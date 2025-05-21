@@ -254,6 +254,7 @@ else:
 # SIDEBAR
     with st.sidebar:
         st.image("./imagens/logo.png", use_container_width=True)
+        st.markdown("---")
         st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
         st.markdown("---")
 
@@ -284,5 +285,36 @@ else:
 
         pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
         st.session_state.pagina_atual = pagina_escolhida
+
+        st.markdown("---")
+
+        # Botão de Meu Perfil (na Sidebar)
+        if st.button("👤 Meu Perfil", use_container_width=True):
+            st.session_state.pagina_atual = "👤 Meu Perfil"
+
+        # Garantir que a chave 'confirmar_logout' exista
+        if 'confirmar_logout' not in st.session_state:
+            st.session_state.confirmar_logout = False
+
+        # Botão de Logout
+        if st.session_state.usuario_logado:
+            if st.button("🚪 Logout", use_container_width=True):
+                st.session_state.confirmar_logout = True
+
+        # Verificação de logout
+        if st.session_state.confirmar_logout:
+            st.warning("Tem certeza que deseja sair?")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("❌ Cancelar", use_container_width=True):
+                    st.session_state.confirmar_logout = False
+            with col2:
+                if st.button("✅ Confirmar", use_container_width=True):
+                    usuarios = st.session_state.get("usuarios", {})
+                    st.session_state.clear()
+                    st.session_state.usuario_logado = False
+                    st.session_state.usuarios = usuarios
+                    st.session_state.pagina_atual = "login"
+                    st.rerun()
 
 
