@@ -56,6 +56,7 @@ def tela_login():
                 st.markdown("""
                     <style>
                         div.stForm {
+                            display: flex;
                             align-items: center;
                         }
                         div.stForm button[kind="primary"] {
