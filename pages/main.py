@@ -206,12 +206,16 @@ def tela_login():
             posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
             nascimento = components.html('''
     <input type="tel" id="nascimento_input" name="nascimento" placeholder="dd/mm/aaaa"
-           pattern="[0-9/]*" inputmode="numeric" 
-           class="stTextInput">''', height=60)
+           pattern="[0-9/]*" inputmode="numeric"
+           style="width: 100%; padding: 0.6rem 1rem; font-size: 1rem; border: none;
+                  border-radius: 0.5rem; background-color: #f0f2f6; box-shadow: inset 0 0 0 1px rgba(49, 51, 63, 0.1);">
+''', height=50)
             telefone = components.html('''
     <input type="tel" id="telefone_input" name="telefone" placeholder="(DDD) número"
-           pattern="[0-9]*" inputmode="numeric" 
-           class="stTextInput">''', height=60)
+           pattern="[0-9]*" inputmode="numeric"
+           style="width: 100%; padding: 0.6rem 1rem; font-size: 1rem; border: none;
+                  border-radius: 0.5rem; background-color: #f0f2f6; box-shadow: inset 0 0 0 1px rgba(49, 51, 63, 0.1);">
+''', height=50)
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
