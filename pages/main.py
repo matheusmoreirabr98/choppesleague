@@ -87,7 +87,7 @@ def tela_login():
     if aba == "Login":
 
         if not st.session_state.modo_recuperacao:
-
+            
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
                 if "mostrar_senha_login" not in st.session_state:
