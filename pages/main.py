@@ -316,6 +316,7 @@ else:
                     st.session_state.confirmar_logout = False
             with col2:
                 if st.button("✅ Confirmar", use_container_width=True):
+                    # Usando a verificação para evitar o erro
                     usuarios = st.session_state.get("usuarios", {})
                     st.session_state.clear()
                     st.session_state.usuario_logado = False
@@ -327,20 +328,20 @@ else:
     if st.session_state.pagina_atual == "👤 Meu Perfil":
         st.title("👤 Meu Perfil")
 
-        # Verificando se as variáveis de usuário estão no session state
-        tipo_usuario = st.session_state.get("tipo_usuario")
-        nome = st.session_state.get("nome")
+        # Garantindo que o session_state tenha os dados necessários
+        tipo_usuario = st.session_state.get("tipo_usuario", "Usuário")
+        nome = st.session_state.get("nome", "Nome não encontrado")
         email = st.session_state.get("login_email") or next(
             (e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None
         )
-        usuarios = st.session_state.get("usuarios")
 
-        # Caso algum dado não tenha sido encontrado, o perfil não será exibido
+        # Verifica se 'usuarios' existe e se o email é válido
+        usuarios = st.session_state.get("usuarios", {})
         if not nome or not email or email not in usuarios:
             st.error("Usuário não identificado ou sessão inválida.")
             st.stop()
             st.rerun()
-        
+
         usuario = usuarios[email]
 
         # Exibindo as informações do perfil dentro da mesma página
@@ -382,3 +383,4 @@ else:
             if st.button("🔙 Voltar para Tela Principal"):
                 st.session_state.pagina_atual = "🏠 Tela Principal"
                 st.rerun()
+
