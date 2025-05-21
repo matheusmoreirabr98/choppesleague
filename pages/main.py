@@ -55,17 +55,16 @@ def tela_login():
                 # espaço entre campos e botão
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
-                # botão centralizado no rodapé
+                # botão centralizado no mesmo alinhamento dos campos
                 st.markdown("""
                     <style>
-                        div.stForm button[kind="primary"] {
-                            display: block;
-                            margin-left: auto;
-                            margin-right: auto;
-                        }
+                    div.stForm > div:nth-child(3) {
+                        display: flex;
+                        justify-content: center;
+                    }
                     </style>
                 """, unsafe_allow_html=True)
-                submit = st.form_submit_button("Entrar")
+            submit = st.form_submit_button("Entrar")
 
                 if submit:
                     usuarios = st.session_state.usuarios
