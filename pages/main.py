@@ -57,7 +57,7 @@ def tela_login():
                     <style>
                         div.stForm {
                             display: flex;
-                            align-items: center;
+                            flex-direction: column;
                         }
                         div.stForm button[kind="primary"] {
                             width: 200px;
