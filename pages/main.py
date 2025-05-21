@@ -215,7 +215,7 @@ def tela_login():
             nome = st.text_input("Nome completo", key="cad_nome")
             posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
             nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="dd/mm/aaaa")
-            telefone = st.text_input("WhatsApp", key="cad_tel", placeholder="(DDD) número"))
+            telefone = st.text_input("WhatsApp", key="cad_tel", placeholder="(DDD) número")
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
