@@ -285,7 +285,7 @@ with st.sidebar:
                 st.session_state.usuario_logado = False
                 st.session_state.usuarios = usuarios
                 st.session_state.pagina_atual = "login"
-                st.experimental_rerun()
+                st.rerun()
 
     # Opções de navegação
     if st.session_state.tipo_usuario == "admin":
@@ -330,7 +330,6 @@ if st.session_state.pagina_atual == "👤 Meu Perfil":
 
     if not nome or not email or email not in usuarios:
         st.error("Usuário não identificado ou sessão inválida.")
-        st.stop()
         st.rerun()
     usuario = usuarios[email]
 
