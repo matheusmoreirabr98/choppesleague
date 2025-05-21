@@ -90,7 +90,15 @@ def tela_login():
 
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
-                senha = st.text_input("Senha", type="password", key="login_senha")
+                if "mostrar_senha_login" not in st.session_state:
+                    st.session_state.mostrar_senha_login = False
+
+                col1, col2 = st.columns([5, 1])
+                with col1:
+                    senha = st.text_input("Senha", type="text" if st.session_state.mostrar_senha_login else "password", key="login_senha")
+                with col2:
+                    if st.button("👁", key="toggle_login_senha"):
+                        st.session_state.mostrar_senha_login = not st.session_state.mostrar_senha_login
 
                 # espaço entre campos e botão
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
