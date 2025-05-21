@@ -54,9 +54,15 @@ def tela_login():
 
                 # Centraliza o botão Entrar visualmente dentro do formulário
                 st.markdown("""
-                        <div style='text-align: center;
-                        stForm button[kind="primary"] {button onclick="window.parent.postMessage({type: 'streamlit:rerun'}, '*');" style='background: none; border: none; color: #1f77b4; text-decoration: underline; font-size: 15px; cursor: pointer;'>
-                            Esqueci minha senha
+                    <style>
+                        div.stForm {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                        }
+                        div.stForm button[kind="primary"] {
+                            width: 200px;  /* opcional: define largura */
+                        }
                     </style>
                 """, unsafe_allow_html=True)
 
