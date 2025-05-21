@@ -215,10 +215,24 @@ def tela_login():
             nome = st.text_input("Nome completo", key="cad_nome")
             posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
             nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="dd/mm/aaaa")
-            telefone = st.text_input("WhatsApp", key="cad_tel", placeholder="(DDD) número")
+            telefone = st.text_input("WhatsApp", key="cad_tel", placeholder="(DDD) número") número")
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
+
+            erros = []
+            if not nascimento.replace('/', '').isdigit():
+                erros.append("📅 O campo 'Data de nascimento' deve conter apenas números e '/'.")
+            if not telefone.isdigit():
+                erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
+
+            if not email_valido(email):
+                erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
+
+            if erros:
+                for erro in erros:
+                    st.warning(erro)
+                submit = False
 
             if submit:
                 if not nome or not posicao or not telefone or not email or not senha:
