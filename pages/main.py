@@ -259,7 +259,7 @@ else:
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
 
         # Botão de Meu Perfil
-        if st.button("👤 Meu Perfil"):
+        if st.button("Meu Perfil"):
             st.session_state.pagina_atual = "👤 Meu Perfil"
 
         st.markdown("---")
@@ -293,7 +293,7 @@ else:
         if st.session_state.pagina_atual != "👤 Meu Perfil":
             st.session_state.pagina_atual = pagina_escolhida
 
-    # --- PÁGINAS PRINCIPAIS ---
+    # --- MEU PERFIL ---
     if st.session_state.pagina_atual == "👤 Meu Perfil":
         st.title("👤 Meu Perfil")
 
@@ -331,3 +331,49 @@ else:
             if nova_palavra_chave:
                 usuario["palavra_chave"] = nova_palavra_chave
             st.success("Informações atualizadas com sucesso!")
+            
+        # 🔙 Botão Voltar para Tela Principal
+        st.markdown("---")
+        if st.button("🔙 Voltar para Tela Principal"):
+            st.session_state.pagina_atual = "🏠 Tela Principal"
+            st.rerun()
+
+        # --- Confirmação de logout ---
+    # Inicializa controle de logout apenas uma vez
+    if "confirmar_logout" not in st.session_state:
+        st.session_state.confirmar_logout = False
+
+    # FLAGS de ação
+    logout_clicado = False
+    cancelar_clicado = False
+    confirmar_clicado = False
+
+    # SIDEBAR - botão logout
+    with st.sidebar:
+        if not st.session_state.confirmar_logout:
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("🚪 Logout", key="botao_logout"):
+                    st.session_state.confirmar_logout = True
+                    logout_clicado = True
+        else:
+            st.warning("Tem certeza que deseja sair?")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
+                    st.session_state.confirmar_logout = False
+                    cancelar_clicado = True
+            with col2:
+                if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
+                    usuarios = st.session_state.get("usuarios", {})
+                    st.session_state.clear()
+                    st.session_state.usuario_logado = False
+                    st.session_state.usuarios = usuarios
+                    st.session_state.pagina_atual = "login"
+                    confirmar_clicado = True
+
+    st.markdown("---")
+
+    # Essas chamadas precisam estar fora do `with`
+    if logout_clicado or cancelar_clicado or confirmar_clicado:
+        st.experimental_rerun()    
