@@ -258,36 +258,6 @@ else:
         st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
         st.markdown("---")
 
-        if st.session_state.tipo_usuario == "admin":
-            opcoes = [
-                "🏠 Tela Principal",
-                "📊 Registrar Partida",
-                "👟 Estatísticas dos Jogadores",
-                "🎲 Sorteio de Times",
-                "✅ Confirmar Presença/Ausência",
-                "🏅 Avaliação Pós-Jogo",
-                "📸 Galeria de Momentos",
-                "💬 Fórum",
-                "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League",
-            ]
-        else:
-            opcoes = [
-                "🏠 Tela Principal",
-                "👟 Estatísticas dos Jogadores",
-                "✅ Confirmar Presença/Ausência",
-                "🏅 Avaliação Pós-Jogo",
-                "📸 Galeria de Momentos",
-                "💬 Fórum",
-                "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League",
-            ]
-
-        pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
-        st.session_state.pagina_atual = pagina_escolhida
-
-        st.markdown("---")
-
         # Botão de Meu Perfil (na Sidebar)
         if st.button("👤 Meu Perfil", use_container_width=True):
             st.session_state.pagina_atual = "👤 Meu Perfil"
@@ -318,3 +288,30 @@ else:
                     st.rerun()
 
 
+        if st.session_state.tipo_usuario == "admin":
+            opcoes = [
+                "🏠 Tela Principal",
+                "📊 Registrar Partida",
+                "👟 Estatísticas dos Jogadores",
+                "🎲 Sorteio de Times",
+                "✅ Confirmar Presença/Ausência",
+                "🏅 Avaliação Pós-Jogo",
+                "📸 Galeria de Momentos",
+                "💬 Fórum",
+                "📣 Comunicado à Gestão",
+                "📜 Regras Choppe's League",
+            ]
+        else:
+            opcoes = [
+                "🏠 Tela Principal",
+                "👟 Estatísticas dos Jogadores",
+                "✅ Confirmar Presença/Ausência",
+                "🏅 Avaliação Pós-Jogo",
+                "📸 Galeria de Momentos",
+                "💬 Fórum",
+                "📣 Comunicado à Gestão",
+                "📜 Regras Choppe's League",
+            ]
+
+        pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
+        st.session_state.pagina_atual = pagina_escolhida
