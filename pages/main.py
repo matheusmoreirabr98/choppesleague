@@ -57,11 +57,13 @@ def tela_login():
                     <style>
                         div.stForm {
                             display: flex;
-                            flex-direction: center;
+                            flex-direction: column;
                             align-items: center;
                         }
                         div.stForm button[kind="primary"] {
-                            width: 200px;  /* opcional: define largura */
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
                         }
                     </style>
                 """, unsafe_allow_html=True)
