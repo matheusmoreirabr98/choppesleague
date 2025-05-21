@@ -57,12 +57,10 @@ def tela_login():
                     <style>
                         div.stForm button[kind="primary"] {
                             display: block;
-                            margin-top: 1rem; auto 0 auto;
+                            margin: 1rem auto 0 auto;
                         }
                     </style>
                 """, unsafe_allow_html=True)
-
-                submit = st.form_submit_button("Entrar")
 
                 if submit:
                     usuarios = st.session_state.usuarios
