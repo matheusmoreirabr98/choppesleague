@@ -30,7 +30,7 @@ st.markdown("""
                 overflow-wrap: break-word;
             }
 
-            @media only screen and (max-width: 600px) {
+            @media only screen and (max-width: 400px) {
                 .main .block-container {
                     padding: 1.5rem 1rem;
                     width: 100%;
@@ -96,7 +96,6 @@ def tela_login():
 
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
-                st.markdown("<div style='margin-top: 10rem;'></div>", unsafe_allow_html=True)
                 senha = st.text_input("Senha", type="password", key="login_senha")
 
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
