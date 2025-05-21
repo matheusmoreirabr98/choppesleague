@@ -253,35 +253,35 @@ if not st.session_state.usuario_logado:
 else:
         # SIDEBAR
         with st.sidebar:
-                st.image("./imagens/logo.png", use_container_width=True)
-                st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
+            st.image("./imagens/logo.png", use_container_width=True)
+            st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
 
-                st.markdown("---")
+            st.markdown("---")
 
-                if st.session_state.tipo_usuario == "admin":
-                    opcoes = [
-                        "🏠 Tela Principal",
-                        "📊 Registrar Partida",
-                        "👟 Estatísticas dos Jogadores",
-                        "🎲 Sorteio de Times",
-                        "✅ Confirmar Presença/Ausência",
-                        "🏅 Avaliação Pós-Jogo",
-                        "📸 Galeria de Momentos",
-                        "💬 Fórum",
-                        "📣 Comunicado à Gestão",
-                        "📜 Regras Choppe's League",
-                    ]
-                else:
-                    opcoes = [
-                        "🏠 Tela Principal",
-                        "👟 Estatísticas dos Jogadores",
-                        "✅ Confirmar Presença/Ausência",
-                        "🏅 Avaliação Pós-Jogo",
-                        "📸 Galeria de Momentos",
-                        "💬 Fórum",
-                        "📣 Comunicado à Gestão",
-                        "📜 Regras Choppe's League",
-                    ]
+            if st.session_state.tipo_usuario == "admin":
+                opcoes = [
+                    "🏠 Tela Principal",
+                    "📊 Registrar Partida",
+                    "👟 Estatísticas dos Jogadores",
+                    "🎲 Sorteio de Times",
+                    "✅ Confirmar Presença/Ausência",
+                    "🏅 Avaliação Pós-Jogo",
+                    "📸 Galeria de Momentos",
+                    "💬 Fórum",
+                    "📣 Comunicado à Gestão",
+                    "📜 Regras Choppe's League",
+                ]
+            else:
+                opcoes = [
+                    "🏠 Tela Principal",
+                    "👟 Estatísticas dos Jogadores",
+                    "✅ Confirmar Presença/Ausência",
+                    "🏅 Avaliação Pós-Jogo",
+                    "📸 Galeria de Momentos",
+                    "💬 Fórum",
+                    "📣 Comunicado à Gestão",
+                    "📜 Regras Choppe's League",
+                ]
                     
         pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
         st.session_state.pagina_atual = pagina_escolhida
