@@ -36,9 +36,9 @@ st.markdown("""
                     width: 100%;
                     max-width: 100vw;
                 }
-                input, textarea, select, button {
+                input, select, button {
                     font-size: 16px !important;
-                    width: 50% !important;
+                    width: 100% !important;
                     box-sizing: border-box;
                 }
                 label, .stMarkdown p {
