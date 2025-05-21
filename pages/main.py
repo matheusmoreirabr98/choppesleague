@@ -196,7 +196,11 @@ def tela_login():
             nome = st.text_input("Nome completo", key="cad_nome")
             posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
             nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="dd/mm/aaaa")
-            telefone = st.text_input("Telefone (com DDD)", key="cad_tel", placeholder="apenas números")
+            telefone = components.html('''
+    <input type="tel" id="telefone_input" name="telefone" placeholder="(DDD) número"
+           pattern="[0-9]*" inputmode="numeric" 
+           style="width: 100%; padding: 0.5rem; font-size: 16px; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc;">
+''', height=60)
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
