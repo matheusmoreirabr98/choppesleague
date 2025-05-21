@@ -48,23 +48,24 @@ def tela_login():
 
         if not st.session_state.modo_recuperacao:
 
-            with st.form("form_login"):
-                email = st.text_input("E-mail", key="login_email")
-                senha = st.text_input("Senha", type="password", key="login_senha")
+                with st.form("form_login"):
+                    email = st.text_input("E-mail", key="login_email")
+                    senha = st.text_input("Senha", type="password", key="login_senha")
 
-                # espaço entre campos e botão
-                st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+                    # espaço entre campos e botão
+                    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
-                # botão centralizado no mesmo alinhamento dos campos
-                st.markdown("""
-                    <style>
-                    div.stForm > div:nth-child(3) {
-                        display: flex;
-                        justify-content: center;
-                    }
-                    </style>
-                """, unsafe_allow_html=True)
-            submit = st.form_submit_button("Entrar")
+                    # botão centralizado no mesmo alinhamento dos campos
+                    st.markdown("""
+                        <style>
+                        div.stForm > div:nth-child(3) {
+                            display: flex;
+                            justify-content: center;
+                        }
+                        </style>
+                    """, unsafe_allow_html=True)
+                    
+                submit = st.form_submit_button("Entrar")
 
                 if submit:
                     usuarios = st.session_state.usuarios
