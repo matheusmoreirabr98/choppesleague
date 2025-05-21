@@ -52,22 +52,29 @@ st.markdown("""
             margin-right: auto;
         }
 
-        .senha-container {
-            position: relative;
-        }
-        .senha-container input {
-            padding-right: 5000rem;
-        }
-        .senha-toggle {
-            position: left;
-            top: 50%;
-            right: 1.00rem;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-        }
+    .senha-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .senha-container input {
+        width: 100%;
+        padding-right: 2.5rem; /* espaço para o botão não sobrepor o texto */
+        box-sizing: border-box;
+    }
+
+    .senha-toggle {
+        position: absolute;
+        top: 50%;
+        right: 0.75rem;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
     </style>
 """, unsafe_allow_html=True)
 
