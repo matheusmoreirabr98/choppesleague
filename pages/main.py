@@ -298,7 +298,6 @@ else:
         if st.button("👤 Meu Perfil", use_container_width=True):
             st.session_state.pagina_atual = "👤 Meu Perfil"  # Define a página atual como "Meu Perfil"
             st.session_state.is_profile_page = True  # Definir flag para página de perfil
-            st.rerun()
         
         # Garantir que a chave 'confirmar_logout' exista no session_state
         if 'confirmar_logout' not in st.session_state:
