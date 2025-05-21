@@ -12,7 +12,7 @@ from datetime import datetime, timedelta, date
 
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
-# CSS para centralizar toda a tela
+# CSS para centralizar toda a tela e torná-la responsiva
 st.markdown("""
     <style>
         .main .block-container {
@@ -21,6 +21,14 @@ st.markdown("""
             align-items: center;
             justify-content: center;
             height: 100vh;
+            padding: 1rem;
+        }
+        @media only screen and (max-width: 600px) {
+            .main .block-container {
+                padding: 2rem 1rem;
+                justify-content: flex-start;
+                height: auto;
+            }
         }
         div.stForm button[kind="primary"] {
             display: block;
