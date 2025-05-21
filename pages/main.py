@@ -146,10 +146,9 @@ def tela_login():
         if aba == "Login":
 
             if not st.session_state.modo_recuperacao:
-
-            with st.form("form_login"):
-                email = st.text_input("E-mail", key="login_email")
-                senha = st.text_input("Senha", type="password", key="login_senha")
+                with st.form("form_login"):
+                    email = st.text_input("E-mail", key="login_email")
+                    senha = st.text_input("Senha", type="password", key="login_senha")
 
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
                 submit = st.form_submit_button("Entrar")
@@ -170,11 +169,11 @@ def tela_login():
                 st.rerun()
 
             else:
-            with st.form("form_esqueci"):
-                email = st.text_input("E-mail cadastrado", key="rec_email_final")
-                palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
-                nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
-                confirmar = st.form_submit_button("Atualizar senha")
+                with st.form("form_esqueci"):
+                    email = st.text_input("E-mail cadastrado", key="rec_email_final")
+                    palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
+                    nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
+                    confirmar = st.form_submit_button("Atualizar senha")
 
                 if confirmar:
                     usuarios = st.session_state.usuarios
