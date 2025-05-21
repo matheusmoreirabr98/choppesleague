@@ -51,7 +51,11 @@ def tela_login():
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
                 senha = st.text_input("Senha", type="password", key="login_senha")
-                submit = st.form_submit_button("Entrar")
+                col1, col2 = st.columns([1, 1])
+                with col1:
+                    submit = st.form_submit_button("Entrar")
+                with col2:
+                    esqueceu = st.form_submit_button("Esqueci minha senha")
 
                 if submit:
                     usuarios = st.session_state.usuarios
@@ -65,37 +69,9 @@ def tela_login():
                     else:
                         st.error("E-mail ou senha inválidos.")
 
-            # Botão estilizado e centralizado "Esqueci minha senha"
-            st.markdown(
-                """
-                <div style="display: flex; justify-content: center; margin-top: 1rem;">
-                    <button onclick="document.getElementById('fake-button-hidden').click()" 
-                            style="background: none; border: none; color: #1f77b4; 
-                                text-decoration: underline; font-size: 15px; cursor: pointer;">
-                        Esqueci minha senha
-                    </button>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            # Botão escondido funcional
-            hide_button = """
-                <style>
-                    #fake-button-hidden { display: none; }
-                </style>
-                <script>
-                    const btn = window.parent.document.querySelector('button[kind="secondary"]');
-                    if (btn && btn.innerText === 'fake') {
-                        btn.style.display = 'none';
-                    }
-                </script>
-            """
-            st.markdown(hide_button, unsafe_allow_html=True)
-
-            if st.button("fake", key="fake-button-hidden"):
-                st.session_state.modo_recuperacao = True
-                st.experimental_rerun()
+                if esqueceu:
+                    st.session_state.modo_recuperacao = True
+                    st.experimental_rerun()
 
         else:
             with st.form("form_esqueci"):
