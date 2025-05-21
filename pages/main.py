@@ -166,7 +166,7 @@ def tela_login():
 
                 if st.button("Esqueci minha senha"):
                     st.session_state.modo_recuperacao = True
-                    st.experimental_rerun()
+                    st.rerun()
 
             else:
                 with st.form("form_esqueci"):
@@ -206,7 +206,7 @@ def tela_login():
                 if st.button("🔙 Voltar para login"):
                     st.session_state.modo_recuperacao = False
                     st.session_state.codigo_enviado = False
-                    st.experimental_rerun()
+                    st.rerun()
 
         # CADASTRO
         elif aba == "Cadastro":
