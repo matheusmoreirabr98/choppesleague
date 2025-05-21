@@ -293,69 +293,11 @@ else:
         if st.session_state.pagina_atual != "👤 Meu Perfil":
             st.session_state.pagina_atual = pagina_escolhida
 
-    # --- MEU PERFIL ---
-    if st.session_state.pagina_atual == "👤 Meu Perfil":
-        st.title("👤 Meu Perfil")
-
-        tipo_usuario = st.session_state.get("tipo_usuario")
-        nome = st.session_state.get("nome")
-        email = st.session_state.get("login_email") or next(
-            (e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None
-        )
-        usuarios = st.session_state.get("usuarios")
-
-        if not nome or not email or email not in usuarios:
-            st.error("Usuário não identificado ou sessão inválida.")
-            st.stop()
-
-        usuario = usuarios[email]
-
-        st.subheader("📋 Informações Cadastradas")
-        st.markdown(f"**Nome completo:** {usuario['nome']}")
-        st.markdown(f"**Posição:** {usuario['posicao']}")
-        st.markdown(f"**Data de nascimento:** {usuario['nascimento']}")
-        st.markdown(f"**Telefone:** {usuario['telefone']}")
-        st.markdown(f"**E-mail:** {email}")
-
-        st.markdown("---")
-        st.subheader("🔑 Atualizar senha e palavra-chave")
-
-        with st.form("form_atualizar_senha"):
-            nova_senha = st.text_input("Nova senha", type="password")
-            nova_palavra_chave = st.text_input("Nova palavra-chave")
-            confirmar = st.form_submit_button("Atualizar")
-
-        if confirmar:
-            if nova_senha:
-                usuario["senha"] = nova_senha
-            if nova_palavra_chave:
-                usuario["palavra_chave"] = nova_palavra_chave
-            st.success("Informações atualizadas com sucesso!")
-
-        # 🔙 Botão Voltar para Tela Principal
-        st.markdown("---")
-        if st.button("🔙 Voltar para Tela Principal"):
-            st.session_state.pagina_atual = "🏠 Tela Principal"
-            st.rerun()
-
-        # --- Confirmação de logout ---
-    # Inicializa controle de logout apenas uma vez
-    if "confirmar_logout" not in st.session_state:
-        st.session_state.confirmar_logout = False
-
-    # FLAGS de ação
-    logout_clicado = False
-    cancelar_clicado = False
-    confirmar_clicado = False
-
-    # SIDEBAR - botão logout
-    with st.sidebar:
+        # Botão de Logout diretamente abaixo do botão "Meu Perfil"
         if not st.session_state.confirmar_logout:
-            col1, col2, col3 = st.columns([1, 2, 1])
-            with col2:
-                if st.button("🚪 Logout", key="botao_logout"):
-                    st.session_state.confirmar_logout = True
-                    logout_clicado = True
+            if st.button("🚪 Logout", key="botao_logout", use_container_width=True):
+                st.session_state.confirmar_logout = True
+                logout_clicado = True
         else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
@@ -376,4 +318,4 @@ else:
 
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
-        st.experimental_rerun()    
+        st.experimental_rerun()
