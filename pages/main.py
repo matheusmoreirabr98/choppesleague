@@ -15,50 +15,6 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
 # CSS para centralizar e tornar responsiva a tela em diferentes dispositivos
-st.markdown("""
-    <div style="max-width: 400px; margin: auto;">
-        <style>
-            .main .block-container {
-                flex-direction: column;
-                align-items: right;
-                justify-content: flex-start;
-                padding: 2rem 1rem;
-                max-width: 100%;
-                margin: auto;
-                word-break: break-word;
-                overflow-wrap: break-word;
-            }
-
-            @media only screen and (max-width: 600px) {
-                .main .block-container {
-                    padding: 1.5rem 1rem;
-                    width: 100%;
-                    max-width: 100vw;
-                }
-                input, textarea, select, button {
-                    font-size: 16px !important;
-                    width: 100% !important;
-                    box-sizing: border-box;
-                }
-                label, .stMarkdown p {
-                    font-size: 15px !important;
-                    word-break: break-word;
-                }
-            }
-
-            div.stForm button[kind="primary"] {
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            input[type="password"] {
-                padding-right: 12px !important;
-                box-sizing: border-box;
-            }
-        </style>
-    </div>
-""", unsafe_allow_html=True)
 
 
 # Sessões iniciais
