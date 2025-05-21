@@ -256,10 +256,10 @@ else:
     # --- SIDEBAR ---
     with st.sidebar:
         st.image("./imagens/logo.png", use_container_width=True)
-        st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
+        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
 
         # Botão de Meu Perfil
-        if st.button("Meu Perfil"):
+        if st.button("👤 Meu Perfil"):
             st.session_state.pagina_atual = "👤 Meu Perfil"
 
         st.markdown("---")
@@ -331,7 +331,7 @@ else:
             if nova_palavra_chave:
                 usuario["palavra_chave"] = nova_palavra_chave
             st.success("Informações atualizadas com sucesso!")
-            
+
         # 🔙 Botão Voltar para Tela Principal
         st.markdown("---")
         if st.button("🔙 Voltar para Tela Principal"):
