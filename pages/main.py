@@ -55,7 +55,7 @@ def tela_login():
                 # Centraliza o botão Entrar com coluna
                 col1, col2, col3 = st.columns([1, 2, 1])
                 with col2:
-                    submit = st.form_submit_button("Entrar")
+                            submit = st.form_submit_button("Entrar")
 
                 if submit:
                     usuarios = st.session_state.usuarios
