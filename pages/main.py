@@ -257,13 +257,12 @@ else:
 
     # SIDEBAR
     with st.sidebar:
-         st.image("./imagens/logo.png", use_container_width=True)
-         st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
+        st.image("./imagens/logo.png", use_container_width=True)
+        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
 
+        st.markdown("---")
 
-         st.markdown("---")
-
-         if st.session_state.tipo_usuario == "admin":
+        if st.session_state.tipo_usuario == "admin":
             opcoes = [
                 "🏠 Tela Principal",
                 "📊 Registrar Partida",
@@ -277,7 +276,7 @@ else:
                 "📜 Regras Choppe's League",
                 "🚪 Sair"
             ]
-         else:
+        else:
             opcoes = [
                 "🏠 Tela Principal",
                 "👟 Estatísticas dos Jogadores",
@@ -295,27 +294,27 @@ else:
 
             st.markdown("---")
 
-         # Botão de Meu Perfil (na Sidebar)
-         if st.button("👤 Meu Perfil", use_container_width=True):
+        # Botão de Meu Perfil (na Sidebar)
+        if st.button("👤 Meu Perfil", use_container_width=True):
             st.session_state.pagina_atual = "👤 Meu Perfil"  # Define a página atual como "Meu Perfil"
             st.rerun()
-            
-         # Adicionando o botão de Logout abaixo do botão Meu Perfil
-         if st.session_state.usuario_logado:
+        
+        # Adicionando o botão de Logout abaixo do botão Meu Perfil
+        if st.session_state.usuario_logado:
             if st.button("🚪 Logout", use_container_width=True):
                 st.session_state.confirmar_logout = True
                 logout_clicado = True
-         st.markdown("---")
+        st.markdown("---")
 
-         # Verificação de logout
-         if st.session_state.confirmar_logout:
+        # Verificação de logout
+        if st.session_state.confirmar_logout:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
             with col1:
-                if  st.button("❌ Cancelar", use_container_width=True):
+                if st.button("❌ Cancelar", use_container_width=True):
                     st.session_state.confirmar_logout = False
             with col2:
-                if  st.button("✅ Confirmar", use_container_width=True):
+                if st.button("✅ Confirmar", use_container_width=True):
                     usuarios = st.session_state.get("usuarios", {})
                     st.session_state.clear()
                     st.session_state.usuario_logado = False
@@ -323,60 +322,60 @@ else:
                     st.session_state.pagina_atual = "login"
                     st.rerun()
 
-            # Exibindo as informações do perfil caso a página atual seja "Meu Perfil"
-            if  st.session_state.pagina_atual == "👤 Meu Perfil":
-                st.title("👤 Meu Perfil")
+    # Exibindo as informações do perfil caso a página atual seja "Meu Perfil"
+    if st.session_state.pagina_atual == "👤 Meu Perfil":
+        st.title("👤 Meu Perfil")
 
-                tipo_usuario = st.session_state.get("tipo_usuario")
-                nome = st.session_state.get("nome")
-                email = st.session_state.get("login_email") or next(
-                    (e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None
-                )
-                usuarios = st.session_state.get("usuarios")
+        tipo_usuario = st.session_state.get("tipo_usuario")
+        nome = st.session_state.get("nome")
+        email = st.session_state.get("login_email") or next(
+            (e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None
+        )
+        usuarios = st.session_state.get("usuarios")
 
-                if not nome or not email or email not in usuarios:
-                    st.error("Usuário não identificado ou sessão inválida.")
-                    st.stop()
-                    st.rerun()
-                
-                usuario = usuarios[email]
+        if not nome or not email or email not in usuarios:
+            st.error("Usuário não identificado ou sessão inválida.")
+            st.stop()
+            st.rerun()
+        
+        usuario = usuarios[email]
 
-                # Exibindo as informações do perfil dentro da mesma página
-                with st.container():
-                    # Adiciona um estilo personalizado para centralizar
-                    st.markdown("""
-                    <div style="text-align: left; padding: 20px;">
-                        <h3>📋 Informações Cadastradas</h3>
-                        <div style="font-size: 18px; line-height: 1.6;">
-                            <p><strong>Nome completo:</strong> {}</p>
-                            <p><strong>Posição:</strong> {}</p>
-                            <p><strong>Data de nascimento:</strong> {}</p>
-                            <p><strong>Telefone:</strong> {}</p>
-                            <p><strong>E-mail:</strong> {}</p>
-                        </div>
-                    </div>
-                    """.format(usuario['nome'], usuario['posicao'], usuario['nascimento'], usuario['telefone'], email), unsafe_allow_html=True)
+        # Exibindo as informações do perfil dentro da mesma página
+        with st.container():
+            # Adiciona um estilo personalizado para centralizar
+            st.markdown("""
+            <div style="text-align: left; padding: 20px;">
+                <h3>📋 Informações Cadastradas</h3>
+                <div style="font-size: 18px; line-height: 1.6;">
+                    <p><strong>Nome completo:</strong> {}</p>
+                    <p><strong>Posição:</strong> {}</p>
+                    <p><strong>Data de nascimento:</strong> {}</p>
+                    <p><strong>Telefone:</strong> {}</p>
+                    <p><strong>E-mail:</strong> {}</p>
+                </div>
+            </div>
+            """.format(usuario['nome'], usuario['posicao'], usuario['nascimento'], usuario['telefone'], email), unsafe_allow_html=True)
 
-                    # Separador visual
-                    st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
+            # Separador visual
+            st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
 
-                    # Atualizar senha e palavra-chave
-                    st.subheader("🔑 Atualizar senha e palavra-chave")
+            # Atualizar senha e palavra-chave
+            st.subheader("🔑 Atualizar senha e palavra-chave")
 
-                    with st.form("form_atualizar_senha"):
-                        nova_senha = st.text_input("Nova senha", type="password")
-                        nova_palavra_chave = st.text_input("Nova palavra-chave")
-                        confirmar = st.form_submit_button("Atualizar")
+            with st.form("form_atualizar_senha"):
+                nova_senha = st.text_input("Nova senha", type="password")
+                nova_palavra_chave = st.text_input("Nova palavra-chave")
+                confirmar = st.form_submit_button("Atualizar")
 
-                    if confirmar:
-                        if nova_senha:
-                            usuario["senha"] = nova_senha
-                        if nova_palavra_chave:
-                            usuario["palavra_chave"] = nova_palavra_chave
-                        st.success("Informações atualizadas com sucesso!")
+            if confirmar:
+                if nova_senha:
+                    usuario["senha"] = nova_senha
+                if nova_palavra_chave:
+                    usuario["palavra_chave"] = nova_palavra_chave
+                st.success("Informações atualizadas com sucesso!")
 
-                    # 🔙 Botão Voltar para Tela Principal
-                    st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
-                    if st.button("🔙 Voltar para Tela Principal"):
-                        st.session_state.pagina_atual = "🏠 Tela Principal"
-                        st.rerun()
+            # 🔙 Botão Voltar para Tela Principal
+            st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
+            if st.button("🔙 Voltar para Tela Principal"):
+                st.session_state.pagina_atual = "🏠 Tela Principal"
+                st.rerun()
