@@ -49,6 +49,23 @@ st.markdown("""
             margin-left: auto;
             margin-right: auto;
         }
+
+        .senha-container {
+            position: relative;
+        }
+        .senha-container input {
+            padding-right: 2.5rem;
+        }
+        .senha-toggle {
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -67,6 +84,8 @@ if "codigo_enviado" not in st.session_state:
     st.session_state.codigo_enviado = False
 if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
+if "mostrar_senha_login" not in st.session_state:
+    st.session_state.mostrar_senha_login = False
 
 # Funções auxiliares
 def email_valido(email):
@@ -80,29 +99,28 @@ def formatar_telefone(numero):
 
 # --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
-    st.title("🔐 Login / Cadastro")
+    st.subtitle("🔐 Login / Cadastro")
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
     # LOGIN NORMAL OU RECUPERAÇÃO
     if aba == "Login":
 
         if not st.session_state.modo_recuperacao:
-            
+
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
-                if "mostrar_senha_login" not in st.session_state:
-                    st.session_state.mostrar_senha_login = False
 
-                col1, col2 = st.columns([5, 1])
-                with col1:
-                    senha = st.text_input("Senha", type="text" if st.session_state.mostrar_senha_login else "password", key="login_senha")
-                with col2:
-                    if st.button("👁", key="toggle_login_senha"):
-                        st.session_state.mostrar_senha_login = not st.session_state.mostrar_senha_login
+                senha_type = "text" if st.session_state.mostrar_senha_login else "password"
+                senha_html = f'''
+                    <div class="senha-container">
+                        <input id="senha_login" name="senha" type="{senha_type}" placeholder="Senha" class="stTextInput">
+                        <button type="button" class="senha-toggle" onclick="var input = document.getElementById('senha_login'); input.type = input.type === 'password' ? 'text' : 'password'; this.textContent = input.type === 'password' ? '👁' : '🙈';">👁</button>
+                    </div>
+                '''
+                st.markdown(senha_html, unsafe_allow_html=True)
+                senha = st.text_input("", type=senha_type, key="login_senha", label_visibility="collapsed")
 
-                # espaço entre campos e botão
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
-
                 submit = st.form_submit_button("Entrar")
 
                 if submit:
@@ -117,7 +135,6 @@ def tela_login():
                     else:
                         st.error("E-mail ou senha inválidos.")
 
-            # Botão "Esqueci minha senha" centralizado com estilo de link
             st.markdown("""
                 <div style='text-align: center; margin-top: 1rem;'>
                     <form action="#" method="post">
