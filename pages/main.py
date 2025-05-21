@@ -188,10 +188,10 @@ def tela_login():
                                 st.session_state.modo_recuperacao = False
                                 st.rerun()
 
-                        if st.button("🔙 Voltar para login"):
-                            st.session_state.modo_recuperacao = False
-                            st.session_state.codigo_enviado = False
-                            st.rerun()
+                if st.button("🔙 Voltar para login"):
+                    st.session_state.modo_recuperacao = False
+                    st.session_state.codigo_enviado = False
+                    st.rerun()
 
         # CADASTRO
         elif aba == "Cadastro":
