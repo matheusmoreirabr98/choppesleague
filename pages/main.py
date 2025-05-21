@@ -127,17 +127,17 @@ if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
 
 # Funções auxiliares
-    def email_valido(email):
+def email_valido(email):
         return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
-    def formatar_telefone(numero):
-        numeros = re.sub(r'\D', '', numero)
-        if len(numeros) == 11:
-            return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
-        return numero
+def formatar_telefone(numero):
+    numeros = re.sub(r'\D', '', numero)
+    if len(numeros) == 11:
+        return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
+    return numero
 
     # --- TELA DE LOGIN / CADASTRO ---
-    def tela_login():
+def tela_login():
         st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
         aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
