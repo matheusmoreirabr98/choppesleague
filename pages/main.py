@@ -40,7 +40,6 @@ st.markdown("""
                     font-size: 16px !important;
                     width: 100% !important;
                     box-sizing: border-box;
-                    text-align: right;
                 }
                 label, .stMarkdown p {
                     font-size: 15px !important;
