@@ -53,16 +53,6 @@ st.markdown("""
                 margin-right: auto;
             }
 
-            /* Remover ícone de olho automático nos campos de senha */
-            input[type="password"]::-ms-reveal,
-            input[type="password"]::-ms-clear,
-            input[type="password"]::-webkit-credentials-auto-fill-button {
-                display: none !important;
-                pointer-events: none;
-                opacity: 0;
-            }
-
-            /* Garantir espaço lateral no campo de senha */
             input[type="password"] {
                 padding-right: 12px !important;
                 box-sizing: border-box;
