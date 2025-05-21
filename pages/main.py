@@ -195,7 +195,11 @@ def tela_login():
         with st.form("form_cadastro"):
             nome = st.text_input("Nome completo", key="cad_nome")
             posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
-            nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="dd/mm/aaaa")
+            nascimento = components.html('''
+    <input type="tel" id="nascimento_input" name="nascimento" placeholder="dd/mm/aaaa"
+           pattern="[0-9/]*" inputmode="numeric" 
+           style="width: 100%; padding: 0.5rem; font-size: 16px; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc;">
+''', height=60)
             telefone = components.html('''
     <input type="tel" id="telefone_input" name="telefone" placeholder="(DDD) número"
            pattern="[0-9]*" inputmode="numeric" 
