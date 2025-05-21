@@ -35,7 +35,12 @@ st.markdown("""
                     padding: 1.5rem 1rem;
                     width: 100%;
                     max-width: 100vw;
+                }
+                input, textarea, select, button {
+                    font-size: 16px !important;
+                    width: 100% !important;
 
+                }
                 label, .stMarkdown p {
                     font-size: 15px !important;
                     word-break: break-word;
