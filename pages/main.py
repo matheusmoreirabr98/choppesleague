@@ -54,11 +54,15 @@ def tela_login():
 
                 # Centraliza o botão Entrar visualmente dentro do formulário
                 st.markdown("""
+                    <div style='text-align: center; margin-top: 1rem;'>
+                        <form action="#" method="post">
+                            <button onclick="window.parent.postMessage({type: 'streamlit:rerun'}, '*');" style='background: none; border: none; color: #1f77b4; text-decoration: underline; font-size: 15px; cursor: pointer;'>
+                                entrar
+                            </button>
+                        </form>
+                    </div>
                     <style>
-                        div.stForm button[kind="primary"] {
-                            display: block;
-                            margin: 0 auto;
-                        }
+                        button[data-testid="btn_hidden_recovery"] { display: none; }
                     </style>
                 """, unsafe_allow_html=True)
 
