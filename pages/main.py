@@ -258,7 +258,7 @@ else:
 
             st.markdown("---")
 
-            if st.session_state.tipo_usuario == "admin":
+        if st.session_state.tipo_usuario == "admin":
                 opcoes = [
                     "🏠 Tela Principal",
                     "📊 Registrar Partida",
@@ -271,7 +271,7 @@ else:
                     "📣 Comunicado à Gestão",
                     "📜 Regras Choppe's League",
                 ]
-            else:
+        else:
                 opcoes = [
                     "🏠 Tela Principal",
                     "👟 Estatísticas dos Jogadores",
