@@ -258,28 +258,28 @@ else:
 
                 st.markdown("---")
 
-                if st.session_state.tipo_usuario == "admin":
-                    opcoes = [
-                        "🏠 Tela Principal",
-                        "📊 Registrar Partida",
-                        "👟 Estatísticas dos Jogadores",
-                        "🎲 Sorteio de Times",
-                        "✅ Confirmar Presença/Ausência",
-                        "🏅 Avaliação Pós-Jogo",
-                        "📸 Galeria de Momentos",
-                        "💬 Fórum",
-                        "📣 Comunicado à Gestão",
-                        "📜 Regras Choppe's League",
-                    ]
-                else:
-                    opcoes = [
-                        "🏠 Tela Principal",
-                        "👟 Estatísticas dos Jogadores",
-                        "✅ Confirmar Presença/Ausência",
-                        "🏅 Avaliação Pós-Jogo",
-                        "📸 Galeria de Momentos",
-                        "💬 Fórum",
-                        "📣 Comunicado à Gestão",
-                        "📜 Regras Choppe's League",
-                    ]
+        if st.session_state.tipo_usuario == "admin":
+            opcoes = [
+                "🏠 Tela Principal",
+                "📊 Registrar Partida",
+                "👟 Estatísticas dos Jogadores",
+                "🎲 Sorteio de Times",
+                "✅ Confirmar Presença/Ausência",
+                "🏅 Avaliação Pós-Jogo",
+                "📸 Galeria de Momentos",
+                "💬 Fórum",
+                "📣 Comunicado à Gestão",
+                "📜 Regras Choppe's League",
+            ]
+        else:
+            opcoes = [
+                "🏠 Tela Principal",
+                "👟 Estatísticas dos Jogadores",
+                "✅ Confirmar Presença/Ausência",
+                "🏅 Avaliação Pós-Jogo",
+                "📸 Galeria de Momentos",
+                "💬 Fórum",
+                "📣 Comunicado à Gestão",
+                "📜 Regras Choppe's League",
+            ]
 
