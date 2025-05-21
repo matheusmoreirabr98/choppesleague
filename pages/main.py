@@ -41,6 +41,11 @@ st.markdown("""
                     width: 100% !important;
                     box-sizing: border-box;
                 }
+                textarea{
+                    font-size: 16px !important;
+                    width: 10% !important;
+                    box-sizing: border-box;
+                }
                 label, .stMarkdown p {
                     font-size: 15px !important;
                     word-break: break-word;
