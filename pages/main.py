@@ -290,9 +290,6 @@ with st.sidebar:
             "🚪 Sair"
         ]
 
-        pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
-        st.session_state.pagina_atual = pagina_escolhida
-
     st.markdown("---")
 
     # Botão de Meu Perfil (na Sidebar)
