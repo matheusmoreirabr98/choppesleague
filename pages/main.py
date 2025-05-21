@@ -20,7 +20,7 @@ st.markdown("""
         <style>
             .main .block-container {
                 flex-direction: column;
-                align-items: center;
+                align-items: right;
                 justify-content: flex-start;
                 padding: 2rem 1rem;
                 max-width: 100%;
