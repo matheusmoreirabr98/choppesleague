@@ -110,7 +110,6 @@ def tela_login():
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
 
-                senha_type = "text" if st.session_state.mostrar_senha_login else "password"
                 senha_html = f'''
                     <div class="senha-container">
                         <input id="senha_login" name="senha" type="{senha_type}" placeholder="Senha" class="stTextInput">
