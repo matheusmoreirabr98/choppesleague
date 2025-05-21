@@ -56,9 +56,16 @@ def tela_login():
                 st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
 
                 # botão centralizado no rodapé
-                col1, col2, col3 = st.columns([1, 2, 1])
-                with col2:
-                    submit = st.form_submit_button("Entrar")
+                st.markdown("""
+                    <style>
+                        div.stForm button[kind="primary"] {
+                            display: block;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
+                    </style>
+                """, unsafe_allow_html=True)
+                submit = st.form_submit_button("Entrar")
 
                 if submit:
                     usuarios = st.session_state.usuarios
