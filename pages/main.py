@@ -58,10 +58,11 @@ def tela_login():
                 # botão centralizado no mesmo alinhamento dos campos
                 st.markdown("""
                     <style>
-                    div.stForm > div:nth-child(3) {
-                        display: flex;
-                        justify-content: center;
-                    }
+                        div.stForm button[kind="primary"] {
+                            display: block;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
                     </style>
                 """, unsafe_allow_html=True)
 
