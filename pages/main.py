@@ -346,36 +346,36 @@ if st.session_state.pagina_atual == "👤 Meu Perfil":
             st.session_state.pagina_atual = "🏠 Tela Principal"
             st.rerun()
 
-    st.markdown("---")
+st.markdown("---")
 
-    if st.session_state.tipo_usuario == "admin":
-        opcoes = [
-            "🏠 Tela Principal",
-            "📊 Registrar Partida",
-            "👟 Estatísticas dos Jogadores",
-            "🎲 Sorteio de Times",
-            "✅ Confirmar Presença/Ausência",
-            "🏅 Avaliação Pós-Jogo",
-            "📸 Galeria de Momentos",
-            "💬 Fórum",
-            "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League",
-            "🚪 Sair"
-        ]
-    else:
-        opcoes = [
-            "🏠 Tela Principal",
-            "👟 Estatísticas dos Jogadores",
-            "✅ Confirmar Presença/Ausência",
-            "🏅 Avaliação Pós-Jogo",
-            "📸 Galeria de Momentos",
-            "💬 Fórum",
-            "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League",
-            "🚪 Sair"
-        ]
+if st.session_state.tipo_usuario == "admin":
+    opcoes = [
+        "🏠 Tela Principal",
+        "📊 Registrar Partida",
+        "👟 Estatísticas dos Jogadores",
+        "🎲 Sorteio de Times",
+        "✅ Confirmar Presença/Ausência",
+        "🏅 Avaliação Pós-Jogo",
+        "📸 Galeria de Momentos",
+        "💬 Fórum",
+        "📣 Comunicado à Gestão",
+        "📜 Regras Choppe's League",
+        "🚪 Sair"
+    ]
+else:
+    opcoes = [
+        "🏠 Tela Principal",
+        "👟 Estatísticas dos Jogadores",
+        "✅ Confirmar Presença/Ausência",
+        "🏅 Avaliação Pós-Jogo",
+        "📸 Galeria de Momentos",
+        "💬 Fórum",
+        "📣 Comunicado à Gestão",
+        "📜 Regras Choppe's League",
+        "🚪 Sair"
+    ]
 
-    pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
-    st.session_state.pagina_atual = pagina_escolhida
+pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
+st.session_state.pagina_atual = pagina_escolhida
 
-    st.markdown("---")
+st.markdown("---")
