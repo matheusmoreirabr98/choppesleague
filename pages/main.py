@@ -297,6 +297,7 @@ else:
         # Botão de Meu Perfil (na Sidebar)
         if st.button("👤 Meu Perfil", use_container_width=True):
             st.session_state.pagina_atual = "👤 Meu Perfil"  # Define a página atual como "Meu Perfil"
+            st.session_state.is_profile_page = True  # Definir flag para página de perfil
             st.rerun()
         
         # Adicionando o botão de Logout abaixo do botão Meu Perfil
@@ -322,10 +323,11 @@ else:
                     st.session_state.pagina_atual = "login"
                     st.rerun()
 
-    # Exibindo as informações do perfil caso a página atual seja "Meu Perfil"
+    # Verificando se a página atual é "👤 Meu Perfil"
     if st.session_state.pagina_atual == "👤 Meu Perfil":
         st.title("👤 Meu Perfil")
 
+        # Verificando se as variáveis de usuário estão no session state
         tipo_usuario = st.session_state.get("tipo_usuario")
         nome = st.session_state.get("nome")
         email = st.session_state.get("login_email") or next(
@@ -333,6 +335,7 @@ else:
         )
         usuarios = st.session_state.get("usuarios")
 
+        # Caso algum dado não tenha sido encontrado, o perfil não será exibido
         if not nome or not email or email not in usuarios:
             st.error("Usuário não identificado ou sessão inválida.")
             st.stop()
@@ -342,7 +345,7 @@ else:
 
         # Exibindo as informações do perfil dentro da mesma página
         with st.container():
-            # Adiciona um estilo personalizado para centralizar
+            # Informações do perfil
             st.markdown("""
             <div style="text-align: left; padding: 20px;">
                 <h3>📋 Informações Cadastradas</h3>
