@@ -319,7 +319,7 @@ else:
 
         # --- CONTEÚDO PRINCIPAL DAS PÁGINAS ---
         if st.session_state.pagina_atual == "🏠 Tela Principal":
-            st.success(f"Bem-vindo, {st.session_state.nome}!")
+                st.success(f"Bem-vindo, {st.session_state.nome}!")
 
         elif st.session_state.pagina_atual == "👤 Meu Perfil":
             st.title("👤 Meu Perfil")
