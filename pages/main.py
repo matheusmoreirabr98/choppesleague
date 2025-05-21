@@ -260,7 +260,6 @@ def tela_login():
                             "tipo": tipo
                         }
                         st.success("Cadastro realizado! Agora faça login.")
-                        st.experimental_rerun()
 
 
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
