@@ -54,8 +54,7 @@ def tela_login():
 
                 # Centraliza o botão Entrar visualmente dentro do formulário
                 st.markdown("""
-                    <style>
-                        div.stForm button[kind="primary"] {
+                        <div style='text-align: center; margin-top: 1rem;'>
                             display: block;
                             margin-top: 1rem;
                         }
