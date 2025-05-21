@@ -61,7 +61,7 @@ st.markdown("""
         .senha-toggle {
             position: left;
             top: 50%;
-            right: 0.75rem;
+            right: 1.00rem;
             transform: translateY(-50%);
             background: none;
             border: none;
