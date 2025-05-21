@@ -138,7 +138,7 @@ def formatar_telefone(numero):
 
 # --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
-    st.title("🔐 Login / Cadastro")
+    st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
     # LOGIN NORMAL OU RECUPERAÇÃO
@@ -212,33 +212,29 @@ def tela_login():
     # CADASTRO
     elif aba == "Cadastro":
         with st.form("form_cadastro"):
-            nome = st.text_input("Nome completo", key="cad_nome")
+            nome = st.text_input("Nome completo", key="cad_nome", placeholder="Digite seu nome completo", autocomplete="name")
             posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
-            raw_nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="ddmmaaaa")
+            raw_nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="ddmmaaaa", autocomplete="bday")
             nascimento = re.sub(r'\D', '', raw_nascimento)
             if len(nascimento) >= 5:
                 nascimento = nascimento[:2] + '/' + nascimento[2:4] + ('/' + nascimento[4:8] if len(nascimento) > 4 else '')
-            telefone = st.text_input("WhatsApp", key="cad_tel", placeholder="(DDD) número")
-            email = st.text_input("E-mail", key="cad_email")
+            telefone = st.text_input("WhatsApp", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
+            email = st.text_input("E-mail", key="cad_email", autocomplete="email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
 
             erros = []
-
-            if submit:
-                if not nome or not posicao or not nascimento or not telefone or not email or not senha:
-                    erros.append("⚠️ Todos os campos devem ser preenchidos.")
-                if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
-                    erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
-                if not telefone.isdigit():
-                    erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
-                if not email_valido(email):
-                    erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
-
-                if erros:
-                    for erro in erros:
-                        st.warning(erro)
-                    submit = False
+            if not nome or not posicao or not nascimento or not telefone or not email or not senha:
+                erros.append("⚠️ Todos os campos devem ser preenchidos.")
+                erros.append("📅 O campo 'Data de nascimento' deve conter apenas números e '/'.")
+            if not telefone.isdigit():
+                erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
+            if not email_valido(email):
+                erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
+            if erros:
+                for erro in erros:
+                    st.warning(erro)
+                submit = False
 
             if submit:
                 if not nome or not posicao or not telefone or not email or not senha:
