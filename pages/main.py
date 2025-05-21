@@ -260,7 +260,8 @@ def tela_login():
                             "tipo": tipo
                         }
                         st.success("Cadastro realizado! Agora faça login.")
-                        st.session_state.update({"aba_login": "Login", "pagina_atual": "login"})
+                        st.session_state.aba_login = "Login"
+                        st.session_state.pagina_atual = "login"
                         st.experimental_rerun()
 
 
