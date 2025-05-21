@@ -161,7 +161,7 @@ def tela_login():
                             st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
                             st.session_state.pagina_atual = "🏠 Tela Principal"
                             st.success("Login realizado com sucesso!")
-                            st.experimental_rerun()
+                            st.stop()
                         else:
                             st.error("E-mail ou senha inválidos.")
 
@@ -260,7 +260,8 @@ def tela_login():
                             "tipo": tipo
                         }
                         st.success("Cadastro realizado! Agora faça login.")
-                        
+
+# BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
 if not st.session_state.usuario_logado:
     tela_login()
     st.stop()
