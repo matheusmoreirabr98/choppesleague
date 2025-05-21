@@ -36,7 +36,7 @@ st.markdown("""
                     width: 100%;
                     max-width: 100vw;
                 }
-                input, select, button {
+                input{
                     font-size: 16px !important;
                     width: 100% !important;
                     box-sizing: border-box;
