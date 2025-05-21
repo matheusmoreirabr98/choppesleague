@@ -210,16 +210,14 @@ nascimento = components.html('''
            pattern="[0-9/]*" inputmode="numeric"
            style="width: 100%; padding: 0.75rem 1rem; font-size: 1rem; border: none;
                   border-radius: 0.5rem; background-color: transparent; box-shadow: inset 0 0 0 1px rgba(49, 51, 63, 0.1);">
-''', height=52);">
-''', height=50)
+''', height=52)
             st.markdown("<label style='margin-bottom: 0.2rem;'>WhatsApp</label>", unsafe_allow_html=True)
 telefone = components.html('''
     <input type="tel" id="telefone_input" name="telefone" placeholder="(DDD) número"
            pattern="[0-9]*" inputmode="numeric"
            style="width: 100%; padding: 0.75rem 1rem; font-size: 1rem; border: none;
                   border-radius: 0.5rem; background-color: transparent; box-shadow: inset 0 0 0 1px rgba(49, 51, 63, 0.1);">
-''', height=52);">
-''', height=50)
+''', height=52)
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
