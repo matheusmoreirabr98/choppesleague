@@ -53,7 +53,12 @@ def tela_login():
                 senha = st.text_input("Senha", type="password", key="login_senha")
 
                 # Centraliza o botão Entrar visualmente dentro do formulário
-
+                st.markdown("""
+                        <div style='text-align: center;
+                        stForm button[kind="primary"] {button onclick="window.parent.postMessage({type: 'streamlit:rerun'}, '*');" style='background: none; border: none; color: #1f77b4; text-decoration: underline; font-size: 15px; cursor: pointer;'>
+                            Esqueci minha senha
+                    </style>
+                """, unsafe_allow_html=True)
 
                 submit = st.form_submit_button("Entrar")
 
