@@ -277,10 +277,10 @@ with st.sidebar:
         st.warning("Tem certeza que deseja sair?")
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("❌ Cancelar", use_container_width=True):
+            if  st.button("❌ Cancelar", use_container_width=True):
                 st.session_state.confirmar_logout = False
         with col2:
-            if st.button("✅ Confirmar", use_container_width=True):
+            if  st.button("✅ Confirmar", use_container_width=True):
                 usuarios = st.session_state.get("usuarios", {})
                 st.session_state.clear()
                 st.session_state.usuario_logado = False
