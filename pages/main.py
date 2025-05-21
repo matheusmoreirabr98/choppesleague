@@ -255,7 +255,7 @@ else:
 
     # --- SIDEBAR ---
     with st.sidebar:
-        st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
+        st.image("./imagens/logo.png", use_container_width=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
 
         st.markdown("---")
@@ -291,5 +291,4 @@ else:
         st.session_state.pagina_atual = pagina_escolhida
 
         st.markdown("---")
-    # aqui você pode chamar outras funções ou páginas, como tela_principal(), etc.
 
