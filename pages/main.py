@@ -39,7 +39,7 @@ st.markdown("""
                 input, textarea, select, button {
                     font-size: 16px !important;
                     width: 100% !important;
-                    box-sizing: right;
+                    box-sizing: border-box;
                 }
                 label, .stMarkdown p {
                     font-size: 15px !important;
@@ -53,6 +53,7 @@ st.markdown("""
                 margin-right: auto;
             }
         </style>
+    </div>
 """, unsafe_allow_html=True)
 
 
@@ -113,20 +114,7 @@ def tela_login():
                     else:
                         st.error("E-mail ou senha inválidos.")
 
-            st.markdown("""
-                <div style='text-align: center; margin-top: 1rem;'>
-                    <form action="#" method="post">
-                        <button onclick="window.parent.postMessage({type: 'streamlit:rerun'}, '*');" style='background: none; border: none; color: #1f77b4; text-decoration: underline; font-size: 15px; cursor: pointer;'>
-                            Esqueci minha senha
-                        </button>
-                    </form>
-                </div>
-                <style>
-                    button[data-testid="btn_hidden_recovery"] { display: none; }
-                </style>
-            """, unsafe_allow_html=True)
-
-            if st.button("", key="btn_hidden_recovery", disabled=True):
+            if st.button("Esqueci minha senha"):
                 st.session_state.modo_recuperacao = True
                 st.experimental_rerun()
 
