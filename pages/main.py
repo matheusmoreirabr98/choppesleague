@@ -79,7 +79,7 @@ st.markdown("""
             line-height: 1;
         }
             </style>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 
 # Sessões iniciais
