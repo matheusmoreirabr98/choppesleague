@@ -206,15 +206,15 @@ def tela_login():
                             st.error("E-mail não encontrado.")
 
                 if st.session_state.codigo_enviado:
-                    st.button("Reenviar código")
-                    if email in st.session_state.usuarios:
+                    if st.button("Reenviar código"):
+                        if email in st.session_state.usuarios:
                             codigo = str(random.randint(100000, 999999))
                             st.session_state.recuperacao_email = email
                             st.session_state.codigo_recuperacao = codigo
                             st.session_state.codigo_enviado = True
                             if enviar_email(email, codigo):
                                 st.success(f"Código enviado para o e-mail {email}")
-                    else:
+                        else:
                             st.error("E-mail não encontrado.")
 
                 if st.session_state.codigo_enviado:
