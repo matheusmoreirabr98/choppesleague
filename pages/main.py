@@ -84,7 +84,16 @@ st.markdown("""
                 padding: 0;
                 line-height: 1;
             }
-        </style>
+            .input-personalizado {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 16px;
+        box-sizing: border-box;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        background-color: white;
+    }
+</style>
     </div>
 """, unsafe_allow_html=True)
 
@@ -198,12 +207,12 @@ def tela_login():
             nascimento = components.html('''
     <input type="tel" id="nascimento_input" name="nascimento" placeholder="dd/mm/aaaa"
            pattern="[0-9/]*" inputmode="numeric" 
-           style="width: 100%; padding: 0.5rem; font-size: 16px; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc;">
+           class='input-personalizado'>
 ''', height=60)
             telefone = components.html('''
     <input type="tel" id="telefone_input" name="telefone" placeholder="(DDD) número"
            pattern="[0-9]*" inputmode="numeric" 
-           style="width: 100%; padding: 0.5rem; font-size: 16px; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc;">
+           class='input-personalizado'>
 ''', height=60)
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
