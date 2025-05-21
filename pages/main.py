@@ -176,9 +176,9 @@ def tela_login():
                     st.experimental_rerun()
 
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
-if not st.session_state.usuario_logado:
-    tela_login()
-    st.stop()
+    if not st.session_state.usuario_logado:
+        tela_login()
+        st.stop()
 
 # --- SIDEBAR ---
 with st.sidebar:
