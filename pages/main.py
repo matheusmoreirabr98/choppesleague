@@ -207,13 +207,11 @@ def tela_login():
             nascimento = components.html('''
     <input type="tel" id="nascimento_input" name="nascimento" placeholder="dd/mm/aaaa"
            pattern="[0-9/]*" inputmode="numeric" 
-           class='input-personalizado'>
-''', height=60)
+           class="stTextInput">''', height=60)
             telefone = components.html('''
     <input type="tel" id="telefone_input" name="telefone" placeholder="(DDD) número"
            pattern="[0-9]*" inputmode="numeric" 
-           class='input-personalizado'>
-''', height=60)
+           class="stTextInput">''', height=60)
             email = st.text_input("E-mail", key="cad_email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
             submit = st.form_submit_button("Cadastrar")
