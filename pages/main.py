@@ -56,7 +56,7 @@ st.markdown("""
             position: relative;
         }
         .senha-container input {
-            padding-right: 6.0rem;
+            padding-right: 5000rem;
         }
         .senha-toggle {
             position: left;
