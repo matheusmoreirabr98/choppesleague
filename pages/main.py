@@ -38,8 +38,8 @@ st.markdown("""
                 }
                 input, textarea, select, button {
                     font-size: 16px !important;
-                    width: 100% !important;
 
+                    box-sizing: border-box;
                 }
                 label, .stMarkdown p {
                     font-size: 15px !important;
