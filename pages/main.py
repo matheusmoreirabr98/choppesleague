@@ -368,10 +368,10 @@ if st.session_state.pagina_atual == "👤 Meu Perfil":
                 usuario["palavra_chave"] = nova_palavra_chave
             st.success("Informações atualizadas com sucesso!")
 
-            # 🔙 Botão Voltar para Tela Principal
-            st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
-            if st.button("🔙 Voltar para Tela Principal"):
-                st.session_state.pagina_atual = "🏠 Tela Principal"
-                st.rerun()
+        # 🔙 Botão Voltar para Tela Principal
+        st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
+        if st.button("🔙 Voltar para Tela Principal"):
+           st.session_state.pagina_atual = "🏠 Tela Principal"
+           st.rerun()
             
 
