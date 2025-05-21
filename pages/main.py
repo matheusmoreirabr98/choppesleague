@@ -21,7 +21,7 @@ st.markdown("""
             align-items: center;
             justify-content: flex-start;
             padding: 2rem 1rem;
-            max-width: 480px;
+            max-width: 100%;
             margin: auto;
             word-break: break-word;
             overflow-wrap: break-word;
@@ -35,6 +35,8 @@ st.markdown("""
             }
             input, textarea, select, button {
                 font-size: 16px !important;
+                width: 100% !important;
+                box-sizing: border-box;
             }
             label, .stMarkdown p {
                 font-size: 15px !important;
@@ -79,7 +81,7 @@ def formatar_telefone(numero):
 # --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
     st.title("🔐 Login / Cadastro")
-    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login")
+    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
     # LOGIN NORMAL OU RECUPERAÇÃO
     if aba == "Login":
