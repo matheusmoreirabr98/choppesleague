@@ -257,7 +257,6 @@ else:
     with st.sidebar:
         st.image("./imagens/logo.png", use_container_width=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
-
         st.markdown("---")
 
         if st.session_state.tipo_usuario == "admin":
@@ -288,40 +287,39 @@ else:
         pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
         st.session_state.pagina_atual = pagina_escolhida
 
-        st.markdown("---")
+    # --- MEU PERFIL NO CORPO PRINCIPAL ---
+    st.title("👤 Meu Perfil")
 
-        st.title("👤 Meu Perfil")
+    # Verifica se o usuário está logado corretamente
+    tipo_usuario = st.session_state.get("tipo_usuario")
+    nome = st.session_state.get("nome")
+    email = st.session_state.get("login_email") or next((e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None)
+    usuarios = st.session_state.get("usuarios")
 
-        # Verifica se o usuário está logado
-        tipo_usuario = st.session_state.get("tipo_usuario")
-        nome = st.session_state.get("nome")
-        usuarios = st.session_state.get("usuarios")
-        email = st.session_state.get("login_email")
+    if not nome or not email or email not in usuarios:
+        st.error("Usuário não identificado ou sessão inválida.")
+        st.stop()
 
-        if not nome or not email or email not in usuarios:
-            st.error("Usuário não identificado ou sessão inválida.")
-            st.stop()
+    usuario = usuarios[email]
 
-        usuario = usuarios[email]
+    st.subheader("📋 Informações Cadastradas")
+    st.markdown(f"**Nome completo:** {usuario['nome']}")
+    st.markdown(f"**Posição:** {usuario['posicao']}")
+    st.markdown(f"**Data de nascimento:** {usuario['nascimento']}")
+    st.markdown(f"**Telefone:** {usuario['telefone']}")
+    st.markdown(f"**E-mail:** {email}")
 
-        st.subheader("📋 Informações Cadastradas")
-        st.markdown(f"**Nome completo:** {usuario['nome']}")
-        st.markdown(f"**Posição:** {usuario['posicao']}")
-        st.markdown(f"**Data de nascimento:** {usuario['nascimento']}")
-        st.markdown(f"**Telefone:** {usuario['telefone']}")
-        st.markdown(f"**E-mail:** {email}")
+    st.markdown("---")
+    st.subheader("🔑 Atualizar senha e palavra-chave")
 
-        st.markdown("---")
-        st.subheader("🔑 Atualizar senha e palavra-chave")
+    with st.form("form_atualizar_senha"):
+        nova_senha = st.text_input("Nova senha", type="password")
+        nova_palavra_chave = st.text_input("Nova palavra-chave")
+        confirmar = st.form_submit_button("Atualizar")
 
-        with st.form("form_atualizar_senha"):
-            nova_senha = st.text_input("Nova senha", type="password")
-            nova_palavra_chave = st.text_input("Nova palavra-chave")
-            confirmar = st.form_submit_button("Atualizar")
-
-        if confirmar:
-            if nova_senha:
-                usuario["senha"] = nova_senha
-            if nova_palavra_chave:
-                usuario["palavra_chave"] = nova_palavra_chave
-            st.success("Informações atualizadas com sucesso!")
+    if confirmar:
+        if nova_senha:
+            usuario["senha"] = nova_senha
+        if nova_palavra_chave:
+            usuario["palavra_chave"] = nova_palavra_chave
+        st.success("Informações atualizadas com sucesso!")
