@@ -51,32 +51,56 @@ st.markdown("""
             margin-left: auto;
             margin-right: auto;
         }
-
-    .senha-container {
-        position: relative;
-        width: 100%;
-    }
-
-    .senha-container input {
-        width: 100%;
-        padding-right: 2.5rem; /* espaço para o botão não sobrepor o texto */
-        box-sizing: border-box;
-    }
-
-    .senha-toggle {
-        position: absolute;
-        top: 50%;
-        right: 0.75rem;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        font-size: 18px;
-        cursor: pointer;
-        padding: 0;
-        line-height: 1;
     }
     </style>
 """, unsafe_allow_html=True)
+
+
+import streamlit as st
+import streamlit.components.v1 as components
+
+components.html("""
+<div style="max-width: 400px; margin: auto;">
+  <style>
+    .senha-container {
+      position: relative;
+      width: 100%;
+    }
+    .senha-container input {
+      width: 100%;
+      padding: 10px;
+      padding-right: 40px; /* espaço para o botão */
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .senha-toggle {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+  </style>
+
+  <div class="senha-container">
+    <input id="senhaInput" type="password" placeholder="Digite sua senha">
+    <button class="senha-toggle" onclick="toggleSenha()">👁️</button>
+  </div>
+
+  <script>
+    function toggleSenha() {
+      var input = document.getElementById("senhaInput");
+      input.type = input.type === "password" ? "text" : "password";
+    }
+  </script>
+</div>
+""", height=100)
+
 
 # Sessões iniciais
 if "usuario_logado" not in st.session_state:
