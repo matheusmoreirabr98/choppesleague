@@ -358,24 +358,22 @@ else:
 
                 st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
 
-            st.subheader("🔑 Atualizar senha")
+                with st.form("form_atualizar_senha"):
+                    nova_senha = st.text_input("Nova senha", type="password")
+                    palavra_chave_atual = st.text_input("Informe sua palavra-chave", type="password", help="A mesma informada no cadastro")
+                    confirmar = st.form_submit_button("Atualizar")
 
-            with st.form("form_atualizar_senha"):
-                nova_senha = st.text_input("Nova senha", type="password")
-                palavra_chave_atual = st.text_input("Informe sua palavra-chave", type="password", help="A mesma informada no cadastro")
-                confirmar = st.form_submit_button("Atualizar")
+                if confirmar:
+                    if not palavra_chave_atual or not nova_senha:
+                        st.warning("Preencha todos os campos.")
+                    elif palavra_chave_atual != usuario["palavra_chave"]:
+                        st.error("❌ Palavra-chave incorreta. A senha não foi alterada.")
+                    else:
+                        usuario["senha"] = nova_senha
+                        st.success("✅ Senha atualizada com sucesso!")
 
-            if confirmar:
-                if not palavra_chave_atual or not nova_senha:
-                    st.warning("Preencha todos os campos.")
-                elif palavra_chave_atual != usuario["palavra_chave"]:
-                    st.error("❌ Palavra-chave incorreta. A senha não foi alterada.")
-                else:
-                    usuario["senha"] = nova_senha
-                    st.success("✅ Senha atualizada com sucesso!")
+                st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
 
-            st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
-
-            if st.button("🔙 Voltar para Tela Principal"):
-                st.session_state.pagina_atual = "🏠 Tela Principal"
-                st.rerun()
+                if st.button("🔙 Voltar para Tela Principal"):
+                    st.session_state.pagina_atual = "🏠 Tela Principal"
+                    st.rerun()
