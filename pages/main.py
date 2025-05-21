@@ -331,6 +331,7 @@ if st.session_state.pagina_atual == "👤 Meu Perfil":
     if not nome or not email or email not in usuarios:
         st.error("Usuário não identificado ou sessão inválida.")
         st.stop()
+        st.rerun()
     usuario = usuarios[email]
 
     # Exibindo informações do perfil
@@ -371,5 +372,6 @@ if st.session_state.pagina_atual == "👤 Meu Perfil":
         st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
         if st.button("🔙 Voltar para Tela Principal"):
             st.session_state.pagina_atual = "🏠 Tela Principal"
+            st.rerun()
             
 
