@@ -9,6 +9,8 @@ import re
 import urllib.parse
 import base64
 from datetime import datetime, timedelta, date
+import streamlit.components.v1 as components
+
 
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
@@ -51,7 +53,7 @@ st.markdown("""
         }
 
         .senha-container {
-            position: relative;
+            position: left;
         }
         .senha-container input {
             padding-right: 2.5rem;
