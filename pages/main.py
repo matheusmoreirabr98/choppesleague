@@ -256,11 +256,44 @@ else:
         st.image("./imagens/logo.png", use_container_width=True)
         st.markdown("---")
         st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
-        st.markdown("---")
 
         # Botão de Meu Perfil (na Sidebar)
         if st.button("👤 Meu Perfil", use_container_width=True):
             st.session_state.pagina_atual = "👤 Meu Perfil"
+
+            with st.container():
+                st.markdown(f"""
+                <div style="text-align: left; padding: 20px;">
+                    <h3>📋 Informações Cadastradas</h3>
+                    <div style="font-size: 18px; line-height: 1.6;">
+                        <p><strong>Nome completo:</strong> {usuario['nome']}</p>
+                        <p><strong>Posição:</strong> {usuario['posicao']}</p>
+                        <p><strong>Data de nascimento:</strong> {usuario['nascimento']}</p>
+                        <p><strong>Telefone:</strong> {usuario['telefone']}</p>
+                        <p><strong>E-mail:</strong> {email}</p>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
+
+                st.subheader("🔑 Atualizar senha e palavra-chave")
+                with st.form("form_atualizar_senha"):
+                    nova_senha = st.text_input("Nova senha", type="password")
+                    nova_palavra_chave = st.text_input("Nova palavra-chave")
+                    confirmar = st.form_submit_button("Atualizar")
+
+                if confirmar:
+                    if nova_senha:
+                        usuario["senha"] = nova_senha
+                    if nova_palavra_chave:
+                        usuario["palavra_chave"] = nova_palavra_chave
+                    st.success("Informações atualizadas com sucesso!")
+
+                st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
+                if st.button("🔙 Voltar para Tela Principal"):
+                    st.session_state.pagina_atual = "🏠 Tela Principal"
+                    st.rerun()
 
         # Garantir que a chave 'confirmar_logout' exista
         if 'confirmar_logout' not in st.session_state:
@@ -286,6 +319,7 @@ else:
                     st.session_state.usuarios = usuarios
                     st.session_state.pagina_atual = "login"
                     st.rerun()
+        st.markdown("---")
 
 
         if st.session_state.tipo_usuario == "admin":
