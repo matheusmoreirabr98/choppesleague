@@ -305,12 +305,6 @@ else:
 
         st.markdown("---")
 
-    # --- SIDEBAR ---
-    with st.sidebar:
-        st.image("./imagens/logo.png", use_container_width=True)
-        st.markdown("---")
-        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
-
         # Botão Meu Perfil (define a página no session_state)
         if st.button("👤 Meu Perfil", use_container_width=True):
             tipo_usuario = st.session_state.get("tipo_usuario", "Usuário")
