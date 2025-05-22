@@ -318,5 +318,56 @@ else:
 
 
             # --- CONTEÚDO PRINCIPAL DAS PÁGINAS ---
-        if st.session_state.pagina_atual == "🏠 Tela Principal":
-            st.success(f"Bem-vindo, {st.session_state.nome}!")
+if st.session_state.pagina_atual == "🏠 Tela Principal":
+    st.success(f"Bem-vindo, {st.session_state.nome}!")
+
+elif st.session_state.pagina_atual == "👤 Meu Perfil":
+    st.title("👤 Meu Perfil")
+
+    tipo_usuario = st.session_state.get("tipo_usuario", "Usuário")
+    nome = st.session_state.get("nome", "Nome não encontrado")
+    email = st.session_state.get("login_email") or next(
+        (e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None
+    )
+
+    usuarios = st.session_state.get("usuarios", {})
+    if not nome or not email or email not in usuarios:
+        st.error("Usuário não identificado ou sessão inválida.")
+        st.stop()
+        st.rerun()
+
+    usuario = usuarios[email]
+
+    with st.container():
+        st.markdown(f"""
+        <div style="text-align: left; padding: 20px;">
+            <h3>📋 Informações Cadastradas</h3>
+            <div style="font-size: 18px; line-height: 1.6;">
+                <p><strong>Nome completo:</strong> {usuario['nome']}</p>
+                <p><strong>Posição:</strong> {usuario['posicao']}</p>
+                <p><strong>Data de nascimento:</strong> {usuario['nascimento']}</p>
+                <p><strong>Telefone:</strong> {usuario['telefone']}</p>
+                <p><strong>E-mail:</strong> {email}</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
+
+        st.subheader("🔑 Atualizar senha e palavra-chave")
+        with st.form("form_atualizar_senha"):
+            nova_senha = st.text_input("Nova senha", type="password")
+            nova_palavra_chave = st.text_input("Nova palavra-chave")
+            confirmar = st.form_submit_button("Atualizar")
+
+        if confirmar:
+            if nova_senha:
+                usuario["senha"] = nova_senha
+            if nova_palavra_chave:
+                usuario["palavra_chave"] = nova_palavra_chave
+            st.success("Informações atualizadas com sucesso!")
+
+        st.markdown("<hr style='border: 1px solid #ddd;'>", unsafe_allow_html=True)
+        if st.button("🔙 Voltar para Tela Principal"):
+            st.session_state.pagina_atual = "🏠 Tela Principal"
+            st.rerun()
