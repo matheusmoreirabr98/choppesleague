@@ -269,7 +269,7 @@ else:
     # --- SIDEBAR ---
     with st.sidebar:
         st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
-        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
+        st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
 
         st.markdown("---")
 
@@ -307,6 +307,9 @@ else:
 
     # --- SIDEBAR ---
     with st.sidebar:
+        st.image("./imagens/logo.png", use_container_width=True)
+        st.markdown("---")
+        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
 
         # Botão Meu Perfil (define a página no session_state)
         if st.button("👤 Meu Perfil", use_container_width=True):
