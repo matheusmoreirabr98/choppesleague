@@ -269,7 +269,6 @@ else:
 
 
 
-
     # SIDEBAR
     with st.sidebar:
         st.image("./imagens/logo.png", use_container_width=True)
