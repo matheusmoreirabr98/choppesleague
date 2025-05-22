@@ -317,24 +317,24 @@ else:
         st.session_state.pagina_atual = pagina_escolhida
 
 
-        # --- CONTEÚDO PRINCIPAL DAS PÁGINAS ---
-        if st.session_state.pagina_atual == "🏠 Tela Principal":
-                st.success(f"Bem-vindo, {st.session_state.nome}!")
+    # --- CONTEÚDO PRINCIPAL DAS PÁGINAS ---
+    if st.session_state.pagina_atual == "🏠 Tela Principal":
+        st.success(f"Bem-vindo, {st.session_state.nome}!")
 
-        elif st.session_state.pagina_atual == "👤 Meu Perfil":
-            st.title("👤 Meu Perfil")
+    elif st.session_state.pagina_atual == "👤 Meu Perfil":
+        st.title("👤 Meu Perfil")
 
-            tipo_usuario = st.session_state.get("tipo_usuario", "Usuário")
-            nome = st.session_state.get("nome", "Nome não encontrado")
-            email = st.session_state.get("login_email") or next(
-                (e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None
-            )
+        tipo_usuario = st.session_state.get("tipo_usuario", "Usuário")
+        nome = st.session_state.get("nome", "Nome não encontrado")
+        email = st.session_state.get("login_email") or next(
+            (e for e, u in st.session_state.usuarios.items() if u["nome"] == nome), None
+        )
 
-            usuarios = st.session_state.get("usuarios", {})
-            if not nome or not email or email not in usuarios:
-                st.error("Usuário não identificado ou sessão inválida.")
-                st.stop()
-                st.rerun()
+        usuarios = st.session_state.get("usuarios", {})
+        if not nome or not email or email not in usuarios:
+            st.error("Usuário não identificado ou sessão inválida.")
+            st.stop()
+            st.rerun()
 
             usuario = usuarios[email]
 
