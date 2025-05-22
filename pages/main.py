@@ -345,7 +345,7 @@ else:
 
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
-        st.experimental_rerun()
+        st.rerun()
 
     # --- ROTEADOR ---
     def tela_principal():
