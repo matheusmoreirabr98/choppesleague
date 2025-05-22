@@ -305,10 +305,14 @@ else:
 
         st.markdown("---")
 
+    # --- SIDEBAR ---
     with st.sidebar:
-        if st.session_state.pagina_atual == "👤 Meu Perfil":
-            st.title("👤 Meu Perfil")
+        st.image("./imagens/logo.png", use_container_width=True)
+        st.markdown("---")
+        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
 
+        # Botão Meu Perfil (define a página no session_state)
+        if st.button("👤 Meu Perfil", use_container_width=True):
             tipo_usuario = st.session_state.get("tipo_usuario", "Usuário")
             nome = st.session_state.get("nome", "Nome não encontrado")
             email = st.session_state.get("login_email") or next(
