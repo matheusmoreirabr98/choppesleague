@@ -327,7 +327,7 @@ else:
 
             usuario = usuarios[email]
 
-            with st.container():
+        with st.container():
                 st.markdown(f"""
                 <div style="text-align: left; padding: 20px;">
                     <h3>📋 Informações Cadastradas</h3>
