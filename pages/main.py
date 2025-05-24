@@ -723,7 +723,7 @@ else:
                 for key in ["presenca_confirmada", "motivo"]:
                     if key in st.session_state:
                         del st.session_state[key]
-                st.experimental_rerun()
+                st.rerun()
             return  # <-- ESSENCIAL para evitar o erro
 
 
