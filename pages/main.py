@@ -749,7 +749,7 @@ else:
                 else:
                     st.session_state["presenca_confirmada"] = "nao"
                     st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
-                st.experimental_rerun()
+                st.rerun()
 
 
 
