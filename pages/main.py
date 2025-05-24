@@ -285,8 +285,7 @@ else:
                 "📸 Galeria de Momentos",
                 "💬 Fórum",
                 "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League",
-                "🚪 Sair"
+                "📜 Regras Choppe's League"
             ]
         else:
             opcoes = [
@@ -297,8 +296,7 @@ else:
                 "📸 Galeria de Momentos",
                 "💬 Fórum",
                 "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League",
-                "🚪 Sair"
+                "📜 Regras Choppe's League"
             ]
 
         pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
