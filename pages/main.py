@@ -639,8 +639,7 @@ else:
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
         st.title("Estatísticas dos Jogadores")
-        return jogadores
-    st.markdown("---")
+        st.markdown("⚠️ Em breve...")
 
 
 
