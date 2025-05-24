@@ -638,38 +638,7 @@ else:
 
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
-        st.title("Registrar Estatísticas dos Jogadores")
-        jogadores_lista = [
-            "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
-            "Lula", "Juninho", "Jesus", "Gabriel", "Arthur",
-            "Walter", "Eduardo", "Cristian", "Luciano", "Deivid"
-        ]
-        times = ["Borussia", "Time 2"]
-        with st.form("form_jogadores", clear_on_submit=True):
-            nome = st.selectbox("Jogador", jogadores_lista)
-            time = st.selectbox("Time", times)
-            gols = st.number_input("Gols", min_value=0, step=1)
-            assistencias = st.number_input("Assistências", min_value=0, step=1)
-            faltas = st.number_input("Faltas", min_value=0, step=1)
-            cart_amarelos = st.number_input("Cartões Amarelos", min_value=0, step=1)
-            cart_vermelhos = st.number_input("Cartões Vermelhos", min_value=0, step=1)
-            submit = st.form_submit_button("Registrar")
-
-            if submit:
-                registro = {
-                    "Nome": nome,
-                    "Time": time,
-                    "Gols": gols,
-                    "Assistências": assistencias,
-                    "Faltas": faltas,
-                    "Cartões Amarelos": cart_amarelos,
-                    "Cartões Vermelhos": cart_vermelhos
-                }
-                jogadores = jogadores.append(registro, ignore_index=True)
-                jogadores.to_csv(FILE_JOGADORES, index=False)
-                st.success("Estatísticas registradas com sucesso!")
-
-        st.dataframe(jogadores)
+        st.title("Estatísticas dos Jogadores")
         return jogadores
 
 
