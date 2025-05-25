@@ -91,7 +91,7 @@ def load_data_gsheets():
     sh = gc.open(NOME_PLANILHA)
 
     # Lista das abas obrigatórias
-    abas_necessarias = ["Partidas", "Jogadores", "Usuarios"]
+    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças"]
     abas_existentes = [w.title for w in sh.worksheets()]
 
     # Cria as abas que estiverem faltando
@@ -103,6 +103,7 @@ def load_data_gsheets():
     partidas = get_as_dataframe(sh.worksheet("Partidas")).dropna(how='all')
     jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how='all')
     usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how='all')
+    presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how='all')
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
@@ -111,17 +112,21 @@ def load_data_gsheets():
             if pd.notna(row['email']):
                 usuarios[row['email']] = row.drop(labels='email').to_dict()
 
-    return partidas, jogadores, usuarios
+    return partidas, jogadores, usuarios, presencas
 
 # -----------------------------------------
 # Salvar dados nas planilhas
 # -----------------------------------------
-def save_data_gsheets(partidas, jogadores, usuarios):
+def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
-    if isinstance(partidas, list): partidas = pd.DataFrame(partidas)
-    if isinstance(jogadores, list): jogadores = pd.DataFrame(jogadores)
+    if isinstance(partidas, list):
+        partidas = pd.DataFrame(partidas)
+    if isinstance(jogadores, list):
+        jogadores = pd.DataFrame(jogadores)
+    if isinstance(presencas, list):
+        presencas = pd.DataFrame(presencas)
 
     # Converter dicionário de usuários para DataFrame
     usuarios_df = pd.DataFrame.from_dict(usuarios, orient='index').reset_index().rename(columns={"index": "email"})
@@ -129,6 +134,7 @@ def save_data_gsheets(partidas, jogadores, usuarios):
     set_with_dataframe(sh.worksheet("Partidas"), partidas)
     set_with_dataframe(sh.worksheet("Jogadores"), jogadores)
     set_with_dataframe(sh.worksheet("Usuarios"), usuarios_df)
+    set_with_dataframe(sh.worksheet("Presenças"), presencas)
 
 # -----------------------------------------
 # Abstrações para carregar/salvar
@@ -136,8 +142,8 @@ def save_data_gsheets(partidas, jogadores, usuarios):
 def load_data():
     return load_data_gsheets()
 
-def save_data(partidas, jogadores, usuarios):
-    save_data_gsheets(partidas, jogadores, usuarios)
+def save_data(partidas, jogadores, usuarios, presencas):
+    save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
 # Sessões iniciais
 if "usuario_logado" not in st.session_state:
