@@ -538,8 +538,8 @@ else:
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
         # Caminhos das imagens na pasta 'imagens'
-        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/inter.png", "Inter")
+        escudo_borussia = imagem_base64("imagens/borussia_escudo.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/inter_escudo.png", "Inter")
 
         # Container com as imagens e o "X"
         st.markdown(f"""
@@ -590,8 +590,8 @@ else:
 
         with col_c:
             st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-            if os.path.exists("./imagens/inter.png"):
-                st.image("./imagens/inter.png", use_container_width=True)
+            if os.path.exists("./imagens/escudo_inter.png"):
+                st.image("./imagens/escudo_inter.png", use_container_width=True)
             else:
                 st.warning("Imagem da Inter não encontrada.")
             st.markdown("</div>", unsafe_allow_html=True)
