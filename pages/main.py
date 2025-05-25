@@ -521,30 +521,30 @@ else:
             """
         return ""
 
-        def tela_principal(partidas, jogadores):
-            # Título e subtítulo centralizados
-            st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
-            st.markdown("---")
-            st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
+    def tela_principal(partidas, jogadores):
+        # Título e subtítulo centralizados
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-            # Gerar HTML com as imagens convertidas
-            escudo_borussia = imagem_base64("./imagens/borussia.png", "Borussia")
-            escudo_inter = imagem_base64("./imagens/inter.png", "Inter")
+        # Gerar HTML com as imagens convertidas
+        escudo_borussia = imagem_base64("./imagens/borussia.png", "Borussia")
+        escudo_inter = imagem_base64("./imagens/inter.png", "Inter")
 
-            # Container flexível com os escudos e o "X"
-            st.markdown(f"""
-                <div style="
-                    display: flexx;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 40px;
-                    flex-wrap: wrap;
-                ">
-                    {escudo_borussia}
-                    <div style="font-size: 40px; font-weight: bold;">X</div>
-                    {escudo_inter}
-                </div>
-            """, unsafe_allow_html=True)
+        # Container flexível com os escudos e o "X"
+        st.markdown(f"""
+            <div style="
+                display: flexx;
+                justify-content: center;
+                align-items: center;
+                gap: 40px;
+                flex-wrap: wrap;
+            ">
+                {escudo_borussia}
+                <div style="font-size: 40px; font-weight: bold;">X</div>
+                {escudo_inter}
+            </div>
+        """, unsafe_allow_html=True)
 
 
 
