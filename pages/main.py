@@ -504,14 +504,13 @@ else:
 
 
     # Tela Principal
-    def imagem_base64(path, legenda, gols, vitorias, confirmados):
+    def imagem_base64(path, legenda, gols, vitorias):
         if os.path.exists(path):
             img = Image.open(path)
             img = img.resize((200, 200))
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
-            confirmados_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
 
             return f"""
                 <div style="text-align: center; min-width: 200px;">
@@ -519,12 +518,6 @@ else:
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                     <p><strong>⚽ Gols:</strong> {gols}</p>
                     <p><strong>✅ Vitórias:</strong> {vitorias}</p>
-                    <details style="text-align: left; margin: 0 auto; max-width: 180px;">
-                        <summary><strong>📋 Confirmados</strong></summary>
-                        <ul style="margin-top: 0.2rem; padding-left: 1.2rem; font-size: 0.9rem;">
-                            {confirmados_html}
-                        </ul>
-                    </details>
                 </div>
             """
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
