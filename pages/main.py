@@ -471,20 +471,41 @@ else:
         st.markdown(f"""
             <div style="
                 display: flex;
-                justify-content: left;
+                justify-content: center;
                 align-items: center;
                 gap: 50px;
                 flex-wrap: nowrap;
             ">
                     {borussia_vitorias}<br>
                     {borussia_gols}
-            <div>
+            </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+            <div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 50px;
+                flex-wrap: nowrap;
+            ">
                     {empates}
             </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+            <div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 50px;
+                flex-wrap: nowrap;
+            ">
                     {inter_vitorias}<br>
                     {inter_gols}
             </div>
         """, unsafe_allow_html=True)
+  
 
 
 
