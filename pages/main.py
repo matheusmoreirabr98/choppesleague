@@ -444,7 +444,7 @@ else:
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
-        st.markdown("<h3 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h3>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
         st.markdown("---")
 
         borussia_gols = 18
