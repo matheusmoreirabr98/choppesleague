@@ -519,7 +519,7 @@ else:
                     elif dados.get("presenca") == "nao":
                         status = "❌"
                     break
-            linhas_html += f"<li>{nome} {status} </li>"
+            linhas_html += f"<li>{status} {nome}</li>"
 
         st.markdown(f"""
             <div style="text-align: center; margin-top: 2rem;">
