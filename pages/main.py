@@ -476,12 +476,12 @@ else:
                 gap: 50px;
                 flex-wrap: nowrap;
             ">
-                    {borussia_vitorias}
+                    {borussia_vitorias}</p>
                     {borussia_gols}
             <div>
                     {empates}
             </div>
-                    {inter_vitorias}
+                    {inter_vitorias}</p>
                     {inter_gols}
             </div>
         """, unsafe_allow_html=True)
