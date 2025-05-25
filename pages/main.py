@@ -749,18 +749,24 @@ else:
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
 
+        # Cria o CSV com a nova coluna se não existir
         if not os.path.exists(FILE_VOTOS):
-            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba"])
+            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro"])
             df_votos.to_csv(FILE_VOTOS, index=False)
 
         df_votos = pd.read_csv(FILE_VOTOS)
+
+        # Se a coluna Goleiro ainda não existir no CSV antigo
+        if "Goleiro" not in df_votos.columns:
+            df_votos["Goleiro"] = ""
 
         jogadores_presentes = st.session_state.get("jogadores_presentes", [
             "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
             "Lula", "Juninho", "Jesus", "Gabriel", "Arthur"
         ])
 
-        st.markdown("<h15 style='font-weight: bold;'>😎 Tá na hora do veredito!</h15>", unsafe_allow_html=True)
+        st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
+        st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
 
         votante = st.session_state.get("nome", "usuário")
         jogadores_para_voto = [j for j in jogadores_presentes if j != votante]
@@ -768,18 +774,20 @@ else:
 
         if not ja_votou:
             with st.form("votacao_form"):
-                craque = st.selectbox("Craque da Choppe's League ⭐", jogadores_para_voto, placeholder="Selecione")
-                pereba = st.selectbox("Pereba da Choppe's League 🥴", jogadores_para_voto, placeholder="Selecione")
+                craque = st.selectbox("⭐ Craque da rodada", jogadores_para_voto, placeholder="Selecione")
+                pereba = st.selectbox("🥴 Pereba da rodada", jogadores_para_voto, placeholder="Selecione")
+                goleiro = st.selectbox("🧤 Melhor goleiro", jogadores_para_voto, placeholder="Selecione")
                 submit = st.form_submit_button("Votar")
 
                 if submit:
-                    if craque == pereba:
-                        st.error("O craque e o pereba não podem ser a mesma pessoa.")
+                    if len({craque, pereba, goleiro}) < 3:
+                        st.error("Os três votos devem ser para jogadores diferentes.")
                     else:
                         novo_voto = pd.DataFrame([{
                             "Votante": votante,
                             "Craque": craque,
-                            "Pereba": pereba
+                            "Pereba": pereba,
+                            "Goleiro": goleiro
                         }])
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
                         df_votos.to_csv(FILE_VOTOS, index=False)
@@ -821,6 +829,7 @@ else:
 
             st.markdown(gerar_html_podio(df_votos["Craque"], "Craque da Choppe's League (Top 3)", "🏆"), unsafe_allow_html=True)
             st.markdown(gerar_html_podio(df_votos["Pereba"], "Pereba da Choppe's League (Top 3)", "🐢"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
 
 
 
