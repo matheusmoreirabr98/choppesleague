@@ -478,7 +478,7 @@ else:
                 flex-wrap: wrap;
             ">
             <div style="text-align: right; min-width: 50px;">
-                <p style="font-size: 20px;">
+                <p style="font-size: 40px;">
                     ✅ - {borussia_vitorias}<br>
                     ⚽ - {borussia_gols}
                 </p>
