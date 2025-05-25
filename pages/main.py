@@ -519,7 +519,7 @@ else:
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                 </div>
             """
-            return ""
+        return ""
 
     def tela_principal(partidas, jogadores):
         # Título e subtítulo centralizados
@@ -534,7 +534,7 @@ else:
         # Container flexível com os escudos e o "X"
         st.markdown(f"""
             <div style="
-                display: flexx;
+                display: flex;
                 justify-content: center;
                 align-items: center;
                 gap: 40px;
