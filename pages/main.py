@@ -190,7 +190,7 @@ else:
 
     # --- SIDEBAR --- (imagem e nome apenas)
     with st.sidebar:
-        st.image("./imagens/logo.png", use_container_width=True)
+        st.image("./imagens/logo.png<br>", use_container_width=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
 
     if st.session_state.tipo_usuario == "admin":
