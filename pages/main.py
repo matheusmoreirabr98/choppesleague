@@ -544,14 +544,19 @@ else:
             if os.path.exists("./imagens/inter.png"):
                 img = Image.open("./imagens/inter.png")
                 img = img.resize((70, 70))
-                st.image(img, caption="Inter", use_container_width=False)
 
-        st.header("Resumo das Partidas")
-        st.write(f"Total de partidas registradas: {len(partidas)}")
+                # Converter imagem para base64
+                buffer = BytesIO()
+                img.save(buffer, format="PNG")
+                img_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-        if not partidas.empty:
-            st.write("Última partida registrada:")
-            st.write(partidas.tail(1))
+                # Exibir imagem centralizada com legenda
+                st.markdown(f"""
+                    <div style='text-align: center;'>
+                        <img src='data:image/png;base64,{img_base64}' width='70'>
+                        <p style='margin-top: 0.5rem;'>Borussia</p>
+                    </div>
+                """, unsafe_allow_html=True)
 
 
 
