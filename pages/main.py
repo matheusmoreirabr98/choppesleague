@@ -358,7 +358,7 @@ else:
 
     # Exibe as páginas conforme tipo
     if pag == "🏠 Tela Principal":
-        tela_principal()
+        tela_principal(partidas, jogadores)
     elif pag == "📊 Registrar Partida" and st.session_state.tipo_usuario == "admin":
         partidas = registrar_partidas(partidas)
     elif pag == "👟 Estatísticas dos Jogadores":
