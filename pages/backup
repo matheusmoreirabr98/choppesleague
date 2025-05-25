@@ -190,7 +190,8 @@ else:
 
     # --- SIDEBAR --- (imagem e nome apenas)
     with st.sidebar:
-        st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
+        st.image("./imagens/logo.png", use_container_width=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
 
     if st.session_state.tipo_usuario == "admin":
@@ -983,7 +984,7 @@ else:
 
     # Tela das Regras
     def tela_regras():
-        st.markdown("<h1 style='font-size:23px;'>📜 Regras Oficiais – Chopp's League</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='font-size:23px;'>🛑 Regras Oficiais</h1>", unsafe_allow_html=True)
         st.markdown("---")
         def subtitulo(txt):
             st.markdown(f'<h3 style="font-size:20px; margin-top: 1em;">{txt}</h3>', unsafe_allow_html=True)
@@ -1055,8 +1056,9 @@ else:
         subtitulo("⭐ 10. Avaliação Pós-Jogo: Péreba e Craque")
         st.markdown("""
         - Após cada partida, será feita uma votação divertida para eleger:
-            - **Péreba**: jogador com a pior performance da rodada.
-            - **Craque**: jogador com a melhor performance.
+            - **⭐ Craque**: jogador com a melhor performance.
+            - **🐢 Péreba**: jogador com a pior performance da rodada.
+            - **🧤 Paredão:** goleiro com a melhor atuação defensiva da rodada.
         - A votação é **exclusiva para quem confirmou presença e jogou na partida do dia**.
         - Somente jogadores presentes poderão votar.
         - A finalidade é **uma brincadeira para animar o grupo e fortalecer o espírito da Choppe's League**.
