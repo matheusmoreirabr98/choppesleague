@@ -481,7 +481,8 @@ else:
                 {borussia_vitorias}
                 {borussia_gols}
 
-            <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+            <div>
+            {empates}
             </div>
 
                 {inter_vitorias}</p>
