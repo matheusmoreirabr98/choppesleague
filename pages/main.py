@@ -467,6 +467,20 @@ else:
             return html
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
+
+
+    def tela_principal(partidas, jogadores):
+        st.title("Tela Principal")
+        st.write("📋 Partidas:")
+        st.write(partidas)
+        st.write("👥 Jogadores:")
+        st.write(jogadores)
+
+    # Simulando dados para teste:
+    partidas = ["Partida 1", "Partida 2"]
+    jogadores = ["Jogador A", "Jogador B"]
+
+
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
         st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
