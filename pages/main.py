@@ -190,41 +190,68 @@ else:
 
 
     # --- SIDEBAR ---
-    with st.sidebar:
-        st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
-        st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
+    # Determina as opções de página com base no tipo de usuário
+    if st.session_state.tipo_usuario == "admin":
+        opcoes = [
+            "🏠 Tela Principal",
+            "📊 Registrar Partida",
+            "👟 Estatísticas dos Jogadores",
+            "🎲 Sorteio de Times",
+            "✅ Confirmar Presença/Ausência",
+            "🏅 Avaliação Pós-Jogo",
+            "📸 Galeria de Momentos",
+            "💬 Fórum",
+            "📣 Comunicado à Gestão",
+            "📜 Regras Choppe's League"
+        ]
+    else:
+        opcoes = [
+            "🏠 Tela Principal",
+            "👟 Estatísticas dos Jogadores",
+            "✅ Confirmar Presença/Ausência",
+            "🏅 Avaliação Pós-Jogo",
+            "📸 Galeria de Momentos",
+            "💬 Fórum",
+            "📣 Comunicado à Gestão",
+            "📜 Regras Choppe's League"
+        ]
 
-        st.markdown("---")
-
-        if st.session_state.tipo_usuario == "admin":
-            opcoes = [
-                "🏠 Tela Principal",
-                "📊 Registrar Partida",
-                "👟 Estatísticas dos Jogadores",
-                "🎲 Sorteio de Times",
-                "✅ Confirmar Presença/Ausência",
-                "🏅 Avaliação Pós-Jogo",
-                "📸 Galeria de Momentos",
-                "💬 Fórum",
-                "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League"
-            ]
-        else:
-            opcoes = [
-                "🏠 Tela Principal",
-                "👟 Estatísticas dos Jogadores",
-                "✅ Confirmar Presença/Ausência",
-                "🏅 Avaliação Pós-Jogo",
-                "📸 Galeria de Momentos",
-                "💬 Fórum",
-                "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League"
-            ]
-
-        pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
+    # Cabeçalho com selectbox de navegação no topo da tela
+    col1, col2 = st.columns([1, 3])
+    with col1:
+        st.image("./imagens/logo.png", width=80)
+    with col2:
+        st.markdown(f"<h5 style='margin-bottom: 0;'>👤 Jogador: <b>{st.session_state.nome}</b></h5>", unsafe_allow_html=True)
+        pagina_escolhida = st.selectbox("Navegar para:", opcoes, index=opcoes.index(st.session_state.pagina_atual), key="menu_topo")
         st.session_state.pagina_atual = pagina_escolhida
 
-        st.markdown("---")
+    # Sidebar apenas com logout e música
+    with st.sidebar:
+        st.markdown("### ⚙️ Ações")
+        
+        if "confirmar_logout" not in st.session_state:
+            st.session_state.confirmar_logout = False
+
+        if not st.session_state.confirmar_logout:
+            if st.button("🚪 Logout", key="botao_logout"):
+                st.session_state.confirmar_logout = True
+        else:
+            st.warning("Tem certeza que deseja sair?")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("❌ Cancelar"):
+                    st.session_state.confirmar_logout = False
+            with col2:
+                if st.button("✅ Confirmar"):
+                    usuarios = st.session_state.get("usuarios", {})
+                    st.session_state.clear()
+                    st.session_state.usuario_logado = False
+                    st.session_state.usuarios = usuarios
+                    st.session_state.pagina_atual = "login"
+                    st.rerun()
+
+        tocar_musica_sidebar()  # música permanece na sidebar
+
         
 
     # --- Confirmação de logout ---
