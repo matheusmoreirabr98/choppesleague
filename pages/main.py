@@ -440,7 +440,7 @@ else:
     def tela_principal(partidas, jogadores):
         st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
-        
+
         borussia_gols = 18
         borussia_vitorias = 7
         inter_gols = 21
@@ -475,11 +475,11 @@ else:
                 gap: 100px;
                 flex-wrap: wrap;
             ">
-            <div style="text-align: left;">
+            <div style="text-align: center;">
                 <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {borussia_vitorias}</p>
                 <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {borussia_gols}</p>
             </div>
-                <div style="text-align: right;">
+                <div style="text-align: center;">
                     <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {inter_vitorias}</p>
                     <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {inter_gols}</p>
                 </div>
