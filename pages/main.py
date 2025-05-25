@@ -185,16 +185,16 @@ def tela_login():
             if st.session_state.modo_recuperacao:
                 st.markdown("<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>", unsafe_allow_html=True)
 
-                with st.form("form_esqueci"):
-                    email = st.text_input("E-mail cadastrado", key="rec_email_final")
-                    
-                    # Mostrar a dica da palavra-chave se o e-mail for válido
-                    dica_exibida = ""
-                    usuarios = st.session_state.usuarios
-                    if email in usuarios and usuarios[email].get("dica_palavra_chave"):
-                        dica_exibida = f"💡 Dica: {usuarios[email]['dica_palavra_chave']}"
-                        st.info(dica_exibida)
+                # Entrada do e-mail FORA do formulário para permitir reatividade
+                email = st.text_input("E-mail cadastrado", key="rec_email_final")
 
+                # Mostrar a dica da palavra-chave se o e-mail for válido
+                usuarios = st.session_state.usuarios
+                if email in usuarios and usuarios[email].get("dica_palavra_chave"):
+                    st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
+
+                # Formulário com o restante dos campos
+                with st.form("form_esqueci"):
                     palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
                     nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
                     confirmar_nova_senha = st.text_input("Confirme a nova senha", type="password", key="conf_nova_senha_final")
