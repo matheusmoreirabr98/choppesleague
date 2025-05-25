@@ -760,7 +760,7 @@ else:
             "Lula", "Juninho", "Jesus", "Gabriel", "Arthur"
         ])
 
-        st.title("🏅 Avaliação Pós-Jogo")
+        st.markdown("<h4 style='font-weight: bold;'>🏅 Avaliação Pós-Jogo</h4>", unsafe_allow_html=True)
 
         votante = st.session_state.get("nome", "usuário")
         jogadores_para_voto = [j for j in jogadores_presentes if j != votante]
