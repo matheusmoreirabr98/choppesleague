@@ -1064,47 +1064,47 @@ else:
 
 
 
-    # Inicialização de sessão
-    if "pagina_atual" not in st.session_state:
-        if "presencas_confirmadas" not in st.session_state:
-            st.session_state.presencas_confirmadas = {}
-        st.session_state.pagina_atual = "🏠 Tela Principal"
+        # Inicialização de sessão
+        if "pagina_atual" not in st.session_state:
+            if "presencas_confirmadas" not in st.session_state:
+                st.session_state.presencas_confirmadas = {}
+            st.session_state.pagina_atual = "🏠 Tela Principal"
 
-    if "nome" not in st.session_state:
-        st.session_state.nome = "usuário"
+        if "nome" not in st.session_state:
+            st.session_state.nome = "usuário"
 
-    # Dados fictícios para partidas
-    if "partidas" not in st.session_state:
-        st.session_state.partidas = pd.DataFrame(columns=[
-            "Data", "Número da Partida",
-            "Placar Borussia", "Gols Borussia", "Assistências Borussia",
-            "Placar Inter", "Gols Inter", "Assistências Inter"
-        ])
+        # Dados fictícios para partidas
+        if "partidas" not in st.session_state:
+            st.session_state.partidas = pd.DataFrame(columns=[
+                "Data", "Número da Partida",
+                "Placar Borussia", "Gols Borussia", "Assistências Borussia",
+                "Placar Inter", "Gols Inter", "Assistências Inter"
+            ])
 
-    partidas = st.session_state.partidas
-
-
+        partidas = st.session_state.partidas
 
 
 
-    # Roteador de páginas
-    if st.session_state.pagina_atual == "🏠 Tela Principal":
+
+
+        # Roteador de páginas
+        if st.session_state.pagina_atual == "🏠 Tela Principal":
             tela_principal(partidas, jogadores)
-    elif st.session_state.pagina_atual == "📊 Registrar Partida":
-        partidas = registrar_partidas()
-    elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
-        jogadores = tela_jogadores()
-    elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
-        tela_sorteio()
-    elif st.session_state.pagina_atual == "✅ Confirmar Presença/Ausência":
-        tela_presenca_login()
-    elif st.session_state.pagina_atual == "🏅 Avaliação Pós-Jogo":
-        tela_avaliacao_pos_jogo()
-    elif st.session_state.pagina_atual == "📸 Galeria de Momentos":
-        tela_galeria_momentos()
-    elif st.session_state.pagina_atual == "💬 Fórum":
-        tela_forum()
-    elif st.session_state.pagina_atual == "📣 Comunicado à Gestão":
-        tela_comunicado()
-    elif st.session_state.pagina_atual == "📜 Regras Choppe's League":
-        tela_regras()
+        elif st.session_state.pagina_atual == "📊 Registrar Partida":
+            partidas = registrar_partidas()
+        elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
+            jogadores = tela_jogadores()
+        elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
+            tela_sorteio()
+        elif st.session_state.pagina_atual == "✅ Confirmar Presença/Ausência":
+            tela_presenca_login()
+        elif st.session_state.pagina_atual == "🏅 Avaliação Pós-Jogo":
+            tela_avaliacao_pos_jogo()
+        elif st.session_state.pagina_atual == "📸 Galeria de Momentos":
+            tela_galeria_momentos()
+        elif st.session_state.pagina_atual == "💬 Fórum":
+            tela_forum()
+        elif st.session_state.pagina_atual == "📣 Comunicado à Gestão":
+            tela_comunicado()
+        elif st.session_state.pagina_atual == "📜 Regras Choppe's League":
+            tela_regras()
