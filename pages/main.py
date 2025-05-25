@@ -515,30 +515,45 @@ else:
         # Subtítulo centralizado
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        # Três colunas: escudo - X - escudo
-        col1, col2, col3 = st.columns([1, 0.3, 1])  # ajuste da proporção do "X" central
+      # Tela Principal
+    def imagem_base64(path, legenda):
+        if os.path.exists(path):
+            img = Image.open(path)
+            img = img.resize((50, 50))
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"""
+                <div style="text-align: center; min-width: 80px;">
+                    <img src="data:image/png;base64,{img_base64}" width="70">
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                </div>
+            """
+        return ""
 
-        with col1:
-            if os.path.exists("./imagens/borussia.png"):
-                img = Image.open("./imagens/borussia.png")
-                img = img.resize((70, 70))
-                st.image(img, caption="Borussia", use_column_width=False)
+    def tela_principal(partidas, jogadores):
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
+        st.markdown("---")
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        with col2:
-            st.markdown("<h1 style='text-align: center;'>X</h1>", unsafe_allow_html=True)
+        # Substitua pelos caminhos reais
+        escudo_borussia = imagem_base64("./imagens/borussia.png")
+        escudo_inter = imagem_base64("./imagens/inter.png")
 
-        with col3:
-            if os.path.exists("./imagens/inter.png"):
-                img = Image.open("./imagens/inter.png")
-                img = img.resize((70, 70))
-                st.image(img, caption="Inter", use_column_width=False)
-
-        st.header("Resumo das Partidas")
-        st.write(f"Total de partidas registradas: {len(partidas)}")
-
-        if not partidas.empty:
-            st.write("Última partida registrada:")
-            st.write(partidas.tail(1))
+        # Renderizar tudo como HTML com unsafe_allow_html
+        st.markdown(f"""
+            <div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 40px;
+                flex-wrap: nowrap;
+            ">
+                {escudo_borussia}
+                <div style="font-size: 40px; font-weight: bold;">X</div>
+                {escudo_inter}
+            </div>
+        """, unsafe_allow_html=True)
 
 
 
