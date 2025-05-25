@@ -479,8 +479,8 @@ else:
                 flex-wrap: wrap;
             ">
             <div style="text-align: center;">
-                <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {borussia_vitorias}</p>
-                <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {borussia_gols}</p>
+                <p style="font-size: 10px;"><strong>✅</strong> {borussia_vitorias}</p>
+                <p style="font-size: 10px;"><strong>⚽</strong> {borussia_gols}</p>
             
             </div>
 
@@ -490,8 +490,8 @@ else:
 
             </div>
                 <div style="text-align: center;">
-                    <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {inter_vitorias}</p>
-                    <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {inter_gols}</p>
+                    <p style="font-size: 10px;"><strong>✅</strong> {inter_vitorias}</p>
+                    <p style="font-size: 10px;"><strong>⚽</strong> {inter_gols}</p>
                 </div>
             </div>
         """, unsafe_allow_html=True)
