@@ -476,7 +476,7 @@ else:
                 gap: 50px;
                 flex-wrap: nowrap;
             ">
-                    {borussia_vitorias}</p>
+                    {borussia_vitorias}<br></p>
                     {borussia_gols}
             <div>
                     {empates}
