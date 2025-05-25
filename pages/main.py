@@ -469,6 +469,13 @@ else:
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
+        print("==== Tela Principal ====")
+        print("\n📋 Partidas:")
+        for partida in partidas:
+            print(f"- {partida}")
+        print("\n👥 Jogadores:")
+        for jogador in jogadores:
+            print(f"- {jogador}")
         st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>Placar Geral</h3>", unsafe_allow_html=True)
