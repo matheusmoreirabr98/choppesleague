@@ -476,10 +476,6 @@ else:
         st.write("👥 Jogadores:")
         st.write(jogadores)
 
-    # Simulando dados para teste:
-    partidas = ["Partida 1", "Partida 2"]
-    jogadores = ["Jogador A", "Jogador B"]
-
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
