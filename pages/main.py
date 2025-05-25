@@ -445,6 +445,7 @@ else:
         borussia_vitorias = 7
         inter_gols = 21
         inter_vitorias = 9
+        empates = 2
 
 
         # Caminhos das imagens na pasta 'imagens'
@@ -461,8 +462,10 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
+
                 <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
                 </div>
+
                     {escudo_inter}
                 </div>
             """, unsafe_allow_html=True)
@@ -478,6 +481,13 @@ else:
             <div style="text-align: center;">
                 <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {borussia_vitorias}</p>
                 <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {borussia_gols}</p>
+            
+            </div>
+
+            <div style="text-align: center;">
+                    <p style="font-size: 10px;"><strong> Empates:</strong> {empates}</p>
+            </div>
+
             </div>
                 <div style="text-align: center;">
                     <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {inter_vitorias}</p>
