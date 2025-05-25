@@ -512,7 +512,7 @@ else:
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-            return f"""
+            html = f"""
                 <div style="text-align: center; min-width: 200px;">
                     <img src="data:image/png;base64,{img_base64}" width="200">
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
@@ -520,6 +520,7 @@ else:
                     <p><strong>✅ Vitórias:</strong> {vitorias}</p>
                 </div>
             """
+            return html
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
@@ -540,23 +541,18 @@ else:
         escudo_inter = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias)
 
         # Layout principal
-        st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 50px;
-                flex-wrap: nowrap;
-            ">
+        html_final = f"""
+            <div style="display: flex; justify-content: center; align-items: center; gap: 50px; flex-wrap: nowrap;">
                 {escudo_borussia}
-            <div style="text-align: center; min-width: 120px;">
-            <div style="font-size: 60px; font-weight: bold;">⚔️
-            </div>
-                <p style="margin-top: -10px;"><strong>🤝 Empates:</strong> {empates}</p>
-            </div>
+                <div style="text-align: center; min-width: 120px;">
+                    <div style="font-size: 60px; font-weight: bold;">⚔️</div>
+                    <p style="margin-top: -10px;"><strong>🤝 Empates:</strong> {empates}</p>
+                </div>
                 {escudo_inter}
             </div>
-        """, unsafe_allow_html=True)
+        """
+
+        st.markdown(html_final, unsafe_allow_html=True)
 
         # Lista geral de confirmados
         confirmados = [
