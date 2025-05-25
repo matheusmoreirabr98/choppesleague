@@ -205,7 +205,7 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League"
+            "📜 Regras"
         ]
     else:
         opcoes = [
@@ -216,7 +216,7 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League"
+            "📜 Regras"
         ]
 
     pagina_escolhida = st.selectbox(
@@ -327,7 +327,7 @@ else:
         tela_forum()
     elif pag == "📣 Comunicado à Gestão":
         tela_comunicado()
-    elif pag == "📜 Regras Choppe's League":
+    elif pag == "📜 Regras":
         tela_regras()
     elif pag == "🚪 Sair":
         for k in list(st.session_state.keys()):
@@ -1109,5 +1109,5 @@ else:
         tela_forum()
     elif st.session_state.pagina_atual == "📣 Comunicado à Gestão":
         tela_comunicado()
-    elif st.session_state.pagina_atual == "📜 Regras Choppe's League":
+    elif st.session_state.pagina_atual == "📜 Regras":
         tela_regras()
