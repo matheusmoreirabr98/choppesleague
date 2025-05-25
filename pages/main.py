@@ -541,7 +541,6 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
-                    <div style="font-size: 40px; font-weight: bold;">X</div>
                     {escudo_inter}
                 </div>
             """, unsafe_allow_html=True)
