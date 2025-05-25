@@ -479,8 +479,8 @@ else:
             ">
             <div style="text-align: center; min-width: 50px;">
                 <p style="font-size: 14px;">
-                    ✅ Vitórias: {borussia_vitorias}<br>
-                    ⚽ Gols: {borussia_gols}
+                    ✅ - {borussia_vitorias}<br>
+                    ⚽ - {borussia_gols}
                 </p>
             </div>
 
@@ -492,8 +492,8 @@ else:
 
             <div style="text-align: center; min-width: 50px;">
                 <p style="font-size: 14px;">
-                    ✅ Vitórias: {inter_vitorias}<br>
-                    ⚽ Gols: {inter_gols}
+                    ✅ - {inter_vitorias}<br>
+                    ⚽ - {inter_gols}
                 </p>
             </div>
         """, unsafe_allow_html=True)
