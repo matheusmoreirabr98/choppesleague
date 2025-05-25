@@ -537,8 +537,8 @@ else:
         empates = 2
 
         # Gera os HTMLs com imagem embutida
-        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias)
-        escudo_inter = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias)
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia", borussia_gols, borussia_vitorias)
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter", inter_gols, inter_vitorias)
 
         # Layout com os escudos + X + empates
         html_final = f"""
