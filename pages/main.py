@@ -496,7 +496,6 @@ else:
                     ⚽ Gols: {inter_gols}
                 </p>
             </div>
-        </div>
         """, unsafe_allow_html=True)
 
   
