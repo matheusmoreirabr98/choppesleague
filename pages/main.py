@@ -508,9 +508,9 @@ else:
 
         with col1:
             if os.path.exists("./imagens/borussia.png"):
-                st.image("./imagens/borussia.png", caption="Borussia", use_container_width=True)
-            else:
-                st.warning("Imagem do Borussia não encontrada.")
+                img = Image.open("./imagens/borussia.png")
+                img = img.resize((200, 200))  # largura x altura
+                st.image(img, caption="Borussia")
         
         with col2:
             if os.path.exists("./imagens/inter.png"):
