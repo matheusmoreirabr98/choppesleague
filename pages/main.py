@@ -482,7 +482,7 @@ else:
                     {empates}
             </div>
                     {inter_vitorias}</p>
-                    {inter_gols}</p>
+                    {inter_gols}
             </div>
         """, unsafe_allow_html=True)
 
