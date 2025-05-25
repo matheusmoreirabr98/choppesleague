@@ -839,7 +839,7 @@ else:
             else:
                 email = st.session_state.get("email")
                 nome = st.session_state.get("nome", "Jogador")
-                posicao = st.session_state.usuarios[email]["posicao"]
+                posicao = st.session_state["usuarios"][email]["posicao"]
                 data_envio = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                 data_partida = horario_partida.strftime("%d/%m/%Y")
 
