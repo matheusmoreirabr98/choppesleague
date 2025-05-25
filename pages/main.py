@@ -514,7 +514,7 @@ else:
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
             return f"""
-                <div style="text-align: center;">
+                <div style="text-align: center; min-width: 80px;">
                     <img src="data:image/png;base64,{img_base64}" width="70">
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                 </div>
@@ -522,16 +522,15 @@ else:
         return ""
 
     def tela_principal(partidas, jogadores):
-        # Título e subtítulo centralizados
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
         st.markdown("---")
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        # Gerar HTML com as imagens convertidas
+        # Substitua pelos caminhos reais
         escudo_borussia = imagem_base64("./imagens/borussia.png", "Borussia")
-        escudo_inter = imagem_base64("./imagens/inter.png", "Inter")
+        escudo_inter = imagem_base64("/mnt/data/07a4d885-8415-470a-a0b8-fd4a343bb68b.png", "Inter")
 
-        # Container flexível com os escudos e o "X"
+        # Renderizar tudo como HTML com unsafe_allow_html
         st.markdown(f"""
             <div style="
                 display: flex;
