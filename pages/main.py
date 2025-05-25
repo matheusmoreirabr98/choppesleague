@@ -537,6 +537,12 @@ else:
         st.markdown("---")
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>🏆 Vitórias</h3>", unsafe_allow_html=True)
 
+        borussia_gols = 18
+        borussia_vitorias = 7
+        inter_gols = 21
+        inter_vitorias = 9
+
+
         # Caminhos das imagens na pasta 'imagens'
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
@@ -556,6 +562,25 @@ else:
                     {escudo_inter}
                 </div>
             """, unsafe_allow_html=True)
+        
+        st.markdown(f"""
+            <div style="
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 100px;
+                flex-wrap: wrap;
+            ">
+                <div style="text-align: center;">
+                    <p style="font-size: 18px;"><strong>✅ Vitórias Borussia:</strong> {borussia_vitorias}</p>
+                    <p style="font-size: 18px;"><strong>⚽ Gols Borussia:</strong> {borussia_gols}</p>
+                </div>
+                <div style="text-align: center;">
+                    <p style="font-size: 18px;"><strong>✅ Vitórias Inter:</strong> {inter_vitorias}</p>
+                    <p style="font-size: 18px;"><strong>⚽ Gols Inter:</strong> {inter_gols}</p>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
 
 
 
