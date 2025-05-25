@@ -502,27 +502,35 @@ else:
 
 
 
-        # Mostra confirmados da semana
-        confirmados = [
-            dados["nome"]
-            for dados in st.session_state.get("presencas_confirmadas", {}).values()
-            if dados.get("presenca") == "sim"
-        ]
+        # Mostrar presença e ausência de todos os jogadores
+        presencas = st.session_state.get("presencas_confirmadas", {})
+        todos_nomes = [dados["nome"] for dados in st.session_state.usuarios.values()]
 
-        if confirmados:
-            lista_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
-            st.markdown(f"""
-                <div style="text-align: center; margin-top: 2rem;">
-                    <details style="margin: 0 auto; max-width: 300px; text-align: left;">
-                        <summary><strong>📋 Confirmados da Semana</strong></summary>
-                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem;">
-                            {lista_html}
-                        </ul>
-                    </details>
-                </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("<p style='text-align:center;'>Nenhum jogador confirmou presença ainda.</p>", unsafe_allow_html=True)
+        linhas_html = ""
+        confirmados = 0
+
+        for nome in sorted(todos_nomes):
+            status = "❓"
+            for email, dados in presencas.items():
+                if dados["nome"] == nome:
+                    if dados.get("presenca") == "sim":
+                        status = "✅"
+                        confirmados += 1
+                    elif dados.get("presenca") == "nao":
+                        status = "❌"
+                    break
+            linhas_html += f"<li>{status} {nome}</li>"
+
+        st.markdown(f"""
+            <div style="text-align: center; margin-top: 2rem;">
+                <details style="margin: 0 auto; max-width: 400px; text-align: left;">
+                    <summary><strong>📋 Presença da Semana</strong> — Confirmados: {confirmados}</summary>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem; line-height: 1.6;">
+                        {linhas_html}
+                    </ul>
+                </details>
+            </div>
+        """, unsafe_allow_html=True)
 
 
 

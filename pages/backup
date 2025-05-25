@@ -77,6 +77,7 @@ def tela_login():
                         st.session_state.usuario_logado = True
                         st.session_state.nome = usuarios[email]["nome"]
                         st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
+                        st.session_state.email = email  # <--- ESSENCIAL!
                         st.session_state.pagina_atual = "🏠 Tela Principal"
                         st.rerun()
                     else:
@@ -178,6 +179,9 @@ if not st.session_state.usuario_logado:
     tela_login()
 else:
 
+    if "presencas_confirmadas" not in st.session_state:
+        st.session_state.presencas_confirmadas = {}
+
 
     # --- SIDEBAR ---
     with st.sidebar:
@@ -250,8 +254,6 @@ else:
                     st.session_state.usuarios = usuarios
                     st.session_state.pagina_atual = "login"
                     confirmar_clicado = True
-
-    st.markdown("---")
 
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
@@ -498,7 +500,30 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
-  
+
+
+        # Mostra confirmados da semana
+        confirmados = [
+            dados["nome"]
+            for dados in st.session_state.get("presencas_confirmadas", {}).values()
+            if dados.get("presenca") == "sim"
+        ]
+
+        if confirmados:
+            lista_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
+            st.markdown(f"""
+                <div style="text-align: center; margin-top: 2rem;">
+                    <details style="margin: 0 auto; max-width: 300px; text-align: left;">
+                        <summary><strong>📋 Confirmados da Semana</strong></summary>
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem;">
+                            {lista_html}
+                        </ul>
+                    </details>
+                </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("<p style='text-align:center;'>Nenhum jogador confirmou presença ainda.</p>", unsafe_allow_html=True)
+
 
 
 
@@ -688,12 +713,28 @@ else:
             if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
                 st.warning("Descreva o motivo da ausência.")
             else:
+                email = st.session_state.get("email")
+                nome = st.session_state.get("nome", "Jogador")
+
                 if presenca == "✅ Sim":
                     st.session_state["presenca_confirmada"] = "sim"
+                    if email:
+                        st.session_state.presencas_confirmadas[email] = {
+                            "nome": nome,
+                            "presenca": "sim"
+                        }
                 else:
                     st.session_state["presenca_confirmada"] = "nao"
                     st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
+                    if email:
+                        st.session_state.presencas_confirmadas[email] = {
+                            "nome": nome,
+                            "presenca": "nao",
+                            "motivo": st.session_state["motivo"]
+                        }
+
                 st.rerun()
+
 
 
 
