@@ -519,13 +519,13 @@ else:
     def imagem_base64(path, legenda):
         if os.path.exists(path):
             img = Image.open(path)
-            img = img.resize((100, 100))
+            img = img.resize((200, 200))
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
             return f"""
                 <div style="text-align: center; min-width: 20px;">
-                    <img src="data:image/png;base64,{img_base64}" width="200">
+                    <img src="data:image/png;base64,{img_base64}" width="100">
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                 </div>
             """
