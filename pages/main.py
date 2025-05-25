@@ -519,34 +519,32 @@ else:
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                 </div>
             """
-        return f"<div style='color:red;'>❌ Imagem não encontrada: {path}</div>"
+        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
-    # Função principal da tela
+    # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
         st.markdown("---")
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        # Obter blocos HTML das imagens
+        # Caminhos das imagens na pasta 'imagens'
         escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/inter.png", "Inter")
 
-        # Combinar e exibir com segurança HTML
+        # Container com as imagens e o "X"
         st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 40px;
-                flex-wrap: nowrap;
-            ">
-                {escudo_borussia}
-                <div style="font-size: 40px; font-weight: bold;">X</div>
-                {escudo_inter}
-            </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown(conteudo_html, unsafe_allow_html=True)
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 40px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                    <div style="font-size: 40px; font-weight: bold;">X</div>
+                    {escudo_inter}
+                </div>
+            """, unsafe_allow_html=True)
 
 
 
