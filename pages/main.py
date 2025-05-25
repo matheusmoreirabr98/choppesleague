@@ -504,64 +504,46 @@ else:
 
 
     # Tela Principal
-    # 🔁 Função que gera o HTML com a imagem em base64 e outras infos
-    def imagem_base64(path, legenda, gols, vitorias, confirmados):
+    def imagem_base64(path, legenda):
         if os.path.exists(path):
             img = Image.open(path)
             img = img.resize((200, 200))
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
-            confirmados_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
-            
-            html = f"""
-                <div style="text-align: center;">
+            return f"""
+                <div style="text-align: center; min-width: 20px;">
                     <img src="data:image/png;base64,{img_base64}" width="200">
-                    <p style="font-weight: bold;">Imagem exibida corretamente ✅</p>
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                 </div>
             """
-            return html
+        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
-        # Exibindo a imagem corretamente
-        st.markdown(imagem_base64("imagens/borussia.png"), unsafe_allow_html=True)
-
-    # 🖥️ Tela principal que mostra os escudos e estatísticas
+    # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
         st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
-        # Dados fictícios
-        borussia_gols = 15
-        borussia_vitorias = 5
-        inter_gols = 18
-        inter_vitorias = 6
-        empates = 2
-        confirmados_borussia = ["João", "Carlos", "Rafael"]
-        confirmados_inter = ["Mateus", "Diego", "Lucas"]
+        # Caminhos das imagens na pasta 'imagens'
+        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/inter.png", "Inter")
 
-        # Gera os HTMLs dos escudos
-        escudo_borussia_html = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias, confirmados_borussia)
-        escudo_inter_html = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias, confirmados_inter)
-
-        # Renderiza os HTMLs com o markdown
+        # Container com as imagens e o "X"
         st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: flex-start;
-                gap: 60px;
-                flex-wrap: wrap;
-            ">
-                {escudo_borussia_html}
-            <div style="text-align: center; font-size: 60px; font-weight: bold; line-height: 1;">
-                ⚔️
-                <p style="font-size: 16px; margin-top: 0.5rem;"><strong>🤝 Empates:</strong> {empates}</p>
-            </div>
-                {escudo_inter_html}
-            </div>
-        """, unsafe_allow_html=True)
-
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 50px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                </div>
+                    {escudo_inter}
+                </div>
+            """, unsafe_allow_html=True)
 
 
 
