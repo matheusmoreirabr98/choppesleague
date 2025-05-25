@@ -20,7 +20,7 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
 
-EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
+EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
 
 
 
