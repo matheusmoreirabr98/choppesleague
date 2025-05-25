@@ -14,6 +14,12 @@ import streamlit.components.v1 as components
 
 
 
+EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
+
+
+
+
+
 
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
@@ -161,7 +167,7 @@ def tela_login():
                     elif len(re.sub(r'\D', '', telefone)) != 11:
                         st.warning("Telefone deve conter 11 dígitos.")
                     else:
-                        tipo = "admin" if email == "admin@teste.com" else "usuario"
+                        tipo = "admin" if email in EMAILS_ADMIN else "usuario"
                         st.session_state.usuarios[email] = {
                             "nome": nome,
                             "posicao": posicao,
@@ -345,12 +351,6 @@ else:
                 st.sidebar.warning("🔇 Música não encontrada.")
 
         tocar_musica_sidebar()
-
-
-
-
-    # Lista de administradores
-    ADMINS = ["teste"]
 
 
 
