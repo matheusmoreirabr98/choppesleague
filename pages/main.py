@@ -760,22 +760,28 @@ else:
 
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
+        from gspread_dataframe import get_as_dataframe, set_with_dataframe
+
         st.markdown("<br>", unsafe_allow_html=True)
         nome = st.session_state.get("nome", "usuário")
+        usuarios = st.session_state.get("usuarios", {})
+        email = st.session_state.get("email", "")
+
+        posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
         agora = datetime.now()
         hoje = agora.weekday()  # segunda = 0 ... domingo = 6
         dias_para_quinta = (3 - hoje) % 7
         proxima_quinta = agora + timedelta(days=dias_para_quinta)
         horario_partida = proxima_quinta.replace(hour=20, minute=0, second=0, microsecond=0)
+        data_formatada = horario_partida.strftime("%d/%m/%Y")
+        data_display = horario_partida.strftime("%d/%m/%Y às %Hh")
 
-        # Exibe a data da próxima partida
-        data_formatada = horario_partida.strftime("%d/%m/%Y às %Hh")
         st.markdown(
-            f"<p style='font-size:18px; font-weight:bold; text-align:center;'>📅 Próxima partida: {data_formatada}</p>",
+            f"<p style='font-size:18px; font-weight:bold; text-align:center;'>📅 Próxima partida: {data_display}</p>",
             unsafe_allow_html=True
         )
-        # Define o prazo de quarta-feira às 22h
+
         dias_para_quarta = (2 - hoje) % 7
         proxima_quarta = agora + timedelta(days=dias_para_quarta)
         prazo_limite = proxima_quarta.replace(hour=22, minute=0, second=0, microsecond=0)
@@ -811,7 +817,6 @@ else:
             return
 
         presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
-
         motivo = ""
         motivo_outros = ""
 
@@ -826,26 +831,27 @@ else:
             if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
                 st.warning("Descreva o motivo da ausência.")
             else:
-                email = st.session_state.get("email")
-                nome = st.session_state.get("nome", "Jogador")
-
-                if presenca == "✅ Sim":
-                    st.session_state["presenca_confirmada"] = "sim"
-                    if email:
-                        st.session_state.presencas_confirmadas[email] = {
-                            "nome": nome,
-                            "presenca": "sim"
-                        }
-                else:
-                    st.session_state["presenca_confirmada"] = "nao"
+                st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
+                if presenca == "❌ Não":
                     st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
-                    if email:
-                        st.session_state.presencas_confirmadas[email] = {
-                            "nome": nome,
-                            "presenca": "nao",
-                            "motivo": st.session_state["motivo"]
-                        }
 
+                # Salva também no Google Sheets
+                gc = autenticar_gsheets()
+                sh = gc.open(NOME_PLANILHA)
+                aba = sh.worksheet("Presenças")
+                df = get_as_dataframe(aba).dropna(how="all")
+
+                nova_linha = {
+                    "Nome": nome,
+                    "Posição": posicao,
+                    "Presença": "Sim" if presenca == "✅ Sim" else "Não",
+                    "Data": data_formatada
+                }
+
+                df = pd.concat([df, pd.DataFrame([nova_linha])], ignore_index=True)
+                set_with_dataframe(aba, df)
+
+                st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
 
 
