@@ -536,25 +536,26 @@ else:
         inter_vitorias = 6
         empates = 2
 
-        # Escudos com dados
+        # Gera os HTMLs com imagem embutida
         escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias)
         escudo_inter = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias)
 
-        # Layout principal
+        # Layout com os escudos + X + empates
         html_final = f"""
-            <div style="display: flex; justify-content: center; align-items: center; gap: 50px; flex-wrap: nowrap;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 50px; flex-wrap: wrap;">
                 {escudo_borussia}
                 <div style="text-align: center; min-width: 120px;">
-                <div style="font-size: 60px; font-weight: bold;">⚔️</div>
+                    <div style="font-size: 60px; font-weight: bold;">⚔️</div>
                     <p style="margin-top: -10px;"><strong>🤝 Empates:</strong> {empates}</p>
                 </div>
                 {escudo_inter}
             </div>
         """
 
+        # ✅ Aqui é onde você garante que o HTML com imagem será interpretado
         st.markdown(html_final, unsafe_allow_html=True)
 
-        # Lista geral de confirmados
+        # Lista de confirmados (sem alteração)
         confirmados = [
             dados["nome"]
             for dados in st.session_state.get("presencas_confirmadas", {}).values()
@@ -575,6 +576,7 @@ else:
             """, unsafe_allow_html=True)
         else:
             st.markdown("<p style='text-align:center;'>Nenhum jogador confirmou presença ainda.</p>", unsafe_allow_html=True)
+
 
 
 
