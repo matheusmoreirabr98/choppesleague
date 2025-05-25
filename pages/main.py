@@ -504,7 +504,7 @@ else:
 
 
     # Tela Principal
-    def imagem_base64(path, legenda):
+    def imagem_base64(path, legenda, gols, vitorias, confirmados):
         if os.path.exists(path):
             img = Image.open(path)
             img = img.resize((200, 200))
@@ -544,8 +544,8 @@ else:
         confirmados_inter = ["Mateus", "Diego", "Lucas"]
 
         # Caminhos das imagens na pasta 'imagens'
-        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/inter.png", "Inter")
+        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias, confirmados_borussia)
+        escudo_inter = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias, confirmados_inter)
 
         # Container com as imagens e o "X"
         st.markdown(f"""
