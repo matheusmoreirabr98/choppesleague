@@ -413,21 +413,6 @@ else:
 
     partidas, jogadores = load_data_safe()
 
-
-
-
-
-    # Tela Principal
-    def tela_principal(partidas, jogadores):
-        # Título centralizado
-        st.markdown("""
-            <div style='text-align: center; font-weight: bold; font-size: 10px;'>
-                Bem-vindo à Choppe's League! 🍻
-            </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("---")
-
       # Tela Principal
     def imagem_base64(path, legenda):
         if os.path.exists(path):
