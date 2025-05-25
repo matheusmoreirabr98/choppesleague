@@ -532,7 +532,7 @@ else:
         escudo_inter = imagem_base64("imagens/inter.png", "Inter")
 
         # Combinar e exibir com segurança HTML
-        conteudo_html = f"""
+        st.markdown(f"""
             <div style="
                 display: flex;
                 justify-content: center;
@@ -541,10 +541,10 @@ else:
                 flex-wrap: nowrap;
             ">
                 {escudo_borussia}
-                <div style="font-size: 40px; font-weight: bold; text-align: center;">X</div>
+                <div style="font-size: 40px; font-weight: bold;">X</div>
                 {escudo_inter}
             </div>
-        """
+        """, unsafe_allow_html=True)
 
         st.markdown(conteudo_html, unsafe_allow_html=True)
 
