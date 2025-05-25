@@ -484,13 +484,13 @@ else:
                 </p>
             </div>
 
-            <div style="text-align: center; min-width: 50px;">
+            <div style="text-align: center; min-width: 100px;">
                 <p style="font-size: 30px;">
                     🤝 - {empates}
                 </p>
             </div>
 
-            <div style="text-align: left; min-width: 50px;">
+            <div style="text-align: left; min-width: 1000px;">
                 <p style="font-size: 30px;">
                     ✅ - {inter_vitorias}<br>
                     ⚽ - {inter_gols}
