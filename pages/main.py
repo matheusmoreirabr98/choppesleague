@@ -77,6 +77,7 @@ def tela_login():
                         st.session_state.usuario_logado = True
                         st.session_state.nome = usuarios[email]["nome"]
                         st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
+                        st.session_state.email = email  # <--- ESSENCIAL!
                         st.session_state.pagina_atual = "🏠 Tela Principal"
                         st.rerun()
                     else:
