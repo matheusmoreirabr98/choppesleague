@@ -531,7 +531,7 @@ else:
             if os.path.exists("./imagens/inter.png"):
                 img = Image.open("./imagens/inter.png")
                 img = img.resize((70, 70))
-                st.image(img, caption="Inter", use_column_width=False)
+                st.image(img, caption="Inter", use_container_width=False)
 
         st.header("Resumo das Partidas")
         st.write(f"Total de partidas registradas: {len(partidas)}")
