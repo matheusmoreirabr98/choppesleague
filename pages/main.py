@@ -477,7 +477,6 @@ else:
                 margin-top: 20px;
                 flex-wrap: wrap;
             ">
-            <!-- Container Borussia -->
             <div style="text-align: left; min-width: 100px;">
                 <p style="font-size: 14px;">
                     ✅ Vitórias: {borussia_vitorias}<br>
@@ -485,14 +484,12 @@ else:
                 </p>
             </div>
 
-            <!-- Container Empates -->
             <div style="text-align: center; min-width: 100px;">
                 <p style="font-size: 14px;">
                     🤝 Empates: {empates}
                 </p>
             </div>
 
-            <!-- Container Inter -->
             <div style="text-align: right; min-width: 100px;">
                 <p style="font-size: 14px;">
                     ✅ Vitórias: {inter_vitorias}<br>
