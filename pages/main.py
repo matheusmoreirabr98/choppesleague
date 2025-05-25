@@ -522,9 +522,19 @@ else:
             if os.path.exists("./imagens/borussia.png"):
                 img = Image.open("./imagens/borussia.png")
                 img = img.resize((70, 70))
-                st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-                st.image(img, caption="Borussia", use_container_width=False)
-                st.markdown("</div>", unsafe_allow_html=True)
+
+                # Converter imagem para base64
+                buffer = BytesIO()
+                img.save(buffer, format="PNG")
+                img_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+                # Exibir imagem centralizada com legenda
+                st.markdown(f"""
+                    <div style='text-align: center;'>
+                        <img src='data:image/png;base64,{img_base64}' width='70'>
+                        <p style='margin-top: 0.5rem;'>Borussia</p>
+                    </div>
+                """, unsafe_allow_html=True)
 
 
         with col2:
