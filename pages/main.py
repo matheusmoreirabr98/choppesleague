@@ -522,16 +522,31 @@ else:
         return ""
 
     # Tela principal com título e escudos lado a lado
+    def imagem_base64(path, legenda):
+        if os.path.exists(path):
+            img = Image.open(path)
+            img = img.resize((50, 50))
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"""
+                <div style="text-align: center; min-width: 80px;">
+                    <img src="data:image/png;base64,{img_base64}" width="70">
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                </div>
+            """
+        return ""
+
     def tela_principal(partidas, jogadores):
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
         st.markdown("---")
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        # Gerar HTML das imagens com legendas
+        # Corrigir: passar legenda corretamente
         escudo_borussia = imagem_base64("./imagens/borussia.png", "Borussia")
         escudo_inter = imagem_base64("./imagens/inter.png", "Inter")
 
-        # Mostrar os escudos com um "X" central entre eles
+        # ✅ Mostrar como HTML renderizado, não como texto
         st.markdown(f"""
             <div style="
                 display: flex;
