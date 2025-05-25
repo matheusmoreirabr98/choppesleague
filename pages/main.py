@@ -504,6 +504,7 @@ else:
 
 
     # Tela Principal
+    # 🔁 Função que gera o HTML com a imagem em base64 e outras infos
     def imagem_base64(path, legenda, gols, vitorias, confirmados):
         if os.path.exists(path):
             img = Image.open(path)
@@ -529,13 +530,13 @@ else:
             """
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
-    # ✅ Tela principal com os escudos lado a lado e "X" no meio
+    # 🖥️ Tela principal que mostra os escudos e estatísticas
     def tela_principal(partidas, jogadores):
         st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
-        # Dados fictícios (substitua por dados reais depois)
+        # Dados fictícios
         borussia_gols = 15
         borussia_vitorias = 5
         inter_gols = 18
@@ -544,10 +545,11 @@ else:
         confirmados_borussia = ["João", "Carlos", "Rafael"]
         confirmados_inter = ["Mateus", "Diego", "Lucas"]
 
-        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias, confirmados_borussia)
-        escudo_inter = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias, confirmados_inter)
+        # Gera os HTMLs dos escudos
+        escudo_borussia_html = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias, confirmados_borussia)
+        escudo_inter_html = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias, confirmados_inter)
 
-        # Container com os escudos, "X" e empates no centro
+        # Renderiza os HTMLs com o markdown
         st.markdown(f"""
             <div style="
                 display: flex;
@@ -556,12 +558,12 @@ else:
                 gap: 60px;
                 flex-wrap: wrap;
             ">
-            {escudo_borussia}
-            <div style="text-align: center; font-size: 60px; font-weight: bold; line-height: 1;">
-                ⚔️
-            <p style="font-size: 16px; margin-top: 0.5rem;"><strong>🤝 Empates:</strong> {empates}</p>
-            </div>
-            {escudo_inter}
+                {escudo_borussia_html}
+                <div style="text-align: center; font-size: 60px; font-weight: bold; line-height: 1;">
+                    ⚔️
+                    <p style="font-size: 16px; margin-top: 0.5rem;"><strong>🤝 Empates:</strong> {empates}</p>
+                </div>
+                {escudo_inter_html}
             </div>
         """, unsafe_allow_html=True)
 
