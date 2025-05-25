@@ -760,7 +760,7 @@ else:
             "Lula", "Juninho", "Jesus", "Gabriel", "Arthur"
         ])
 
-        st.markdown("<h15 style='font-weight: bold;'>🔥Quem brilhou? Vote nos craques e no paredão</h15>", unsafe_allow_html=True)
+        st.markdown("<h15 style='font-weight: bold;'>😎 Tá na hora do veredito!</h15>", unsafe_allow_html=True)
 
         votante = st.session_state.get("nome", "usuário")
         jogadores_para_voto = [j for j in jogadores_presentes if j != votante]
