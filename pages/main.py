@@ -219,13 +219,15 @@ def tela_login():
                 telefone = st.text_input("WhatsApp - Ex: 3199475512", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
                 email = st.text_input("E-mail", key="cad_email", autocomplete="email")
                 senha = st.text_input("Senha", type="password", key="cad_senha")
+                confirmar_senha = st.text_input("Confirme a senha", type="password", key="cad_conf_senha")
                 palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
+                dica_palavra_chave = st.text_input("Dica da palavra-chave", key="cad_dica", help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.")
                 submit = st.form_submit_button("Cadastrar")
 
                 erros = []
 
                 if submit:
-                    if not nome or not posicao or not nascimento or not telefone or not email or not senha:
+                    if not nome or not posicao or not nascimento or not telefone or not email or not senha or not confirmar_senha or not palavra_chave or not dica_palavra_chave:
                         erros.append("⚠️ Todos os campos devem ser preenchidos.")
                     if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
                         erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
@@ -233,6 +235,8 @@ def tela_login():
                         erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
                     if not email_valido(email):
                         erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
+                    if senha != confirmar_senha:
+                        erros.append("🔐 As senhas não coincidem.")
 
                     if erros:
                         for erro in erros:
@@ -240,11 +244,7 @@ def tela_login():
                         submit = False
 
                 if submit:
-                    if not nome or not posicao or not telefone or not email or not senha:
-                        st.warning("Preencha todos os campos.")
-                    elif not email_valido(email):
-                        st.warning("E-mail inválido.")
-                    elif email in st.session_state.usuarios:
+                    if email in st.session_state.usuarios:
                         st.warning("Este e-mail já está cadastrado.")
                     elif len(re.sub(r'\D', '', telefone)) != 11:
                         st.warning("Telefone deve conter 11 dígitos.")
@@ -257,6 +257,7 @@ def tela_login():
                             "telefone": formatar_telefone(telefone),
                             "senha": senha,
                             "palavra_chave": palavra_chave,
+                            "dica_palavra_chave": dica_palavra_chave,
                             "tipo": tipo
                         }
                         st.success("Cadastro realizado! Agora faça login.")
