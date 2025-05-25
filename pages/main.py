@@ -508,12 +508,12 @@ else:
     # Tela Principal
     def tela_principal(partidas, jogadores):
         # Título centralizado
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>🍻 Bem-vindo à Choppe's League!</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
 
         st.markdown("---")
 
         # Subtítulo centralizado
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>🏆 Vitórias</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
         # Centralizar os escudos
         col1, col2, col3 = st.columns([1, 1, 1])
