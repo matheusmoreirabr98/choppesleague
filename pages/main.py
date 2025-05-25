@@ -521,16 +521,17 @@ else:
             """
         return ""
 
+    # Tela principal com título e escudos lado a lado
     def tela_principal(partidas, jogadores):
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
         st.markdown("---")
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        # Substitua pelos caminhos reais
-        escudo_borussia = imagem_base64("./imagens/borussia.png")
-        escudo_inter = imagem_base64("./imagens/inter.png")
+        # Gerar HTML das imagens com legendas
+        escudo_borussia = imagem_base64("./imagens/borussia.png", "Borussia")
+        escudo_inter = imagem_base64("./imagens/inter.png", "Inter")
 
-        # Renderizar tudo como HTML com unsafe_allow_html
+        # Mostrar os escudos com um "X" central entre eles
         st.markdown(f"""
             <div style="
                 display: flex;
