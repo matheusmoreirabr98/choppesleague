@@ -10,8 +10,6 @@ import urllib.parse
 import base64
 from datetime import datetime, timedelta, date
 import streamlit.components.v1 as components
-import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
 
 
 
