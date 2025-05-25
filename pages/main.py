@@ -190,7 +190,14 @@ else:
 
 
     # --- SIDEBAR ---
-    # Determina as opções de página com base no tipo de usuário
+    # --- SIDEBAR --- (imagem e nome apenas)
+    with st.sidebar:
+        st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
+        st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
+
+    # --- NAVEGAÇÃO CENTRAL ---
+    st.markdown("<h4 style='margin-top: 1rem;'>📋 Menu de Navegação</h4>", unsafe_allow_html=True)
+
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
             "🏠 Tela Principal",
@@ -216,42 +223,13 @@ else:
             "📜 Regras Choppe's League"
         ]
 
-    # Cabeçalho com selectbox de navegação no topo da tela
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        st.image("./imagens/logo.png", width=80)
-    with col2:
-        st.markdown(f"<h5 style='margin-bottom: 0;'>👤 Jogador: <b>{st.session_state.nome}</b></h5>", unsafe_allow_html=True)
-        pagina_escolhida = st.selectbox("Navegar para:", opcoes, index=opcoes.index(st.session_state.pagina_atual), key="menu_topo")
-        st.session_state.pagina_atual = pagina_escolhida
-
-    # Sidebar apenas com logout e música
-    with st.sidebar:
-        st.markdown("### ⚙️ Ações")
-        
-        if "confirmar_logout" not in st.session_state:
-            st.session_state.confirmar_logout = False
-
-        if not st.session_state.confirmar_logout:
-            if st.button("🚪 Logout", key="botao_logout"):
-                st.session_state.confirmar_logout = True
-        else:
-            st.warning("Tem certeza que deseja sair?")
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("❌ Cancelar"):
-                    st.session_state.confirmar_logout = False
-            with col2:
-                if st.button("✅ Confirmar"):
-                    usuarios = st.session_state.get("usuarios", {})
-                    st.session_state.clear()
-                    st.session_state.usuario_logado = False
-                    st.session_state.usuarios = usuarios
-                    st.session_state.pagina_atual = "login"
-                    st.rerun()
-
-        tocar_musica_sidebar()  # música permanece na sidebar
-
+    pagina_escolhida = st.selectbox(
+        "Selecione uma página:",
+        opcoes,
+        index=opcoes.index(st.session_state.pagina_atual),
+        key="menu_topo"
+    )
+    st.session_state.pagina_atual = pagina_escolhida
         
 
     # --- Confirmação de logout ---
