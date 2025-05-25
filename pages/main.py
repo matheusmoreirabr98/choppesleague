@@ -454,21 +454,6 @@ else:
 
         # Container com as imagens e o "X"
         st.markdown(f"""
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 50px;
-                    flex-wrap: nowrap;
-                ">
-                    {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-                </div>
-                    {escudo_inter}
-                </div>
-            """, unsafe_allow_html=True)
-
-        st.markdown(f"""
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-top: 20px;">
                 
                 <!-- Container Borussia -->
@@ -496,6 +481,7 @@ else:
 
             </div>
         """, unsafe_allow_html=True)
+
   
 
 
