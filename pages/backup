@@ -346,8 +346,6 @@ else:
                     st.session_state.pagina_atual = "login"
                     confirmar_clicado = True
 
-    st.markdown("---")
-
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
         st.rerun()
@@ -523,9 +521,9 @@ else:
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
+        st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
         # Caminhos das imagens na pasta 'imagens'
         escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
@@ -541,6 +539,8 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                </div>
                     {escudo_inter}
                 </div>
             """, unsafe_allow_html=True)

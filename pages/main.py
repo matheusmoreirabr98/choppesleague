@@ -504,17 +504,27 @@ else:
 
 
     # Tela Principal
-    def imagem_base64(path, legenda):
+    def imagem_base64(path, legenda, gols, vitorias, confirmados):
         if os.path.exists(path):
             img = Image.open(path)
             img = img.resize((200, 200))
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            confirmados_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
+
             return f"""
-                <div style="text-align: center; min-width: 20px;">
+                <div style="text-align: center; min-width: 200px;">
                     <img src="data:image/png;base64,{img_base64}" width="200">
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                    <p><strong>⚽ Gols:</strong> {gols}</p>
+                    <p><strong>✅ Vitórias:</strong> {vitorias}</p>
+                    <details style="text-align: left; margin: 0 auto; max-width: 180px;">
+                        <summary><strong>📋 Confirmados</strong></summary>
+                        <ul style="margin-top: 0.2rem; padding-left: 1.2rem; font-size: 0.9rem;">
+                            {confirmados_html}
+                        </ul>
+                    </details>
                 </div>
             """
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
@@ -525,25 +535,36 @@ else:
         st.markdown("---")
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
-        # Caminhos das imagens na pasta 'imagens'
-        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/inter.png", "Inter")
+        # Dados fictícios (substitua por dados reais depois)
+        borussia_gols = 15
+        borussia_vitorias = 5
+        inter_gols = 18
+        inter_vitorias = 6
+        empates = 2
+        confirmados_borussia = ["João", "Carlos", "Rafael"]
+        confirmados_inter = ["Mateus", "Diego", "Lucas"]
 
-        # Container com as imagens e o "X"
+        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias, confirmados_borussia)
+        escudo_inter = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias, confirmados_inter)
+
+        # Container com os escudos, "X" e empates no centro
         st.markdown(f"""
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 50px;
-                    flex-wrap: nowrap;
-                ">
-                    {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+            <div style="
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 60px;
+                flex-wrap: wrap;
+            ">
+                {escudo_borussia}
+                <div style="text-align: center; font-size: 60px; font-weight: bold; line-height: 1;">
+                    ⚔️
+                    <p style="font-size: 16px; margin-top: 0.5rem;"><strong>🤝 Empates:</strong> {empates}</p>
                 </div>
-                    {escudo_inter}
-                </div>
-            """, unsafe_allow_html=True)
+                {escudo_inter}
+            </div>
+        """, unsafe_allow_html=True)
+
 
 
 
