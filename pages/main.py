@@ -500,9 +500,7 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
-
-
-        # Mostrar presença e ausência de todos os jogadores
+        # Mostrar presença e ausência de todos os jogadores (lista simples)
         presencas = st.session_state.get("presencas_confirmadas", {})
         todos_nomes = [dados["nome"] for dados in st.session_state.usuarios.values()]
 
@@ -523,12 +521,10 @@ else:
 
         st.markdown(f"""
             <div style="text-align: center; margin-top: 2rem;">
-                <details style="margin: 0 auto; max-width: 400px; text-align: left;">
-                    <summary><strong>📋 Presença da Semana</strong> — Confirmados: {confirmados}</summary>
-                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem; line-height: 1.6;">
-                        {linhas_html}
-                    </ul>
-                </details>
+                <h4 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h4>
+                <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
+                    {linhas_html}
+                </ul>
             </div>
         """, unsafe_allow_html=True)
 
