@@ -9,7 +9,7 @@ import os
 import re
 import urllib.parse
 import base64
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 import streamlit.components.v1 as components
 import gspread
 import pandas as pd
@@ -839,9 +839,9 @@ else:
                 email = st.session_state.get("email")
                 nome = st.session_state.get("nome", "Jogador")
                 posicao = usuarios.get(email, {}).get("posicao", "Linha")
-                data_envio = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                fuso_utc_minus_3 = timezone(timedelta(hours=-3))
+                data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
                 data_partida = horario_partida.strftime("%d/%m/%Y")
-
                 nova_linha = {
                     "Nome": nome,
                     "Posição": posicao,
