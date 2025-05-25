@@ -535,7 +535,7 @@ else:
     def tela_principal(partidas, jogadores):
         st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
-        st.markdown("<h3 style='text-align: center; font-weight: bold;'>.   Vitórias</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; font-weight: bold;'>🏆 Vitórias</h3>", unsafe_allow_html=True)
 
         # Caminhos das imagens na pasta 'imagens'
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
