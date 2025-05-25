@@ -229,9 +229,6 @@ else:
     index=opcoes.index(st.session_state.pagina_atual),
     key="menu_topo"
 )
-
-if pagina_escolhida != st.session_state.pagina_atual:
-    st.session_state.pagina_atual = pagina_escolhida
     st.rerun()
 
         
