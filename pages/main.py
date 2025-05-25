@@ -526,12 +526,12 @@ else:
             with col_a:
                 if os.path.exists("./imagens/borussia.png"):
                     img = Image.open("./imagens/borussia.png")
-                    img = img.resize((80, 80))  # Ajuste do tamanho
+                    img = img.resize((50, 50))  # Ajuste do tamanho
                     st.image(img, caption="Borussia")
             with col_b:
                 if os.path.exists("./imagens/inter.png"):
                     img = Image.open("./imagens/inter.png")
-                    img = img.resize((80, 80))
+                    img = img.resize((50, 50))
                     st.image(img, caption="Inter")
 
         with col3:
