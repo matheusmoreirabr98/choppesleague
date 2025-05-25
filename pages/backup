@@ -537,6 +537,24 @@ else:
         st.markdown("---")
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>🏆 Vitórias</h3>", unsafe_allow_html=True)
 
+
+
+    def imagem_base64(path, legenda):
+        if os.path.exists(path):
+            img = Image.open(path)
+            img = img.resize((120, 120))
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"""
+                <div style="text-align: center;">
+                    <img src="data:image/png;base64,{img_base64}" width="100">
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                </div>
+            """
+        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
+
+
         # Caminhos das imagens na pasta 'imagens'
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
