@@ -184,28 +184,34 @@ def tela_login():
 
             if st.session_state.modo_recuperacao:
                 st.markdown("<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>", unsafe_allow_html=True)
+
+                # Entrada do e-mail FORA do formulário para permitir reatividade
+                email = st.text_input("E-mail cadastrado", key="rec_email_final")
+
+                # Mostrar a dica da palavra-chave se o e-mail for válido
+                usuarios = st.session_state.usuarios
+                if email in usuarios and usuarios[email].get("dica_palavra_chave"):
+                    st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
+
+                # Formulário com o restante dos campos
                 with st.form("form_esqueci"):
-                        email = st.text_input("E-mail cadastrado", key="rec_email_final")
-                        palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
-                        nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
-                        confirmar = st.form_submit_button("Atualizar senha")
+                    palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
+                    nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
+                    confirmar_nova_senha = st.text_input("Confirme a nova senha", type="password", key="conf_nova_senha_final")
+                    confirmar = st.form_submit_button("Atualizar senha")
 
-                        if confirmar:
-                            usuarios = st.session_state.usuarios
-                            if email not in usuarios:
-                                st.error("E-mail não encontrado.")
-                            elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
-                                st.error("Palavra-chave incorreta.")
-                            else:
-                                usuarios[email]["senha"] = nova_senha
-                                st.success("Senha atualizada com sucesso! Agora faça login.")
-                                st.session_state.modo_recuperacao = False
-                                st.rerun()
-
-                if st.button("🔙 Voltar para login"):
-                    st.session_state.modo_recuperacao = False
-                    st.session_state.codigo_enviado = False
-                    st.rerun()
+                    if confirmar:
+                        if email not in usuarios:
+                            st.error("E-mail não encontrado.")
+                        elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
+                            st.error("Palavra-chave incorreta.")
+                        elif nova_senha != confirmar_nova_senha:
+                            st.error("As novas senhas não coincidem.")
+                        else:
+                            usuarios[email]["senha"] = nova_senha
+                            st.success("Senha atualizada com sucesso! Agora faça login.")
+                            st.session_state.modo_recuperacao = False
+                            st.rerun()
 
         # CADASTRO
         elif aba == "Cadastro":
@@ -219,13 +225,15 @@ def tela_login():
                 telefone = st.text_input("WhatsApp - Ex: 3199475512", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
                 email = st.text_input("E-mail", key="cad_email", autocomplete="email")
                 senha = st.text_input("Senha", type="password", key="cad_senha")
+                confirmar_senha = st.text_input("Confirme a senha", type="password", key="cad_conf_senha")
                 palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
+                dica_palavra_chave = st.text_input("Dica da palavra-chave", key="cad_dica", help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.")
                 submit = st.form_submit_button("Cadastrar")
 
                 erros = []
 
                 if submit:
-                    if not nome or not posicao or not nascimento or not telefone or not email or not senha:
+                    if not nome or not posicao or not nascimento or not telefone or not email or not senha or not confirmar_senha or not palavra_chave or not dica_palavra_chave:
                         erros.append("⚠️ Todos os campos devem ser preenchidos.")
                     if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
                         erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
@@ -233,6 +241,8 @@ def tela_login():
                         erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
                     if not email_valido(email):
                         erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
+                    if senha != confirmar_senha:
+                        erros.append("🔐 As senhas não coincidem.")
 
                     if erros:
                         for erro in erros:
@@ -240,11 +250,7 @@ def tela_login():
                         submit = False
 
                 if submit:
-                    if not nome or not posicao or not telefone or not email or not senha:
-                        st.warning("Preencha todos os campos.")
-                    elif not email_valido(email):
-                        st.warning("E-mail inválido.")
-                    elif email in st.session_state.usuarios:
+                    if email in st.session_state.usuarios:
                         st.warning("Este e-mail já está cadastrado.")
                     elif len(re.sub(r'\D', '', telefone)) != 11:
                         st.warning("Telefone deve conter 11 dígitos.")
@@ -257,6 +263,7 @@ def tela_login():
                             "telefone": formatar_telefone(telefone),
                             "senha": senha,
                             "palavra_chave": palavra_chave,
+                            "dica_palavra_chave": dica_palavra_chave,
                             "tipo": tipo
                         }
                         st.success("Cadastro realizado! Agora faça login.")
@@ -499,32 +506,44 @@ else:
 
 
     # Tela Principal
+    def imagem_base64(path, legenda):
+        if os.path.exists(path):
+            img = Image.open(path)
+            img = img.resize((200, 200))
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"""
+                <div style="text-align: center; min-width: 20px;">
+                    <img src="data:image/png;base64,{img_base64}" width="200">
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                </div>
+            """
+        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
+
+    # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
-        st.markdown("<h2 style='font-weight: bold;'>Bem-vindo a Choppe's League!</h2>", unsafe_allow_html=True)
-
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
         st.markdown("---")
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        col1, col2 = st.columns(2)
+        # Caminhos das imagens na pasta 'imagens'
+        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/inter.png", "Inter")
 
-        with col1:
-            if os.path.exists("./imagens/borussia.png"):
-                st.image("./imagens/borussia.png", caption="Borussia", use_container_width=True)
-            else:
-                st.warning("Imagem do Borussia não encontrada.")
-        
-        with col2:
-            if os.path.exists("./imagens/inter.png"):
-                st.image("./imagens/inter.png", caption="Inter", use_container_width=True)
-            else:
-                st.warning("Imagem da Inter não encontrada.")
-
-        st.header("Resumo das Partidas")
-        st.write(f"Total de partidas registradas: {len(partidas)}")
-
-        if not partidas.empty:
-            st.write("Última partida registrada:")
-            st.write(partidas.tail(1))
-
+        # Container com as imagens e o "X"
+        st.markdown(f"""
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 50px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                    {escudo_inter}
+                </div>
+            """, unsafe_allow_html=True)
 
 
 
