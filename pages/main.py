@@ -1056,8 +1056,9 @@ else:
         subtitulo("⭐ 10. Avaliação Pós-Jogo: Péreba e Craque")
         st.markdown("""
         - Após cada partida, será feita uma votação divertida para eleger:
-            - **Péreba**: jogador com a pior performance da rodada.
-            - **Craque**: jogador com a melhor performance.
+            - **⭐ Craque**: jogador com a melhor performance.
+            - **🐢 Péreba**: jogador com a pior performance da rodada.
+            - **🧤 Paredão:** goleiro com a melhor atuação defensiva da rodada.
         - A votação é **exclusiva para quem confirmou presença e jogou na partida do dia**.
         - Somente jogadores presentes poderão votar.
         - A finalidade é **uma brincadeira para animar o grupo e fortalecer o espírito da Choppe's League**.
