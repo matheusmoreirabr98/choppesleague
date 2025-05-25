@@ -230,9 +230,9 @@ else:
     key="menu_topo"
 )
 
-    if pagina_escolhida != st.session_state.pagina_atual:
-        st.session_state.pagina_atual = pagina_escolhida
-        st.rerun()
+if pagina_escolhida != st.session_state.pagina_atual:
+    st.session_state.pagina_atual = pagina_escolhida
+    st.rerun()
 
         
 
