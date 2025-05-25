@@ -350,68 +350,12 @@ else:
     if logout_clicado or cancelar_clicado or confirmar_clicado:
         st.rerun()
 
-    # --- ROTEADOR ---
-    def tela_principal():
-        pass
-
-    def registrar_partidas(p):
-        return p
-
-    def tela_jogadores(j):
-        return j
-
-    def tela_sorteio():
-        pass
-
-    def tela_presenca_login():
-        pass
-
-    def tela_avaliacao_pos_jogo():
-        pass
-
-    def tela_galeria_momentos():
-        pass
-
-    def tela_forum():
-        pass
-
-    def tela_comunicado():
-        pass
-
-    def tela_regras():
-        pass
-
 
     partidas = st.session_state.get("partidas", [])
     jogadores = st.session_state.get("jogadores", [])
 
     pag = st.session_state.pagina_atual
 
-    # Exibe as páginas conforme tipo
-    if pag == "🏠 Tela Principal":
-        tela_principal()
-    elif pag == "📊 Registrar Partida" and st.session_state.tipo_usuario == "admin":
-        partidas = registrar_partidas(partidas)
-    elif pag == "👟 Estatísticas dos Jogadores":
-        jogadores = tela_jogadores(jogadores)
-    elif pag == "🎲 Sorteio de Times" and st.session_state.tipo_usuario == "admin":
-        tela_sorteio()
-    elif pag == "✅ Confirmar Presença/Ausência":
-        tela_presenca_login()
-    elif pag == "🏅 Avaliação Pós-Jogo":
-        tela_avaliacao_pos_jogo()
-    elif pag == "📸 Galeria de Momentos":
-        tela_galeria_momentos()
-    elif pag == "💬 Fórum":
-        tela_forum()
-    elif pag == "📣 Comunicado à Gestão":
-        tela_comunicado()
-    elif pag == "📜 Regras Choppe's League":
-        tela_regras()
-    elif pag == "🚪 Sair":
-        for k in list(st.session_state.keys()):
-            del st.session_state[k]
-        st.experimental_rerun()
 
 
 
@@ -504,46 +448,81 @@ else:
 
 
     # Tela Principal
-    def imagem_base64(path, legenda):
+    def imagem_base64(path, legenda, gols, vitorias):
         if os.path.exists(path):
             img = Image.open(path)
             img = img.resize((200, 200))
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
-            return f"""
-                <div style="text-align: center; min-width: 20px;">
+
+            html = f"""
+                <div style="text-align: center; min-width: 200px;">
                     <img src="data:image/png;base64,{img_base64}" width="200">
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                    <p><strong>⚽ Gols:</strong> {gols}</p>
+                    <p><strong>✅ Vitórias:</strong> {vitorias}</p>
                 </div>
             """
+            return html
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
         st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
-        st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; font-weight: bold;'>Placar Geral</h3>", unsafe_allow_html=True)
 
-        # Caminhos das imagens na pasta 'imagens'
-        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/inter.png", "Inter")
+        # Dados fictícios
+        borussia_gols = 15
+        borussia_vitorias = 5
+        inter_gols = 18
+        inter_vitorias = 6
+        empates = 2
 
-        # Container com as imagens e o "X"
-        st.markdown(f"""
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 50px;
-                    flex-wrap: nowrap;
-                ">
-                    {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+        # Gera os HTMLs com imagem embutida
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia", borussia_gols, borussia_vitorias)
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter", inter_gols, inter_vitorias)
+
+        # Layout com os escudos + X + empates
+        html_final = f"""
+            <div style="display: flex; justify-content: center; align-items: center; gap: 50px; flex-wrap: wrap;">
+                {escudo_borussia}
+                <div style="text-align: center; min-width: 120px;">
+                    <div style="font-size: 60px; font-weight: bold;">⚔️</div>
+                    <p style="margin-top: -10px;"><strong>Empates:</strong> {empates}</p>
                 </div>
-                    {escudo_inter}
+                {escudo_inter}
+            </div>
+        """
+
+        # ✅ Aqui é onde você garante que o HTML com imagem será interpretado
+        st.markdown(html_final, unsafe_allow_html=True)
+
+        # Lista de confirmados (sem alteração)
+        confirmados = [
+            dados["nome"]
+            for dados in st.session_state.get("presencas_confirmadas", {}).values()
+            if dados.get("presenca") == "sim"
+        ]
+
+        if confirmados:
+            lista_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
+            st.markdown(f"""
+                <div style="text-align: center; margin-top: 2rem;">
+                    <details style="margin: 0 auto; max-width: 300px; text-align: left;">
+                        <summary><strong>📋 Confirmados da Semana</strong></summary>
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem;">
+                            {lista_html}
+                        </ul>
+                    </details>
                 </div>
             """, unsafe_allow_html=True)
+        else:
+            st.markdown("<p style='text-align:center;'>Nenhum jogador confirmou presença ainda.</p>", unsafe_allow_html=True)
+
+
+
 
 
 
@@ -734,9 +713,22 @@ else:
             else:
                 if presenca == "✅ Sim":
                     st.session_state["presenca_confirmada"] = "sim"
+                    email = st.session_state.get("login_email")
+                    if email:
+                        st.session_state.presencas_confirmadas[email] = {
+                            "nome": st.session_state.get("nome"),
+                            "presenca": "sim"
+    }
                 else:
                     st.session_state["presenca_confirmada"] = "nao"
                     st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
+                    email = st.session_state.get("login_email")
+                    if email:
+                        st.session_state.presencas_confirmadas[email] = {
+                            "nome": st.session_state.get("nome"),
+                            "presenca": "nao",
+                            "motivo": st.session_state["motivo"]
+                        }
                 st.rerun()
 
 
@@ -1049,6 +1041,8 @@ else:
 
     # Inicialização de sessão
     if "pagina_atual" not in st.session_state:
+        if "presencas_confirmadas" not in st.session_state:
+            st.session_state.presencas_confirmadas = {}
         st.session_state.pagina_atual = "🏠 Tela Principal"
 
     if "nome" not in st.session_state:
@@ -1072,9 +1066,9 @@ else:
     if st.session_state.pagina_atual == "🏠 Tela Principal":
         tela_principal(partidas, jogadores)
     elif st.session_state.pagina_atual == "📊 Registrar Partida":
-        partidas = registrar_partidas(partidas)
+        partidas = registrar_partidas()
     elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
-        jogadores = tela_jogadores(jogadores)
+        jogadores = tela_jogadores()
     elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
         tela_sorteio()
     elif st.session_state.pagina_atual == "✅ Confirmar Presença/Ausência":

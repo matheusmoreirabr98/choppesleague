@@ -489,7 +489,7 @@ else:
             <div style="display: flex; justify-content: center; align-items: center; gap: 50px; flex-wrap: wrap;">
                 {escudo_borussia}
                 <div style="text-align: center; min-width: 120px;">
-                    <div style="font-size: 60px; font-weight: bold;">⚔️</div>
+                <div style="font-size: 60px; font-weight: bold;">⚔️</div>
                     <p style="margin-top: -10px;"><strong>Empates:</strong> {empates}</p>
                 </div>
                 {escudo_inter}
