@@ -479,10 +479,16 @@ else:
             ">
             <div style="text-align: right; min-width: 50px;">
                 <p style="font-size: 30px;">
-                    ✅ - {borussia_vitorias}<br>
+                    ✅ - {borussia_vitorias}
+                </p>
+            </div>
+
+            <div style="text-align: right; min-width: 50px;">
+                <p style="font-size: 30px;">
                     ⚽ - {borussia_gols}
                 </p>
             </div>
+
 
             <div style="text-align: center; min-width: 50px;">
                 <p style="font-size: 30px;">
