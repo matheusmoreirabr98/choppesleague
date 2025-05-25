@@ -361,7 +361,6 @@ else:
 
 
 
-
     # Música ambiente (apenas se logado)
     if st.session_state.usuario_logado:
         def tocar_musica_sidebar():
