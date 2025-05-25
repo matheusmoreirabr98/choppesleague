@@ -1,15 +1,12 @@
 import streamlit as st
-import requests
 from io import BytesIO
 from PIL import Image
 import pandas as pd
-import random
 import os
 import re
 import urllib.parse
 import base64
-from datetime import datetime, timedelta, date
-import streamlit.components.v1 as components
+from datetime import datetime, timedelta
 
 
 
