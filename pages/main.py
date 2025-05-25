@@ -663,9 +663,17 @@ else:
         st.title("✅ Confirmação de Presença")
         nome = st.session_state.get("nome", "usuário")
 
-        # Define o prazo de quarta-feira às 22h
         agora = datetime.now()
         hoje = agora.weekday()  # segunda = 0 ... domingo = 6
+        dias_para_quinta = (3 - hoje) % 7
+        proxima_quinta = agora + timedelta(days=dias_para_quinta)
+        horario_partida = proxima_quinta.replace(hour=20, minute=0, second=0, microsecond=0)
+
+        # Exibe a data da próxima partida
+        data_formatada = horario_partida.strftime("%d/%m/%Y às %Hh")
+        st.markdown(f"### 📅 Próxima partida: **{data_formatada}**")
+
+        # Define o prazo de quarta-feira às 22h
         dias_para_quarta = (2 - hoje) % 7
         proxima_quarta = agora + timedelta(days=dias_para_quarta)
         prazo_limite = proxima_quarta.replace(hour=22, minute=0, second=0, microsecond=0)
@@ -686,7 +694,6 @@ else:
                 st.info("Você não informou sua presença ou ausência esta semana.")
             return
 
-        # Se o jogador já respondeu, mostrar mensagem + botão para mudar de ideia
         if resposta_enviada:
             if st.session_state["presenca_confirmada"] == "sim":
                 st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
@@ -699,10 +706,8 @@ else:
                     if key in st.session_state:
                         del st.session_state[key]
                 st.rerun()
-            return  # <-- ESSENCIAL para evitar o erro
+            return
 
-
-        # Exibe opções caso não tenha respondido ou clicado em "mudar de ideia"
         presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
 
         motivo = ""
