@@ -579,8 +579,8 @@ else:
 
         with col_a:
             st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-            if os.path.exists("./imagens/borussia.png"):
-                st.image("./imagens/borussia.png", use_container_width=True)
+            if os.path.exists("./imagens/escudo_borussia.png"):
+                st.image("./imagens/escudo_borussia.png", use_container_width=True)
             else:
                 st.warning("Imagem do Borussia não encontrada.")
             st.markdown("</div>", unsafe_allow_html=True)
