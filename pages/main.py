@@ -575,7 +575,7 @@ else:
                 <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {borussia_vitorias}</p>
                 <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {borussia_gols}</p>
             </div>
-                <div style="text-align: center;">
+                <div style="text-align: right;">
                     <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {inter_vitorias}</p>
                     <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {inter_gols}</p>
                 </div>
