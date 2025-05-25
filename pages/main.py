@@ -767,7 +767,6 @@ else:
         ja_votou = votante in df_votos["Votante"].values
 
         if not ja_votou:
-            st.markdown(f"Olá, **{votante}**! Escolha os destaques da partida:")
             with st.form("votacao_form"):
                 craque = st.selectbox("Craque da Choppe's League ⭐", jogadores_para_voto, placeholder="Selecione")
                 pereba = st.selectbox("Pereba da Choppe's League 🥴", jogadores_para_voto, placeholder="Selecione")
