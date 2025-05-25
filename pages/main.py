@@ -661,7 +661,7 @@ else:
 
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
-        st.title("✅ Confirmação de Presença")
+        st.title("<h2✅ Confirmação de Presença </h2>")
         nome = st.session_state.get("nome", "usuário")
 
         agora = datetime.now()
