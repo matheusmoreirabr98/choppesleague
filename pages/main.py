@@ -188,15 +188,10 @@ else:
     if "presencas_confirmadas" not in st.session_state:
         st.session_state.presencas_confirmadas = {}
 
-
-    # --- SIDEBAR ---
     # --- SIDEBAR --- (imagem e nome apenas)
     with st.sidebar:
         st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
-
-    # --- NAVEGAÇÃO CENTRAL ---
-    st.markdown("<h4 style='margin-top: 1rem;'>📋 Menu de Navegação</h4>", unsafe_allow_html=True)
 
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
@@ -331,7 +326,7 @@ else:
     elif pag == "🚪 Sair":
         for k in list(st.session_state.keys()):
             del st.session_state[k]
-        st.experimental_rerun()
+        st.rerun()
 
 
 
