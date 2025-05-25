@@ -533,18 +533,18 @@ else:
 
         # Container com as imagens e o "X"
         st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 40px;
-                flex-wrap: nowrap;
-            ">
-                {escudo_borussia}
-                <div style="font-size: 40px; font-weight: bold;">X</div>
-                {escudo_inter}
-            </div>
-        """, unsafe_allow_html=True)
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 40px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                    <div style="font-size: 40px; font-weight: bold;">X</div>
+                    {escudo_inter}
+                </div>
+            """, unsafe_allow_html=True)
 
 
 
