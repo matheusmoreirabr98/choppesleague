@@ -500,6 +500,8 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
+        st.markdown("---")
+
         # Mostrar presença e ausência de todos os jogadores (lista simples)
         presencas = st.session_state.get("presencas_confirmadas", {})
         todos_nomes = [dados["nome"] for dados in st.session_state.usuarios.values()]
