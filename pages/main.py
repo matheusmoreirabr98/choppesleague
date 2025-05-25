@@ -471,7 +471,7 @@ else:
         st.markdown(f"""
             <div style="
                 display: flex;
-                justify-content: center;
+                justify-content: left;
                 align-items: center;
                 gap: 50px;
                 flex-wrap: nowrap;
@@ -496,7 +496,7 @@ else:
         st.markdown(f"""
             <div style="
                 display: flex;
-                justify-content: center;
+                justify-content: right;
                 align-items: center;
                 gap: 50px;
                 flex-wrap: nowrap;
