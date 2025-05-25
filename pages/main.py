@@ -560,19 +560,27 @@ else:
         """, unsafe_allow_html=True)
 
         # Lista geral de confirmados
-        confirmados_geral = [(nome, "Borussia") for nome in confirmados_borussia] + [(nome, "Inter") for nome in confirmados_inter]
-        confirmados_html = "".join(f"<li>{nome} <span style='color: gray; font-size: 0.9rem;'>({time})</span></li>" for nome, time in confirmados_geral)
+        confirmados = [
+            dados["nome"]
+            for dados in st.session_state.get("presencas_confirmadas", {}).values()
+            if dados.get("presenca") == "sim"
+        ]
+        
+        if confirmados:
+            lista_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
+            st.markdown(f"""
+                <div style="text-align: center; margin-top: 2rem;">
+                    <details style="margin: 0 auto; max-width: 300px; text-align: left;">
+                        <summary><strong>📋 Confirmados da Semana</strong></summary>
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem;">
+                            {lista_html}
+                        </ul>
+                    </details>
+                </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("<p style='text-align:center;'>Nenhum jogador confirmou presença ainda.</p>", unsafe_allow_html=True)
 
-        st.markdown(f"""
-            <div style="text-align: center; margin-top: 2rem;">
-                <details style="margin: 0 auto; max-width: 300px; text-align: left;">
-                    <summary><strong>📋 Confirmados (Todos os Times)</strong></summary>
-                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem;">
-                        {confirmados_html}
-                    </ul>
-                </details>
-            </div>
-        """, unsafe_allow_html=True)
 
 
 
@@ -764,9 +772,22 @@ else:
             else:
                 if presenca == "✅ Sim":
                     st.session_state["presenca_confirmada"] = "sim"
+                    email = st.session_state.get("login_email")
+                    if email:
+                        st.session_state.presencas_confirmadas[email] = {
+                            "nome": st.session_state.get("nome"),
+                            "presenca": "sim"
+    }
                 else:
                     st.session_state["presenca_confirmada"] = "nao"
                     st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
+                    email = st.session_state.get("login_email")
+                    if email:
+                        st.session_state.presencas_confirmadas[email] = {
+                            "nome": st.session_state.get("nome"),
+                            "presenca": "nao",
+                            "motivo": st.session_state["motivo"]
+                        }
                 st.rerun()
 
 
@@ -1079,6 +1100,8 @@ else:
 
     # Inicialização de sessão
     if "pagina_atual" not in st.session_state:
+        if "presencas_confirmadas" not in st.session_state:
+            st.session_state.presencas_confirmadas = {}
         st.session_state.pagina_atual = "🏠 Tela Principal"
 
     if "nome" not in st.session_state:
