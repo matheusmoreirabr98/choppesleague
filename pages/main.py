@@ -534,8 +534,6 @@ else:
         inter_gols = 18
         inter_vitorias = 6
         empates = 2
-        confirmados_borussia = ["João", "Carlos", "Rafael"]
-        confirmados_inter = ["Mateus", "Diego", "Lucas"]
 
         # Escudos com dados
         escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias)
@@ -552,7 +550,8 @@ else:
             ">
                 {escudo_borussia}
             <div style="text-align: center; min-width: 120px;">
-            <div style="font-size: 60px; font-weight: bold;">⚔️</div>
+            <div style="font-size: 60px; font-weight: bold;">⚔️
+            </div>
                 <p style="margin-top: -10px;"><strong>🤝 Empates:</strong> {empates}</p>
             </div>
                 {escudo_inter}
