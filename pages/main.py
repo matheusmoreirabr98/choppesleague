@@ -506,57 +506,45 @@ else:
 
 
     # Tela Principal
-    def tela_principal(partidas, jogadores):
-        # Título centralizado
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
+    def imagem_base64(path, legenda):
+        if os.path.exists(path):
+            img = Image.open(path)
+            img = img.resize((50, 50))
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"""
+                <div style="text-align: center;">
+                    <img src="data:image/png;base64,{img_base64}" width="70">
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                </div>
+            """
+        return ""
 
-        st.markdown("---")
+        def tela_principal(partidas, jogadores):
+            # Título e subtítulo centralizados
+            st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
+            st.markdown("---")
+            st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        # Subtítulo centralizado
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
+            # Gerar HTML com as imagens convertidas
+            escudo_borussia = imagem_base64("./imagens/borussia.png", "Borussia")
+            escudo_inter = imagem_base64("./imagens/inter.png", "Inter")
 
-        # Três colunas: escudo - X - escudo
-        col1, col2, col3 = st.columns([1, 0.3, 1])  # ajuste da proporção do "X" central
-
-        with col1:
-            if os.path.exists("./imagens/borussia.png"):
-                img = Image.open("./imagens/borussia.png")
-                img = img.resize((50, 50))
-
-                # Converter imagem para base64
-                buffer = BytesIO()
-                img.save(buffer, format="PNG")
-                img_base64 = base64.b64encode(buffer.getvalue()).decode()
-
-                # Exibir imagem centralizada com legenda
-                st.markdown(f"""
-                    <div style='text-align: center;'>
-                        <img src='data:image/png;base64,{img_base64}' width='70'>
-                        <p style='margin-top: 0.5rem;'>Borussia</p>
-                    </div>
-                """, unsafe_allow_html=True)
-
-
-        with col2:
-            st.markdown("<h1 style='text-align: center;'>X</h1>", unsafe_allow_html=True)
-
-        with col3:
-            if os.path.exists("./imagens/inter.png"):
-                img = Image.open("./imagens/inter.png")
-                img = img.resize((50, 50))
-
-                # Converter imagem para base64
-                buffer = BytesIO()
-                img.save(buffer, format="PNG")
-                img_base64 = base64.b64encode(buffer.getvalue()).decode()
-
-                # Exibir imagem centralizada com legenda
-                st.markdown(f"""
-                    <div style='text-align: center;'>
-                        <img src='data:image/png;base64,{img_base64}' width='70'>
-                        <p style='margin-top: 0.5rem;'>Borussia</p>
-                    </div>
-                """, unsafe_allow_html=True)
+            # Container flexível com os escudos e o "X"
+            st.markdown(f"""
+                <div style="
+                    display: flexx;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 40px;
+                    flex-wrap: wrap;
+                ">
+                    {escudo_borussia}
+                    <div style="font-size: 40px; font-weight: bold;">X</div>
+                    {escudo_inter}
+                </div>
+            """, unsafe_allow_html=True)
 
 
 
