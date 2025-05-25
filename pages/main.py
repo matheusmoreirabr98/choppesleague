@@ -519,7 +519,7 @@ else:
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                 </div>
             """
-        return ""
+            return ""
 
     def tela_principal(partidas, jogadores):
         # Título e subtítulo centralizados
