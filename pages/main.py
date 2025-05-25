@@ -229,7 +229,7 @@ else:
     index=opcoes.index(st.session_state.pagina_atual),
     key="menu_topo"
 )
-    st.rerun()
+
 
         
 
