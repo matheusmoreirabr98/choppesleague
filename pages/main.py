@@ -521,7 +521,7 @@ else:
         with col1:
             if os.path.exists("./imagens/borussia.png"):
                 img = Image.open("./imagens/borussia.png")
-                img = img.resize((30, 30))
+                img = img.resize((50, 50))
 
                 # Converter imagem para base64
                 buffer = BytesIO()
@@ -543,7 +543,7 @@ else:
         with col3:
             if os.path.exists("./imagens/inter.png"):
                 img = Image.open("./imagens/inter.png")
-                img = img.resize((30, 30))
+                img = img.resize((50, 50))
 
                 # Converter imagem para base64
                 buffer = BytesIO()
