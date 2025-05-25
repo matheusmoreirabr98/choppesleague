@@ -513,7 +513,7 @@ else:
         st.markdown("---")
 
         # Subtítulo centralizado
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias</h2>", unsafe_allow_html=True)
 
       # Tela Principal
     def imagem_base64(path, legenda):
