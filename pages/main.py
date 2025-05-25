@@ -538,7 +538,7 @@ else:
                 justify-content: center;
                 align-items: center;
                 gap: 40px;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
             ">
                 {escudo_borussia}
                 <div style="font-size: 40px; font-weight: bold;">X</div>
