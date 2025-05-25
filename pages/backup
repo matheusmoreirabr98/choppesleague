@@ -442,10 +442,10 @@ else:
         st.markdown("---")
 
         borussia_gols = 18
-        borussia_vitorias = 7
+        borussia_vitorias = 17
         inter_gols = 21
-        inter_vitorias = 9
-        empates = 2
+        inter_vitorias = 19
+        empates = 12
 
 
         # Caminhos das imagens na pasta 'imagens'
@@ -469,28 +469,35 @@ else:
             """, unsafe_allow_html=True)
 
         st.markdown(f"""
-            <div style="text-align: left; min-width: 100px;">
-                <p style="font-size: 14px;">
-                    ✅ Vitórias: {borussia_vitorias}<br>
-                    ⚽ Gols: {borussia_gols}
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 50px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            ">
+            <div style="text-align: center; min-width: 80px;">
+                <p style="font-size: 30px;">
+                    🏆 - {borussia_vitorias}<br>
+                    ⚽ - {borussia_gols}
                 </p>
             </div>
 
-            <div style="text-align: center; min-width: 100px;">
-                <p style="font-size: 14px;">
-                    🤝 Empates: {empates}
+            <div style="text-align: center; min-width: 80px;">
+                <p style="font-size: 30px;">
+                    🤝 - {empates}
                 </p>
             </div>
 
-            <div style="text-align: right; min-width: 100px;">
-                <p style="font-size: 14px;">
-                    ✅ Vitórias: {inter_vitorias}<br>
-                    ⚽ Gols: {inter_gols}
+            <div style="text-align: center; min-width: 80px;">
+                <p style="font-size: 30px;">
+                    🏆 - {inter_vitorias}<br>
+                    ⚽ - {inter_gols}
                 </p>
             </div>
+        """, unsafe_allow_html=True)
 
-            </div>
-            """, unsafe_allow_html=True)
   
 
 
