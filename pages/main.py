@@ -528,7 +528,7 @@ else:
 
         # Substitua pelos caminhos reais
         escudo_borussia = imagem_base64("./imagens/borussia.png", "Borussia")
-        escudo_inter = imagem_base64("/mnt/data/07a4d885-8415-470a-a0b8-fd4a343bb68b.png", "Inter")
+        escudo_inter = imagem_base64("./imagens/inter.png", "Inter")
 
         # Renderizar tudo como HTML com unsafe_allow_html
         st.markdown(f"""
