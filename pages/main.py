@@ -672,8 +672,10 @@ else:
 
         # Exibe a data da próxima partida
         data_formatada = horario_partida.strftime("%d/%m/%Y às %Hh")
-        st.markdown(f"### 📅 Próxima partida: **{data_formatada}**")
-
+        st.markdown(
+            f"<p style='font-size:15px; font-weight:bold;'>📅 Próxima partida: {data_formatada}</p>",
+            unsafe_allow_html=True
+        )
         # Define o prazo de quarta-feira às 22h
         dias_para_quarta = (2 - hoje) % 7
         proxima_quarta = agora + timedelta(days=dias_para_quarta)
