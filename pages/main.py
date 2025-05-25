@@ -178,6 +178,9 @@ if not st.session_state.usuario_logado:
     tela_login()
 else:
 
+    if "presencas_confirmadas" not in st.session_state:
+        st.session_state.presencas_confirmadas = {}
+
 
     # --- SIDEBAR ---
     with st.sidebar:
@@ -496,7 +499,30 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
-  
+
+
+    # Mostra confirmados da semana
+    confirmados = [
+        dados["nome"]
+        for dados in st.session_state.get("presencas_confirmadas", {}).values()
+        if dados.get("presenca") == "sim"
+    ]
+
+    if confirmados:
+        lista_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
+        st.markdown(f"""
+            <div style="text-align: center; margin-top: 2rem;">
+                <details style="margin: 0 auto; max-width: 300px; text-align: left;">
+                    <summary><strong>📋 Confirmados da Semana</strong></summary>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem;">
+                        {lista_html}
+                    </ul>
+                </details>
+            </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("<p style='text-align:center;'>Nenhum jogador confirmou presença ainda.</p>", unsafe_allow_html=True)
+
 
 
 
