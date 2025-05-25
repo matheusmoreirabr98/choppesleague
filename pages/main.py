@@ -556,12 +556,12 @@ else:
                 gap: 60px;
                 flex-wrap: wrap;
             ">
-                {escudo_borussia}
+            {escudo_borussia}
             <div style="text-align: center; font-size: 60px; font-weight: bold; line-height: 1;">
                 ⚔️
             <p style="font-size: 16px; margin-top: 0.5rem;"><strong>🤝 Empates:</strong> {empates}</p>
             </div>
-                {escudo_inter}
+            {escudo_inter}
             </div>
         """, unsafe_allow_html=True)
 
