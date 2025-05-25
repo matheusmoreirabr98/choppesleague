@@ -515,7 +515,7 @@ else:
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
             return f"""
                 <div style="text-align: center; min-width: 20px;">
-                    <img src="data:image/png;base64,{img_base64}" width="70">
+                    <img src="data:image/png;base64,{img_base64}" width="200">
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                 </div>
             """
