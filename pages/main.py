@@ -521,7 +521,7 @@ else:
 
         st.markdown(f"""
             <div style="text-align: center; margin-top: 2rem;">
-                <h4 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h4>
+                <h6 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h6>
                 <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
                     {linhas_html}
                 </ul>
