@@ -522,15 +522,10 @@ else:
             if os.path.exists("./imagens/borussia.png"):
                 img = Image.open("./imagens/borussia.png")
                 img = img.resize((70, 70))
-                st.markdown(
-                    f"""
-                    <div style='text-align: center;'>
-                        <img src='data:image/png;base64,{base64.b64encode(img.tobytes()).decode()}' width='70'><br>
-                        <p>Borussia</p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+                st.image(img, caption="Borussia", use_container_width=False)
+                st.markdown("</div>", unsafe_allow_html=True)
+
 
         with col2:
             st.markdown("<h1 style='text-align: center;'>X</h1>", unsafe_allow_html=True)
