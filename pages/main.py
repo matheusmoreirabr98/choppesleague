@@ -522,7 +522,7 @@ else:
             if os.path.exists("./imagens/borussia.png"):
                 img = Image.open("./imagens/borussia.png")
                 img = img.resize((70, 70))
-                st.image(img, caption="Borussia", use_column_width=False)
+                st.image(img, caption="Borussia", use_container_width=False)
 
         with col2:
             st.markdown("<h1 style='text-align: center;'>X</h1>", unsafe_allow_html=True)
