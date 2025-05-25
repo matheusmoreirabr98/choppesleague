@@ -469,28 +469,39 @@ else:
             """, unsafe_allow_html=True)
 
         st.markdown(f"""
-            <div style="text-align: left; min-width: 100px;">
-                <p style="font-size: 14px;">
-                    ✅ Vitórias: {borussia_vitorias}<br>
-                    ⚽ Gols: {borussia_gols}
-                </p>
-            </div>
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 50px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            ">
+                <!-- Container Borussia -->
+                <div style="text-align: left; min-width: 100px;">
+                    <p style="font-size: 14px;">
+                        ✅ Vitórias: {borussia_vitorias}<br>
+                        ⚽ Gols: {borussia_gols}
+                    </p>
+                </div>
 
-            <div style="text-align: center; min-width: 100px;">
-                <p style="font-size: 14px;">
-                    🤝 Empates: {empates}
-                </p>
-            </div>
+                <!-- Container Empates -->
+                <div style="text-align: center; min-width: 100px;">
+                    <p style="font-size: 14px;">
+                        🤝 Empates: {empates}
+                    </p>
+                </div>
 
-            <div style="text-align: right; min-width: 100px;">
-                <p style="font-size: 14px;">
-                    ✅ Vitórias: {inter_vitorias}<br>
-                    ⚽ Gols: {inter_gols}
-                </p>
+                <!-- Container Inter -->
+                <div style="text-align: right; min-width: 100px;">
+                    <p style="font-size: 14px;">
+                        ✅ Vitórias: {inter_vitorias}<br>
+                        ⚽ Gols: {inter_gols}
+                    </p>
+                </div>
             </div>
+        """, unsafe_allow_html=True)
 
-            </div>
-            """, unsafe_allow_html=True)
   
 
 
