@@ -456,12 +456,12 @@ else:
         st.markdown(f"""
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-top: 20px;">
                 
-                <div style="text-align: left; min-width: 100px;">
-                    <p style="font-size: 14px;">
-                        ✅ Vitórias: {borussia_vitorias}<br>
-                        ⚽ Gols: {borussia_gols}
-                    </p>
-                </div>
+            <div style="text-align: left; min-width: 100px;">
+                <p style="font-size: 14px;">
+                    ✅ Vitórias: {borussia_vitorias}<br>
+                    ⚽ Gols: {borussia_gols}
+                </p>
+            </div>
 
                 <div style="text-align: center; min-width: 100px;">
                     <p style="font-size: 14px;">
