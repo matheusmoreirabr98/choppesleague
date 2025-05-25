@@ -514,9 +514,10 @@ else:
         
         with col2:
             if os.path.exists("./imagens/inter.png"):
-                st.image("./imagens/inter.png", caption="Inter", use_container_width=True)
-            else:
-                st.warning("Imagem da Inter não encontrada.")
+
+                img = Image.open("./imagens/inter.png")
+                img = img.resize((200, 200))  # largura x altura
+                st.image(img, caption="Inter")
 
         st.header("Resumo das Partidas")
         st.write(f"Total de partidas registradas: {len(partidas)}")
