@@ -350,35 +350,6 @@ else:
     if logout_clicado or cancelar_clicado or confirmar_clicado:
         st.rerun()
 
-    # --- ROTEADOR ---
-
-    def registrar_partidas(p):
-        return p
-
-    def tela_jogadores(j):
-        return j
-
-    def tela_sorteio():
-        pass
-
-    def tela_presenca_login():
-        pass
-
-    def tela_avaliacao_pos_jogo():
-        pass
-
-    def tela_galeria_momentos():
-        pass
-
-    def tela_forum():
-        pass
-
-    def tela_comunicado():
-        pass
-
-    def tela_regras():
-        pass
-
 
     partidas = st.session_state.get("partidas", [])
     jogadores = st.session_state.get("jogadores", [])
