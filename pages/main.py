@@ -511,6 +511,8 @@ else:
 
         st.markdown("---")
 
+        st.markdown("<h2 style='font-weight: bold;'>Vitórias</h2>", unsafe_allow_html=True)
+
         col1, col2 = st.columns(2)
 
         with col1:
