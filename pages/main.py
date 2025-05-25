@@ -509,7 +509,7 @@ else:
     def imagem_base64(path, legenda):
         if os.path.exists(path):
             img = Image.open(path)
-            img = img.resize((50, 50))
+            img = img.resize((200, 200))
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
