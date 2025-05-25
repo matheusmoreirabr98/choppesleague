@@ -219,7 +219,7 @@ else:
         ]
 
     pagina_escolhida = st.selectbox(
-        "Selecione uma página:",  # label obrigatória
+        "",  # label obrigatória
         opcoes,
         index=opcoes.index(st.session_state.pagina_atual),
         key="menu_topo"
