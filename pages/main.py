@@ -551,10 +551,10 @@ else:
                 flex-wrap: nowrap;
             ">
                 {escudo_borussia}
-                <div style="text-align: center; min-width: 120px;">
-                <div style="font-size: 60px; font-weight: bold;">⚔️</div>
+            <div style="text-align: center; min-width: 120px;">
+            <div style="font-size: 60px; font-weight: bold;">⚔️</div>
                 <p style="margin-top: -10px;"><strong>🤝 Empates:</strong> {empates}</p>
-                </div>
+            </div>
                 {escudo_inter}
             </div>
         """, unsafe_allow_html=True)
@@ -565,7 +565,7 @@ else:
             for dados in st.session_state.get("presencas_confirmadas", {}).values()
             if dados.get("presenca") == "sim"
         ]
-        
+
         if confirmados:
             lista_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
             st.markdown(f"""
