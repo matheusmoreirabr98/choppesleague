@@ -420,7 +420,11 @@ else:
     # Tela Principal
     def tela_principal(partidas, jogadores):
         # Título centralizado
-        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h5>", unsafe_allow_html=True)
+        st.markdown("""
+            <div style='text-align: center; font-weight: bold; font-size: 15px;'>
+                Bem-vindo à Choppe's League! 🍻
+            </div>
+        """, unsafe_allow_html=True)
 
         st.markdown("---")
 
