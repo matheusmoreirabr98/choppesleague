@@ -507,25 +507,35 @@ else:
 
     # Tela Principal
     def tela_principal(partidas, jogadores):
-        st.markdown("<h2 style='font-weight: bold;'>Bem-vindo a Choppe's League!</h2>", unsafe_allow_html=True)
+        # Título centralizado
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>🍻 Bem-vindo à Choppe's League!</h2>", unsafe_allow_html=True)
 
         st.markdown("---")
 
-        st.markdown("<h2 style='font-weight: bold;'>Vitórias</h2>", unsafe_allow_html=True)
+        # Subtítulo centralizado
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>🏆 Vitórias</h2>", unsafe_allow_html=True)
 
-        col1, col2 = st.columns(2)
+        # Centralizar os escudos
+        col1, col2, col3 = st.columns([1, 1, 1])
 
         with col1:
-            if os.path.exists("./imagens/borussia.png"):
-                img = Image.open("./imagens/borussia.png")
-                img = img.resize((50, 50))  # largura x altura
-                st.image(img, caption="Borussia")
-        
+            st.empty()
+
         with col2:
-            if os.path.exists("./imagens/inter.png"):
-                img = Image.open("./imagens/inter.png")
-                img = img.resize((50, 50))  # largura x altura
-                st.image(img, caption="Inter")
+            col_a, col_b = st.columns(2)
+            with col_a:
+                if os.path.exists("./imagens/borussia.png"):
+                    img = Image.open("./imagens/borussia.png")
+                    img = img.resize((80, 80))  # Ajuste do tamanho
+                    st.image(img, caption="Borussia")
+            with col_b:
+                if os.path.exists("./imagens/inter.png"):
+                    img = Image.open("./imagens/inter.png")
+                    img = img.resize((80, 80))
+                    st.image(img, caption="Inter")
+
+        with col3:
+            st.empty()
 
         st.header("Resumo das Partidas")
         st.write(f"Total de partidas registradas: {len(partidas)}")
