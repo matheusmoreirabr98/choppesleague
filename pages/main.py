@@ -516,13 +516,13 @@ else:
         with col1:
             if os.path.exists("./imagens/borussia.png"):
                 img = Image.open("./imagens/borussia.png")
-                img = img.resize((200, 200))  # largura x altura
+                img = img.resize((300, 300))  # largura x altura
                 st.image(img, caption="Borussia")
         
         with col2:
             if os.path.exists("./imagens/inter.png"):
                 img = Image.open("./imagens/inter.png")
-                img = img.resize((200, 200))  # largura x altura
+                img = img.resize((300, 300))  # largura x altura
                 st.image(img, caption="Inter")
 
         st.header("Resumo das Partidas")
