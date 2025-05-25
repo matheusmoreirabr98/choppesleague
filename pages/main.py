@@ -538,8 +538,8 @@ else:
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
         # Caminhos das imagens na pasta 'imagens'
-        escudo_borussia = imagem_base64("imagens/borussia_escudo.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/inter_escudo.png", "Inter")
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
         # Container com as imagens e o "X"
         st.markdown(f"""
