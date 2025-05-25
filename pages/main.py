@@ -749,39 +749,50 @@ else:
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
 
-        # Cria o CSV com a nova coluna se não existir
         if not os.path.exists(FILE_VOTOS):
             df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro"])
             df_votos.to_csv(FILE_VOTOS, index=False)
 
         df_votos = pd.read_csv(FILE_VOTOS)
 
-        # Se a coluna Goleiro ainda não existir no CSV antigo
         if "Goleiro" not in df_votos.columns:
             df_votos["Goleiro"] = ""
 
-        jogadores_presentes = st.session_state.get("jogadores_presentes", [
-            "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
-            "Lula", "Juninho", "Jesus", "Gabriel", "Arthur"
-        ])
+        jogadores_presentes = st.session_state.get("jogadores_presentes", [])
+        usuarios = st.session_state.get("usuarios", {})
+
+        # Separar jogadores por posição
+        goleiros = []
+        linha = []
+        for j in jogadores_presentes:
+            for email, info in usuarios.items():
+                if info["nome"] == j:
+                    if info.get("posicao", "Linha") == "Goleiro":
+                        goleiros.append(j)
+                    else:
+                        linha.append(j)
 
         st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
         st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
 
         votante = st.session_state.get("nome", "usuário")
-        jogadores_para_voto = [j for j in jogadores_presentes if j != votante]
+        linha = [j for j in linha if j != votante]
+        goleiros = [g for g in goleiros if g != votante]
         ja_votou = votante in df_votos["Votante"].values
 
         if not ja_votou:
             with st.form("votacao_form"):
-                craque = st.selectbox("⭐ Craque da rodada", jogadores_para_voto, placeholder="Selecione")
-                pereba = st.selectbox("🥴 Pereba da rodada", jogadores_para_voto, placeholder="Selecione")
-                goleiro = st.selectbox("🧤 Melhor goleiro", jogadores_para_voto, placeholder="Selecione")
+                craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione")
+                pereba_opcoes = [j for j in linha if j != craque]
+                pereba = st.selectbox("🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione")
+                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione")
                 submit = st.form_submit_button("Votar")
 
                 if submit:
-                    if len({craque, pereba, goleiro}) < 3:
-                        st.error("Os três votos devem ser para jogadores diferentes.")
+                    if craque == pereba:
+                        st.error("O craque e o pereba devem ser jogadores diferentes.")
+                    elif goleiro == "":
+                        st.error("Escolha um goleiro.")
                     else:
                         novo_voto = pd.DataFrame([{
                             "Votante": votante,
