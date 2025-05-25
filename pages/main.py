@@ -218,17 +218,16 @@ else:
             "📜 Regras Choppe's League"
         ]
 
-    pagina_escolhida = st.selectbox(
-        opcoes,
-        index=opcoes.index(st.session_state.pagina_atual),
-        key="menu_topo"
-    )
-    st.session_state.pagina_atual = pagina_escolhida
-    pagina_escolhida = st.selectbox(
-    opcoes,
-    index=opcoes.index(st.session_state.pagina_atual),
-    key="menu_topo"
-)
+        pagina_escolhida = st.selectbox(
+            "Selecione uma página:",
+            opcoes,
+            index=opcoes.index(st.session_state.pagina_atual),
+            key="menu_topo"
+        )
+
+        if pagina_escolhida != st.session_state.pagina_atual:
+            st.session_state.pagina_atual = pagina_escolhida
+            st.experimental_rerun()
 
 
         
