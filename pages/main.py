@@ -527,8 +527,8 @@ else:
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
         # Substitua pelos caminhos reais
-        escudo_borussia = imagem_base64("./imagens/borussia.png", "Borussia")
-        escudo_inter = imagem_base64("./imagens/inter.png", "Inter")
+        escudo_borussia = imagem_base64("./imagens/borussia.png")
+        escudo_inter = imagem_base64("./imagens/inter.png")
 
         # Renderizar tudo como HTML com unsafe_allow_html
         st.markdown(f"""
