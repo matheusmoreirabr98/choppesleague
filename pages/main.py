@@ -78,7 +78,7 @@ def init_data_gsheets():
 
     if "Presenças" not in existentes:
         df_presencas = pd.DataFrame(columns=[
-            "Nome", "Posição", "Presença", "Data"
+            "Nome", "Posição", "Presença", "DataPartida", "Data"
         ])
         sh.add_worksheet(title="Presenças", rows="100", cols="10")
         set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
@@ -837,29 +837,36 @@ else:
             if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
                 st.warning("Descreva o motivo da ausência.")
             else:
-                st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
-                if presenca == "❌ Não":
-                    st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
-
-                # Salva também no Google Sheets
-                gc = autenticar_gsheets()
-                sh = gc.open(NOME_PLANILHA)
-                aba = sh.worksheet("Presenças")
-                df = get_as_dataframe(aba).dropna(how="all")
+                email = st.session_state.get("email")
+                nome = st.session_state.get("nome", "Jogador")
+                posicao = st.session_state.usuarios[email]["posicao"]
+                data_envio = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                data_partida = horario_partida.strftime("%d/%m/%Y")
 
                 nova_linha = {
                     "Nome": nome,
                     "Posição": posicao,
                     "Presença": "Sim" if presenca == "✅ Sim" else "Não",
-                    "Data": data_formatada
+                    "DataPartida": data_partida,
+                    "Data": data_envio
                 }
 
-                df = pd.concat([df, pd.DataFrame([nova_linha])], ignore_index=True)
-                set_with_dataframe(aba, df)
+                # Carrega planilha e adiciona linha
+                gc = autenticar_gsheets()
+                sh = gc.open(NOME_PLANILHA)
+                aba_presencas = sh.worksheet("Presenças")
+                df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
+                df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
+                set_with_dataframe(aba_presencas, df_presencas)
+
+                # Atualiza session_state também
+                st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
+                if presenca == "❌ Não":
+                    st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
 
                 st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
-
+        
 
 
 
