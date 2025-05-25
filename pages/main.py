@@ -1088,11 +1088,11 @@ else:
 
     # Roteador de páginas
     if st.session_state.pagina_atual == "🏠 Tela Principal":
-        tela_principal(partidas, jogadores)
+        tela_principal()
     elif st.session_state.pagina_atual == "📊 Registrar Partida":
-        partidas = registrar_partidas(partidas)
+        partidas = registrar_partidas()
     elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
-        jogadores = tela_jogadores(jogadores)
+        jogadores = tela_jogadores()
     elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
         tela_sorteio()
     elif st.session_state.pagina_atual == "✅ Confirmar Presença/Ausência":
