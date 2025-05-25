@@ -514,7 +514,6 @@ else:
         
         with col2:
             if os.path.exists("./imagens/inter.png"):
-
                 img = Image.open("./imagens/inter.png")
                 img = img.resize((200, 200))  # largura x altura
                 st.image(img, caption="Inter")
