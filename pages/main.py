@@ -477,7 +477,7 @@ else:
                 margin-top: 20px;
                 flex-wrap: wrap;
             ">
-            <div style="text-align: left; min-width: 50px;">
+            <div style="text-align: right; min-width: 50px;">
                 <p style="font-size: 20px;">
                     ✅ - {borussia_vitorias}<br>
                     ⚽ - {borussia_gols}
