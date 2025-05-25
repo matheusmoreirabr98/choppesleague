@@ -712,12 +712,28 @@ else:
             if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
                 st.warning("Descreva o motivo da ausência.")
             else:
+                email = st.session_state.get("login_email")
+                nome = st.session_state.get("nome", "Jogador")
+
                 if presenca == "✅ Sim":
                     st.session_state["presenca_confirmada"] = "sim"
+                    if email:
+                        st.session_state.presencas_confirmadas[email] = {
+                            "nome": nome,
+                            "presenca": "sim"
+                        }
                 else:
                     st.session_state["presenca_confirmada"] = "nao"
                     st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
+                    if email:
+                        st.session_state.presencas_confirmadas[email] = {
+                            "nome": nome,
+                            "presenca": "nao",
+                            "motivo": st.session_state["motivo"]
+                        }
+
                 st.rerun()
+
 
 
 
