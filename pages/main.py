@@ -462,7 +462,6 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
-
                 <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
                 </div>
                     {escudo_inter}
@@ -479,12 +478,11 @@ else:
             ">
                     {borussia_vitorias}
                     {borussia_gols}
-
             <div>
                     {empates}
-
-                    {inter_vitorias}</p>
-                    {inter_gols}</p>
+            </div>
+                    {inter_vitorias}
+                    {inter_gols}
             </div>
         """, unsafe_allow_html=True)
 
