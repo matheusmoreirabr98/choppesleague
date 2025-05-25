@@ -8,115 +8,15 @@ import os
 import re
 import urllib.parse
 import base64
-from datetime import datetime, timedelta, date
-import streamlit.components.v1 as components
+from datetime import datetime
+from datetime import datetime, timedelta
+from datetime import date
 
 
 
 
 
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
-
-
-
-
-
-# CSS para centralizar e tornar responsiva a tela em diferentes dispositivos
-st.markdown("""
-    <div style="max-width: 400px; margin: auto;">
-        <style>
-            .main .block-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
-                padding: 2rem 1rem;
-                max-width: 100%;
-                margin: auto;
-                word-break: break-word;
-                overflow-wrap: break-word;
-            }
-
-            @media only screen and (max-width: 600px) {
-                .main .block-container {
-                    padding: 1.5rem 1rem;
-                    width: 100%;
-                    max-width: 100vw;
-                }
-                textarea, input, select, button {
-                    font-size: 16px !important;
-                    width: 100% !important;
-                    box-sizing: border-box;
-                }
-                label, .stMarkdown p {
-                    font-size: 15px !important;
-                    word-break: break-word;
-                }
-            }
-
-            div.stForm button[kind="primary"] {
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            input[type="password"] {
-                padding-right: 12px !important;
-                box-sizing: border-box;
-            }
-
-
-            .senha-container {
-                position: relative;
-                width: 100%;
-            }
-
-            .senha-container input {
-                width: 100%;
-                padding: 10px;
-                padding-right: 40px; /* espaço pro botão não sobrepor o texto */
-                font-size: 16px;
-                box-sizing: border-box;
-            }
-
-            .senha-toggle {
-                position: absolute;
-                top: 50%;
-                right: 10px;
-                transform: translateY(-50%);
-                background: none;
-                border: none;
-                font-size: 18px;
-                cursor: pointer;
-                padding: 0;
-                line-height: 1;
-            }
-            .input-personalizado {
-        width: 100%;
-        padding: 0.5rem;
-        font-size: 16px;
-        box-sizing: border-box;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        background-color: white;
-    }
-    .input-personalizado {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        border: none;
-        border-radius: 0.5rem;
-        background-color: #f0f2f6;
-        box-shadow: inset 0 0 0 1px rgba(49, 51, 63, 0.1);
-        font-family: inherit;
-    }
-</style>
-    </div>
-""", unsafe_allow_html=True)
-
-
-
-
 
 # Sessões iniciais
 if "usuario_logado" not in st.session_state:
@@ -133,17 +33,10 @@ if "codigo_enviado" not in st.session_state:
     st.session_state.codigo_enviado = False
 if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
-if "mostrar_senha_login" not in st.session_state:
-    st.session_state.mostrar_senha_login = False
-
-
-
-
 
 # Funções auxiliares
-
 def email_valido(email):
-        return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
 def formatar_telefone(numero):
     numeros = re.sub(r'\D', '', numero)
@@ -151,20 +44,20 @@ def formatar_telefone(numero):
         return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
     return numero
 
-    # --- TELA DE LOGIN / CADASTRO ---
+# --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
-        st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
-        aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
+    st.title("🔐 Login / Cadastro")
+    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login")
 
-        # LOGIN NORMAL OU RECUPERAÇÃO
-        if aba == "Login":
+    # LOGIN NORMAL OU RECUPERAÇÃO
+    if aba == "Login":
 
-            if not st.session_state.modo_recuperacao:
-                with st.form("form_login"):
-                    email = st.text_input("E-mail", key="login_email")
-                    senha = st.text_input("Senha", type="password", key="login_senha")
-                    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
-                    submit = st.form_submit_button("Entrar")
+        if not st.session_state.modo_recuperacao:
+
+            with st.form("form_login"):
+                email = st.text_input("E-mail", key="login_email")
+                senha = st.text_input("Senha", type="password", key="login_senha")
+                submit = st.form_submit_button("Entrar")
 
                 if submit:
                     usuarios = st.session_state.usuarios
@@ -173,106 +66,119 @@ def tela_login():
                         st.session_state.nome = usuarios[email]["nome"]
                         st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
                         st.session_state.pagina_atual = "🏠 Tela Principal"
-                        st.rerun()
+                        st.success("Login realizado com sucesso!")
+                        st.experimental_rerun()
                     else:
                         st.error("E-mail ou senha inválidos.")
 
-            if not st.session_state.modo_recuperacao:
-                if st.button("Esqueci minha senha"):
+                # Botão centralizado: "Esqueci minha senha"
+                st.markdown(
+                    """
+                    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                        <button onclick="document.getElementById('fake-button').click()" 
+                                style="background: none; border: none; color: #1f77b4; 
+                                    text-decoration: underline; font-size: 15px; cursor: pointer;">
+                            Esqueci minha senha
+                        </button>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown("""
+                    <div id="hidden-button" style="display: none;">
+                        <form action="#" method="post">
+                            <button type="submit" name="fake-button">Fake</button>
+                        </form>
+                    </div>
+                """, unsafe_allow_html=True)
+
+                # Checa se o botão foi clicado com o nome correto
+                if st.button("fake", key="fake-button"):
                     st.session_state.modo_recuperacao = True
-                    st.rerun()
+                    st.experimental_rerun()
 
-            if st.session_state.modo_recuperacao:
-                st.markdown("<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>", unsafe_allow_html=True)
+                else:
+                    with st.form("form_esqueci"):
+                        email = st.text_input("Digite seu e-mail", key="rec_email")
+                        enviar = st.form_submit_button("Enviar código de recuperação")
 
-                # Entrada do e-mail FORA do formulário para permitir reatividade
-                email = st.text_input("E-mail cadastrado", key="rec_email_final")
+                        if enviar:
+                            if email in st.session_state.usuarios:
+                                codigo = str(random.randint(100000, 999999))
+                                st.session_state.recuperacao_email = email
+                                st.session_state.codigo_recuperacao = codigo
+                                st.session_state.codigo_enviado = True
+                                st.success(f"Código enviado para o e-mail {email} (simulado: {codigo})")
+                            else:
+                                st.error("E-mail não encontrado.")
 
-                # Mostrar a dica da palavra-chave se o e-mail for válido
-                usuarios = st.session_state.usuarios
-                if email in usuarios and usuarios[email].get("dica_palavra_chave"):
-                    st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
+                    if st.session_state.codigo_enviado:
+                        with st.form("form_codigo"):
+                            codigo_digitado = st.text_input("Digite o código recebido", key="codigo_digitado")
+                            nova_senha = st.text_input("Nova senha", type="password", key="nova_senha")
+                            confirmar = st.form_submit_button("Atualizar senha")
 
-                # Formulário com o restante dos campos
-                with st.form("form_esqueci"):
-                    palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
-                    nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
-                    confirmar_nova_senha = st.text_input("Confirme a nova senha", type="password", key="conf_nova_senha_final")
-                    confirmar = st.form_submit_button("Atualizar senha")
+                            if confirmar:
+                                if codigo_digitado == st.session_state.codigo_recuperacao:
+                                    email = st.session_state.recuperacao_email
+                                    st.session_state.usuarios[email]["senha"] = nova_senha
+                                    st.success("Senha atualizada com sucesso! Agora faça login.")
+                                    # Limpa os dados temporários
+                                    st.session_state.codigo_enviado = False
+                                    st.session_state.codigo_recuperacao = ""
+                                    st.session_state.recuperacao_email = ""
+                                    st.session_state.modo_recuperacao = False
+                                    st.session_state.pagina_atual = "login"
+                                    st.experimental_rerun()
+                                else:
+                                    st.error("Código incorreto. Tente novamente.")
 
-                    if confirmar:
-                        if email not in usuarios:
-                            st.error("E-mail não encontrado.")
-                        elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
-                            st.error("Palavra-chave incorreta.")
-                        elif nova_senha != confirmar_nova_senha:
-                            st.error("As novas senhas não coincidem.")
-                        else:
-                            usuarios[email]["senha"] = nova_senha
-                            st.success("Senha atualizada com sucesso! Agora faça login.")
-                            st.session_state.modo_recuperacao = False
-                            st.rerun()
+                    if st.button("🔙 Voltar para login"):
+                        st.session_state.modo_recuperacao = False
+                        st.session_state.codigo_enviado = False
+                        st.experimental_rerun()
 
-        # CADASTRO
-        elif aba == "Cadastro":
-            with st.form("form_cadastro"):
-                nome = st.text_input("Nome completo", key="cad_nome", placeholder="Digite seu nome completo", autocomplete="name")
-                posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
-                raw_nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="ddmmaaaa", autocomplete="bday")
-                nascimento = re.sub(r'\D', '', raw_nascimento)
-                if len(nascimento) >= 5:
-                    nascimento = nascimento[:2] + '/' + nascimento[2:4] + ('/' + nascimento[4:8] if len(nascimento) > 4 else '')
-                telefone = st.text_input("WhatsApp - Ex: 3199475512", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
-                email = st.text_input("E-mail", key="cad_email", autocomplete="email")
-                senha = st.text_input("Senha", type="password", key="cad_senha")
-                confirmar_senha = st.text_input("Confirme a senha", type="password", key="cad_conf_senha")
-                palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
-                dica_palavra_chave = st.text_input("Dica da palavra-chave", key="cad_dica", help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.")
-                submit = st.form_submit_button("Cadastrar")
+    # CADASTRO
+    elif aba == "Cadastro":
+        with st.form("form_cadastro"):
+            nome = st.text_input("Nome completo", key="cad_nome")
+            posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
+            nascimento = st.date_input("Data de nascimento", value=date(2000, 1, 1), key="cad_nasc")
+            telefone = st.text_input("Telefone (com DDD)", key="cad_tel")
+            email = st.text_input("E-mail", key="cad_email")
+            senha = st.text_input("Senha", type="password", key="cad_senha")
+            submit = st.form_submit_button("Cadastrar")
 
-                erros = []
-
-                if submit:
-                    if not nome or not posicao or not nascimento or not telefone or not email or not senha or not confirmar_senha or not palavra_chave or not dica_palavra_chave:
-                        erros.append("⚠️ Todos os campos devem ser preenchidos.")
-                    if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
-                        erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
-                    if not telefone.isdigit():
-                        erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
-                    if not email_valido(email):
-                        erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
-                    if senha != confirmar_senha:
-                        erros.append("🔐 As senhas não coincidem.")
-
-                    if erros:
-                        for erro in erros:
-                            st.warning(erro)
-                        submit = False
-
-                if submit:
-                    if email in st.session_state.usuarios:
-                        st.warning("Este e-mail já está cadastrado.")
-                    elif len(re.sub(r'\D', '', telefone)) != 11:
-                        st.warning("Telefone deve conter 11 dígitos.")
-                    else:
-                        tipo = "admin" if email == "admin@teste.com" else "usuario"
-                        st.session_state.usuarios[email] = {
-                            "nome": nome,
-                            "posicao": posicao,
-                            "nascimento": str(nascimento),
-                            "telefone": formatar_telefone(telefone),
-                            "senha": senha,
-                            "palavra_chave": palavra_chave,
-                            "dica_palavra_chave": dica_palavra_chave,
-                            "tipo": tipo
-                        }
-                        st.success("Cadastro realizado! Agora faça login.")
+            if submit:
+                if not nome or not posicao or not telefone or not email or not senha:
+                    st.warning("Preencha todos os campos.")
+                elif posicao == "":
+                    st.warning("Selecione a posição.")
+                elif not email_valido(email):
+                    st.warning("E-mail inválido.")
+                elif email in st.session_state.usuarios:
+                    st.warning("Este e-mail já está cadastrado.")
+                elif len(re.sub(r'\D', '', telefone)) != 11:
+                    st.warning("Telefone deve conter 11 dígitos.")
+                else:
+                    tipo = "admin" if email == "admin@teste.com" else "usuario"
+                    st.session_state.usuarios[email] = {
+                        "nome": nome,
+                        "posicao": posicao,
+                        "nascimento": str(nascimento),
+                        "telefone": formatar_telefone(telefone),
+                        "senha": senha,
+                        "tipo": tipo
+                    }
+                    st.success("Cadastro realizado! Agora faça login.")
+                    st.session_state.pagina_atual = "login"
+                    st.experimental_rerun()
 
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
 if not st.session_state.usuario_logado:
     tela_login()
-else:
-
+    st.stop()
 
     # --- SIDEBAR ---
     with st.sidebar:
@@ -292,7 +198,8 @@ else:
                 "📸 Galeria de Momentos",
                 "💬 Fórum",
                 "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League"
+                "📜 Regras Choppe's League",
+                "🚪 Sair"
             ]
         else:
             opcoes = [
@@ -303,7 +210,8 @@ else:
                 "📸 Galeria de Momentos",
                 "💬 Fórum",
                 "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League"
+                "📜 Regras Choppe's League",
+                "🚪 Sair"
             ]
 
         pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
@@ -346,9 +254,42 @@ else:
                     st.session_state.pagina_atual = "login"
                     confirmar_clicado = True
 
+    st.markdown("---")
+
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
-        st.rerun()
+        st.experimental_rerun()
+
+    # --- ROTEADOR ---
+    def tela_principal():
+        pass
+
+    def registrar_partidas(p):
+        return p
+
+    def tela_jogadores(j):
+        return j
+
+    def tela_sorteio():
+        pass
+
+    def tela_presenca_login():
+        pass
+
+    def tela_avaliacao_pos_jogo():
+        pass
+
+    def tela_galeria_momentos():
+        pass
+
+    def tela_forum():
+        pass
+
+    def tela_comunicado():
+        pass
+
+    def tela_regras():
+        pass
 
 
     partidas = st.session_state.get("partidas", [])
@@ -356,6 +297,31 @@ else:
 
     pag = st.session_state.pagina_atual
 
+    # Exibe as páginas conforme tipo
+    if pag == "🏠 Tela Principal":
+        tela_principal()
+    elif pag == "📊 Registrar Partida" and st.session_state.tipo_usuario == "admin":
+        partidas = registrar_partidas(partidas)
+    elif pag == "👟 Estatísticas dos Jogadores":
+        jogadores = tela_jogadores(jogadores)
+    elif pag == "🎲 Sorteio de Times" and st.session_state.tipo_usuario == "admin":
+        tela_sorteio()
+    elif pag == "✅ Confirmar Presença/Ausência":
+        tela_presenca_login()
+    elif pag == "🏅 Avaliação Pós-Jogo":
+        tela_avaliacao_pos_jogo()
+    elif pag == "📸 Galeria de Momentos":
+        tela_galeria_momentos()
+    elif pag == "💬 Fórum":
+        tela_forum()
+    elif pag == "📣 Comunicado à Gestão":
+        tela_comunicado()
+    elif pag == "📜 Regras Choppe's League":
+        tela_regras()
+    elif pag == "🚪 Sair":
+        for k in list(st.session_state.keys()):
+            del st.session_state[k]
+        st.experimental_rerun()
 
 
 
@@ -448,80 +414,31 @@ else:
 
 
     # Tela Principal
-    def imagem_base64(path, legenda, gols, vitorias):
-        if os.path.exists(path):
-            img = Image.open(path)
-            img = img.resize((200, 200))
-            buffer = BytesIO()
-            img.save(buffer, format="PNG")
-            img_base64 = base64.b64encode(buffer.getvalue()).decode()
-
-            html = f"""
-                <div style="text-align: center; min-width: 200px;">
-                    <img src="data:image/png;base64,{img_base64}" width="200">
-                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
-                    <p><strong>⚽ Gols:</strong> {gols}</p>
-                    <p><strong>✅ Vitórias:</strong> {vitorias}</p>
-                </div>
-            """
-            return html
-        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
-
-    # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
-        st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-weight: bold;'>Bem-vindo a Choppe's League!</h2>", unsafe_allow_html=True)
+
         st.markdown("---")
-        st.markdown("<h3 style='text-align: center; font-weight: bold;'>Placar Geral</h3>", unsafe_allow_html=True)
 
-        # Dados fictícios
-        borussia_gols = 15
-        borussia_vitorias = 5
-        inter_gols = 18
-        inter_vitorias = 6
-        empates = 2
+        col1, col2 = st.columns(2)
 
-        # Gera os HTMLs com imagem embutida
-        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia", borussia_gols, borussia_vitorias)
-        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter", inter_gols, inter_vitorias)
+        with col1:
+            if os.path.exists("./imagens/borussia.png"):
+                st.image("./imagens/borussia.png", caption="Borussia", use_container_width=True)
+            else:
+                st.warning("Imagem do Borussia não encontrada.")
+        
+        with col2:
+            if os.path.exists("./imagens/inter.png"):
+                st.image("./imagens/inter.png", caption="Inter", use_container_width=True)
+            else:
+                st.warning("Imagem da Inter não encontrada.")
 
-        # Layout com os escudos + X + empates
-        html_final = f"""
-            <div style="display: flex; justify-content: center; align-items: center; gap: 50px; flex-wrap: wrap;">
-                {escudo_borussia}
-                <div style="text-align: center; min-width: 120px;">
-                    <div style="font-size: 60px; font-weight: bold;">⚔️</div>
-                    <p style="margin-top: -10px;"><strong>Empates:</strong> {empates}</p>
-                </div>
-                {escudo_inter}
-            </div>
-        """
+        st.header("Resumo das Partidas")
+        st.write(f"Total de partidas registradas: {len(partidas)}")
 
-        # ✅ Aqui é onde você garante que o HTML com imagem será interpretado
-        st.markdown(html_final, unsafe_allow_html=True)
-
-        # Lista de confirmados (sem alteração)
-        confirmados = [
-            dados["nome"]
-            for dados in st.session_state.get("presencas_confirmadas", {}).values()
-            if dados.get("presenca") == "sim"
-        ]
-
-        if confirmados:
-            lista_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
-            st.markdown(f"""
-                <div style="text-align: center; margin-top: 2rem;">
-                    <details style="margin: 0 auto; max-width: 300px; text-align: left;">
-                        <summary><strong>📋 Confirmados da Semana</strong></summary>
-                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem;">
-                            {lista_html}
-                        </ul>
-                    </details>
-                </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("<p style='text-align:center;'>Nenhum jogador confirmou presença ainda.</p>", unsafe_allow_html=True)
-
-
+        if not partidas.empty:
+            st.write("Última partida registrada:")
+            st.write(partidas.tail(1))
 
 
 
@@ -636,8 +553,39 @@ else:
 
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
-        st.title("Estatísticas dos Jogadores")
-        st.markdown("⚠️ Em breve...")
+        st.title("Registrar Estatísticas dos Jogadores")
+        jogadores_lista = [
+            "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
+            "Lula", "Juninho", "Jesus", "Gabriel", "Arthur",
+            "Walter", "Eduardo", "Cristian", "Luciano", "Deivid"
+        ]
+        times = ["Borussia", "Time 2"]
+        with st.form("form_jogadores", clear_on_submit=True):
+            nome = st.selectbox("Jogador", jogadores_lista)
+            time = st.selectbox("Time", times)
+            gols = st.number_input("Gols", min_value=0, step=1)
+            assistencias = st.number_input("Assistências", min_value=0, step=1)
+            faltas = st.number_input("Faltas", min_value=0, step=1)
+            cart_amarelos = st.number_input("Cartões Amarelos", min_value=0, step=1)
+            cart_vermelhos = st.number_input("Cartões Vermelhos", min_value=0, step=1)
+            submit = st.form_submit_button("Registrar")
+
+            if submit:
+                registro = {
+                    "Nome": nome,
+                    "Time": time,
+                    "Gols": gols,
+                    "Assistências": assistencias,
+                    "Faltas": faltas,
+                    "Cartões Amarelos": cart_amarelos,
+                    "Cartões Vermelhos": cart_vermelhos
+                }
+                jogadores = jogadores.append(registro, ignore_index=True)
+                jogadores.to_csv(FILE_JOGADORES, index=False)
+                st.success("Estatísticas registradas com sucesso!")
+
+        st.dataframe(jogadores)
+        return jogadores
 
 
 
@@ -690,7 +638,7 @@ else:
                 for key in ["presenca_confirmada", "motivo"]:
                     if key in st.session_state:
                         del st.session_state[key]
-                st.rerun()
+                st.experimental_rerun()
             return  # <-- ESSENCIAL para evitar o erro
 
 
@@ -713,23 +661,10 @@ else:
             else:
                 if presenca == "✅ Sim":
                     st.session_state["presenca_confirmada"] = "sim"
-                    email = st.session_state.get("login_email")
-                    if email:
-                        st.session_state.presencas_confirmadas[email] = {
-                            "nome": st.session_state.get("nome"),
-                            "presenca": "sim"
-    }
                 else:
                     st.session_state["presenca_confirmada"] = "nao"
                     st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
-                    email = st.session_state.get("login_email")
-                    if email:
-                        st.session_state.presencas_confirmadas[email] = {
-                            "nome": st.session_state.get("nome"),
-                            "presenca": "nao",
-                            "motivo": st.session_state["motivo"]
-                        }
-                st.rerun()
+                st.experimental_rerun()
 
 
 
@@ -1041,8 +976,6 @@ else:
 
     # Inicialização de sessão
     if "pagina_atual" not in st.session_state:
-        if "presencas_confirmadas" not in st.session_state:
-            st.session_state.presencas_confirmadas = {}
         st.session_state.pagina_atual = "🏠 Tela Principal"
 
     if "nome" not in st.session_state:
@@ -1066,9 +999,9 @@ else:
     if st.session_state.pagina_atual == "🏠 Tela Principal":
         tela_principal(partidas, jogadores)
     elif st.session_state.pagina_atual == "📊 Registrar Partida":
-        partidas = registrar_partidas()
+        partidas = registrar_partidas(partidas)
     elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
-        jogadores = tela_jogadores()
+        jogadores = tela_jogadores(jogadores)
     elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
         tela_sorteio()
     elif st.session_state.pagina_atual == "✅ Confirmar Presença/Ausência":
