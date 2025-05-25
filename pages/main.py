@@ -516,7 +516,7 @@ else:
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
         # Centralizar os escudos
-        col1, col2, col3 = st.columns([1, 1, 1])
+        col1, col2 = st.columns([1, 1])
 
         with col1:
             st.empty()
@@ -533,9 +533,6 @@ else:
                     img = Image.open("./imagens/inter.png")
                     img = img.resize((50, 50))
                     st.image(img, caption="Inter")
-
-        with col3:
-            st.empty()
 
         st.header("Resumo das Partidas")
         st.write(f"Total de partidas registradas: {len(partidas)}")
