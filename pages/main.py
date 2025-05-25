@@ -462,40 +462,30 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
-                </div>
 
                 <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
                 </div>
 
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 50px;
-                    flex-wrap: nowrap;
-                ">
-                    
                     {escudo_inter}
                 </div>
             """, unsafe_allow_html=True)
-        
+
         st.markdown(f"""
             <div style="
                 display: flex;
                 justify-content: center;
-                align-items: flex-start;
-                gap: 100px;
-                flex-wrap: wrap;
+                align-items: center;
+                gap: 50px;
+                flex-wrap: nowrap;
             ">
-                    {borussia_vitorias}
-                    {borussia_gols}
+                {borussia_vitorias}
+                {borussia_gols}
 
-            <div style="text-align: center;">
-                    <p style="font-size: 10px;"><strong> Empates:</strong> {empates}</p>
+            <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+            </div>
 
-                    {inter_vitorias}
-                    {inter_gols}
-                </div>
+                {inter_vitorias}</p>
+                {inter_gols}</p>
             </div>
         """, unsafe_allow_html=True)
 
