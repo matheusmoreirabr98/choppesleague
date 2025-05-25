@@ -134,10 +134,10 @@ def tela_login():
                                 else:
                                     st.error("Código incorreto. Tente novamente.")
 
-                    if st.button("🔙 Voltar para login"):
-                        st.session_state.modo_recuperacao = False
-                        st.session_state.codigo_enviado = False
-                        st.experimental_rerun()
+                        if st.button("🔙 Voltar para login"):
+                            st.session_state.modo_recuperacao = False
+                            st.session_state.codigo_enviado = False
+                            st.experimental_rerun()
 
     # CADASTRO
     elif aba == "Cadastro":
