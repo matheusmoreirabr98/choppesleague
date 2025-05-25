@@ -532,55 +532,37 @@ else:
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
-    def tela_principal(partidas, jogadores):
-        st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
-        st.markdown("---")
-        st.markdown("<h3 style='text-align: center; font-weight: bold;'>🏆 Vitórias</h3>", unsafe_allow_html=True)
-
-        borussia_gols = 18
-        borussia_vitorias = 7
-        inter_gols = 21
-        inter_vitorias = 9
-
-
-        # Caminhos das imagens na pasta 'imagens'
-        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
-
-        # Container com as imagens e o "X"
-        st.markdown(f"""
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 50px;
-                    flex-wrap: nowrap;
-                ">
-                    {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-                </div>
-                    {escudo_inter}
-                </div>
-            """, unsafe_allow_html=True)
-        
-        st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: flex-start;
-                gap: 100px;
-                flex-wrap: wrap;
-            ">
-            <div style="text-align: left;">
-                <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {borussia_vitorias}</p>
-                <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {borussia_gols}</p>
+    # Escudos + Estatísticas centralizadas
+    st.markdown(f"""
+        <div style="
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 100px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        ">
+            <!-- Borussia -->
+            <div style="text-align: center;">
+                <img src="data:image/png;base64,{base64_borussia}" width="80">
+                <p style="margin: 0.5rem 0 0; font-weight: bold;">Borussia</p>
+                <p style="margin: 4px; font-size: 14px;">✅ Vitórias: {borussia_vitorias}</p>
+                <p style="margin: 4px; font-size: 14px;">⚽ Gols: {borussia_gols}</p>
             </div>
-                <div style="text-align: right;">
-                    <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {inter_vitorias}</p>
-                    <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {inter_gols}</p>
-                </div>
+
+            <!-- Versus -->
+            <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
+
+            <!-- Inter -->
+            <div style="text-align: center;">
+                <img src="data:image/png;base64,{base64_inter}" width="80">
+                <p style="margin: 0.5rem 0 0; font-weight: bold;">Inter</p>
+                <p style="margin: 4px; font-size: 14px;">✅ Vitórias: {inter_vitorias}</p>
+                <p style="margin: 4px; font-size: 14px;">⚽ Gols: {inter_gols}</p>
             </div>
-        """, unsafe_allow_html=True)
+        </div>
+    """, unsafe_allow_html=True)
+
 
 
 
