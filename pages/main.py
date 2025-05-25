@@ -515,20 +515,24 @@ else:
         # Subtítulo centralizado
         st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
 
-        # Colunas lado a lado para os escudos
-        col1, col2 = st.columns(2)
+        # Centralizar os escudos
+        col1, col2, col3 = st.columns([1, 1, 1])
 
         with col1:
-            if os.path.exists("./imagens/borussia.png"):
-                img = Image.open("./imagens/borussia.png")
-                img = img.resize((70, 70))  # pode ajustar aqui o tamanho
-                st.image(img, caption="Borussia", use_column_width=False)
+            st.empty()
 
         with col2:
-            if os.path.exists("./imagens/inter.png"):
-                img = Image.open("./imagens/inter.png")
-                img = img.resize((70, 70))
-                st.image(img, caption="Inter", use_column_width=False)
+            col_a, col_b = st.columns(2)
+            with col_a:
+                if os.path.exists("./imagens/borussia.png"):
+                    img = Image.open("./imagens/borussia.png")
+                    img = img.resize((50, 50))  # Ajuste do tamanho
+                    st.image(img, caption="Borussia")
+            with col_b:
+                if os.path.exists("./imagens/inter.png"):
+                    img = Image.open("./imagens/inter.png")
+                    img = img.resize((50, 50))
+                    st.image(img, caption="Inter")
 
         with col3:
             st.empty()
