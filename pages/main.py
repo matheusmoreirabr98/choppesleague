@@ -469,40 +469,31 @@ else:
             """, unsafe_allow_html=True)
 
         st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: left;
-                align-items: center;
-                gap: 50px;
-                flex-wrap: nowrap;
-            ">
-                    {borussia_vitorias}<br>
-                    {borussia_gols}
-            </div>
-        """, unsafe_allow_html=True)
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; margin-top: 20px;">
+                
+                <!-- Container Borussia -->
+                <div style="text-align: left; min-width: 100px;">
+                    <p style="font-size: 14px;">
+                        ✅ Vitórias: {borussia_vitorias}<br>
+                        ⚽ Gols: {borussia_gols}
+                    </p>
+                </div>
 
-        st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 50px;
-                flex-wrap: nowrap;
-            ">
-                    {empates}
-            </div>
-        """, unsafe_allow_html=True)
+                <!-- Container Empates -->
+                <div style="text-align: center; min-width: 100px;">
+                    <p style="font-size: 14px;">
+                        🤝 Empates: {empates}
+                    </p>
+                </div>
 
-        st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: right;
-                align-items: center;
-                gap: 50px;
-                flex-wrap: nowrap;
-            ">
-                    {inter_vitorias}<br>
-                    {inter_gols}
+                <!-- Container Inter -->
+                <div style="text-align: right; min-width: 100px;">
+                    <p style="font-size: 14px;">
+                        ✅ Vitórias: {inter_vitorias}<br>
+                        ⚽ Gols: {inter_gols}
+                    </p>
+                </div>
+
             </div>
         """, unsafe_allow_html=True)
   
