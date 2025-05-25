@@ -523,8 +523,7 @@ else:
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
-        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h5>", unsafe_allow_html=True)
-
+        st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
         st.markdown("<h4 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h4>", unsafe_allow_html=True)
 
