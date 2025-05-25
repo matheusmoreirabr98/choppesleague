@@ -504,13 +504,14 @@ else:
 
 
     # Tela Principal
-    def imagem_base64(path, legenda, gols, vitorias):
+    def imagem_base64(path, legenda, gols, vitorias, confirmados):
         if os.path.exists(path):
             img = Image.open(path)
             img = img.resize((200, 200))
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            confirmados_html = "".join(f"<li>{nome}</li>" for nome in confirmados)
 
             return f"""
                 <div style="text-align: center; min-width: 200px;">
@@ -518,6 +519,12 @@ else:
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                     <p><strong>⚽ Gols:</strong> {gols}</p>
                     <p><strong>✅ Vitórias:</strong> {vitorias}</p>
+                    <details style="text-align: left; margin: 0 auto; max-width: 180px;">
+                        <summary><strong>📋 Confirmados</strong></summary>
+                        <ul style="margin-top: 0.2rem; padding-left: 1.2rem; font-size: 0.9rem;">
+                            {confirmados_html}
+                        </ul>
+                    </details>
                 </div>
             """
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
@@ -528,7 +535,6 @@ else:
         st.markdown("---")
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
-        # Dados fictícios
         borussia_gols = 15
         borussia_vitorias = 5
         inter_gols = 18
@@ -537,40 +543,25 @@ else:
         confirmados_borussia = ["João", "Carlos", "Rafael"]
         confirmados_inter = ["Mateus", "Diego", "Lucas"]
 
-        # Escudos com dados
-        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias)
-        escudo_inter = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias)
+        # Caminhos das imagens na pasta 'imagens'
+        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia", borussia_gols, borussia_vitorias, confirmados_borussia)
+        escudo_inter = imagem_base64("imagens/inter.png", "Inter", inter_gols, inter_vitorias, confirmados_inter)
 
-        # Layout dos escudos e "X"
+        # Container com as imagens e o "X"
         st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 50px;
-                flex-wrap: nowrap;
-            ">
-                {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
-                {escudo_inter}
-            </div>
-        """, unsafe_allow_html=True)
-
-        # Bloco com todos os confirmados
-        confirmados_geral = [(nome, "Borussia") for nome in confirmados_borussia] + [(nome, "Inter") for nome in confirmados_inter]
-        confirmados_html = "".join(f"<li>{nome} <span style='color: gray; font-size: 0.9rem;'>({time})</span></li>" for nome, time in confirmados_geral)
-
-        st.markdown(f"""
-            <div style="text-align: center; margin-top: 2rem;">
-                <details style="margin: 0 auto; max-width: 300px; text-align: left;">
-                    <summary><strong>📋 Confirmados (Todos os Times)</strong></summary>
-                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem; font-size: 0.95rem;">
-                        {confirmados_html}
-                    </ul>
-                </details>
-            </div>
-        """, unsafe_allow_html=True)
-
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 50px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                </div>
+                    {escudo_inter}
+                </div>
+            """, unsafe_allow_html=True)
 
 
 
