@@ -519,41 +519,43 @@ else:
     def imagem_base64(path, legenda):
         if os.path.exists(path):
             img = Image.open(path)
-            img = img.resize((50, 50))
+            img = img.resize((200, 200))
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             img_base64 = base64.b64encode(buffer.getvalue()).decode()
             return f"""
-                <div style="text-align: center; min-width: 80px;">
-                    <img src="data:image/png;base64,{img_base64}" width="70">
+                <div style="text-align: center; min-width: 20px;">
+                    <img src="data:image/png;base64,{img_base64}" width="200">
                     <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
                 </div>
             """
-        return ""
+        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
+    # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
+        st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
         st.markdown("---")
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias 🏆</h2>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
-        # Substitua pelos caminhos reais
-        escudo_borussia = imagem_base64("./imagens/borussia.png")
-        escudo_inter = imagem_base64("./imagens/inter.png")
+        # Caminhos das imagens na pasta 'imagens'
+        escudo_borussia = imagem_base64("imagens/borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/inter.png", "Inter")
 
-        # Renderizar tudo como HTML com unsafe_allow_html
+        # Container com as imagens e o "X"
         st.markdown(f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 40px;
-                flex-wrap: nowrap;
-            ">
-                {escudo_borussia}
-                <div style="font-size: 40px; font-weight: bold;">X</div>
-                {escudo_inter}
-            </div>
-        """, unsafe_allow_html=True)
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 50px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                </div>
+                    {escudo_inter}
+                </div>
+            """, unsafe_allow_html=True)
 
 
 
