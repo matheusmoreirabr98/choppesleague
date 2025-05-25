@@ -571,10 +571,10 @@ else:
                 gap: 100px;
                 flex-wrap: wrap;
             ">
-                <div style="text-align: left;">
-                    <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {borussia_vitorias}</p>
-                    <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {borussia_gols}</p>
-                </div>
+            <div style="text-align: left;">
+                <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {borussia_vitorias}</p>
+                <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {borussia_gols}</p>
+            </div>
                 <div style="text-align: center;">
                     <p style="font-size: 10px;"><strong>✅ Vitórias:</strong> {inter_vitorias}</p>
                     <p style="font-size: 10px;"><strong>⚽ Gols:</strong> {inter_gols}</p>
