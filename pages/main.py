@@ -766,8 +766,7 @@ else:
 
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
-        from gspread_dataframe import get_as_dataframe, set_with_dataframe
-
+        
         st.markdown("<br>", unsafe_allow_html=True)
         nome = st.session_state.get("nome", "usuário")
         usuarios = st.session_state.get("usuarios", {})
@@ -839,7 +838,7 @@ else:
             else:
                 email = st.session_state.get("email")
                 nome = st.session_state.get("nome", "Jogador")
-                posicao = st.session_state["usuarios"][email]["posicao"]
+                posicao = usuarios.get(email, {}).get("posicao", "Linha")
                 data_envio = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                 data_partida = horario_partida.strftime("%d/%m/%Y")
 
