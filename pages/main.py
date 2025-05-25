@@ -351,8 +351,6 @@ else:
         st.rerun()
 
     # --- ROTEADOR ---
-    def tela_principal():
-        pass
 
     def registrar_partidas(p):
         return p
