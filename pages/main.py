@@ -658,6 +658,7 @@ else:
 
 
 
+
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
         st.title("✅ Confirmação de Presença")
