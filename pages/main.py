@@ -664,7 +664,7 @@ else:
         # Exibe a data da próxima partida
         data_formatada = horario_partida.strftime("%d/%m/%Y às %Hh")
         st.markdown(
-            f"<p style='font-size:18px; font-weight:bold;'>📅 Próxima partida: {data_formatada}</p>",
+            f"<p style='font-size:18px; font-weight:bold; text-align:center;'>📅 Próxima partida: {data_formatada}</p>",
             unsafe_allow_html=True
         )
         # Define o prazo de quarta-feira às 22h
