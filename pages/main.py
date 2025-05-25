@@ -513,7 +513,7 @@ else:
         st.markdown("---")
 
         # Subtítulo centralizado
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Vitórias</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='text-align: center; font-weight: bold;'>  Vitórias</h2>", unsafe_allow_html=True)
 
       # Tela Principal
     def imagem_base64(path, legenda):
@@ -538,8 +538,8 @@ else:
         st.markdown("<h3 style='text-align: center; font-weight: bold;'>Vitórias</h3>", unsafe_allow_html=True)
 
         # Caminhos das imagens na pasta 'imagens'
-        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia Dortmund")
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter de Milão")
 
         # Container com as imagens e o "X"
         st.markdown(f"""
