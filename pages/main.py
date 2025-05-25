@@ -188,43 +188,49 @@ else:
     if "presencas_confirmadas" not in st.session_state:
         st.session_state.presencas_confirmadas = {}
 
-
-    # --- SIDEBAR ---
+    # --- SIDEBAR --- (imagem e nome apenas)
     with st.sidebar:
-        st.image("./imagens/logo.png", caption="Chopp's League", use_container_width=True)
+        st.image("./imagens/logo.png", use_container_width=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
 
-        st.markdown("---")
+    if st.session_state.tipo_usuario == "admin":
+        opcoes = [
+            "🏠 Tela Principal",
+            "📊 Registrar Partida",
+            "👟 Estatísticas dos Jogadores",
+            "🎲 Sorteio de Times",
+            "✅ Confirmar Presença/Ausência",
+            "🏅 Avaliação Pós-Jogo",
+            "📸 Galeria de Momentos",
+            "💬 Fórum",
+            "📣 Comunicado à Gestão",
+            "📜 Regras Choppe's League"
+        ]
+    else:
+        opcoes = [
+            "🏠 Tela Principal",
+            "👟 Estatísticas dos Jogadores",
+            "✅ Confirmar Presença/Ausência",
+            "🏅 Avaliação Pós-Jogo",
+            "📸 Galeria de Momentos",
+            "💬 Fórum",
+            "📣 Comunicado à Gestão",
+            "📜 Regras Choppe's League"
+        ]
 
-        if st.session_state.tipo_usuario == "admin":
-            opcoes = [
-                "🏠 Tela Principal",
-                "📊 Registrar Partida",
-                "👟 Estatísticas dos Jogadores",
-                "🎲 Sorteio de Times",
-                "✅ Confirmar Presença/Ausência",
-                "🏅 Avaliação Pós-Jogo",
-                "📸 Galeria de Momentos",
-                "💬 Fórum",
-                "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League"
-            ]
-        else:
-            opcoes = [
-                "🏠 Tela Principal",
-                "👟 Estatísticas dos Jogadores",
-                "✅ Confirmar Presença/Ausência",
-                "🏅 Avaliação Pós-Jogo",
-                "📸 Galeria de Momentos",
-                "💬 Fórum",
-                "📣 Comunicado à Gestão",
-                "📜 Regras Choppe's League"
-            ]
+    pagina_escolhida = st.selectbox(
+        "",  # label obrigatória
+        opcoes,
+        index=opcoes.index(st.session_state.pagina_atual),
+        key="menu_topo"
+    )
 
-        pagina_escolhida = st.selectbox("Navegar para:", opcoes, key="navegacao_sidebar", label_visibility="collapsed")
+    if pagina_escolhida != st.session_state.pagina_atual:
         st.session_state.pagina_atual = pagina_escolhida
+        st.rerun()
 
-        st.markdown("---")
+
         
 
     # --- Confirmação de logout ---
@@ -326,7 +332,7 @@ else:
     elif pag == "🚪 Sair":
         for k in list(st.session_state.keys()):
             del st.session_state[k]
-        st.experimental_rerun()
+        st.rerun()
 
 
 
@@ -408,20 +414,6 @@ else:
 
     partidas, jogadores = load_data_safe()
 
-
-
-
-
-    # Tela Principal
-    def tela_principal(partidas, jogadores):
-        # Título centralizado
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h2>", unsafe_allow_html=True)
-
-        st.markdown("---")
-
-        # Subtítulo centralizado
-        st.markdown("<h2 style='text-align: center; font-weight: bold;'>  Vitórias</h2>", unsafe_allow_html=True)
-
       # Tela Principal
     def imagem_base64(path, legenda):
         if os.path.exists(path):
@@ -440,7 +432,7 @@ else:
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
-        st.markdown("<h4 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h4>", unsafe_allow_html=True)
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h5>", unsafe_allow_html=True)
         st.markdown("---")
 
         borussia_gols = 18
@@ -661,7 +653,7 @@ else:
 
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
-        st.title("✅ Confirmação de Presença")
+        st.markdown("<br>", unsafe_allow_html=True)
         nome = st.session_state.get("nome", "usuário")
 
         agora = datetime.now()
@@ -672,8 +664,10 @@ else:
 
         # Exibe a data da próxima partida
         data_formatada = horario_partida.strftime("%d/%m/%Y às %Hh")
-        st.markdown(f"### 📅 Próxima partida: **{data_formatada}**")
-
+        st.markdown(
+            f"<p style='font-size:18px; font-weight:bold; text-align:center;'>📅 Próxima partida: {data_formatada}</p>",
+            unsafe_allow_html=True
+        )
         # Define o prazo de quarta-feira às 22h
         dias_para_quarta = (2 - hoje) % 7
         proxima_quarta = agora + timedelta(days=dias_para_quarta)
@@ -757,37 +751,55 @@ else:
         FILE_VOTOS = "votacao.csv"
 
         if not os.path.exists(FILE_VOTOS):
-            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba"])
+            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro"])
             df_votos.to_csv(FILE_VOTOS, index=False)
 
         df_votos = pd.read_csv(FILE_VOTOS)
 
-        jogadores_presentes = st.session_state.get("jogadores_presentes", [
-            "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
-            "Lula", "Juninho", "Jesus", "Gabriel", "Arthur"
-        ])
+        if "Goleiro" not in df_votos.columns:
+            df_votos["Goleiro"] = ""
 
-        st.title("🏅 Avaliação Pós-Jogo")
+        jogadores_presentes = st.session_state.get("jogadores_presentes", [])
+        usuarios = st.session_state.get("usuarios", {})
+
+        # Separar jogadores por posição
+        goleiros = []
+        linha = []
+        for j in jogadores_presentes:
+            for email, info in usuarios.items():
+                if info["nome"] == j:
+                    if info.get("posicao", "Linha") == "Goleiro":
+                        goleiros.append(j)
+                    else:
+                        linha.append(j)
+
+        st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
+        st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
 
         votante = st.session_state.get("nome", "usuário")
-        jogadores_para_voto = [j for j in jogadores_presentes if j != votante]
+        linha = [j for j in linha if j != votante]
+        goleiros = [g for g in goleiros if g != votante]
         ja_votou = votante in df_votos["Votante"].values
 
         if not ja_votou:
-            st.markdown(f"Olá, **{votante}**! Escolha os destaques da partida:")
             with st.form("votacao_form"):
-                craque = st.selectbox("Craque da Choppe's League ⭐", jogadores_para_voto, placeholder="Selecione")
-                pereba = st.selectbox("Pereba da Choppe's League 🥴", jogadores_para_voto, placeholder="Selecione")
+                craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione")
+                pereba_opcoes = [j for j in linha if j != craque]
+                pereba = st.selectbox("🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione")
+                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione")
                 submit = st.form_submit_button("Votar")
 
                 if submit:
                     if craque == pereba:
-                        st.error("O craque e o pereba não podem ser a mesma pessoa.")
+                        st.error("O craque e o pereba devem ser jogadores diferentes.")
+                    elif goleiro == "":
+                        st.error("Escolha um goleiro.")
                     else:
                         novo_voto = pd.DataFrame([{
                             "Votante": votante,
                             "Craque": craque,
-                            "Pereba": pereba
+                            "Pereba": pereba,
+                            "Goleiro": goleiro
                         }])
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
                         df_votos.to_csv(FILE_VOTOS, index=False)
@@ -829,6 +841,7 @@ else:
 
             st.markdown(gerar_html_podio(df_votos["Craque"], "Craque da Choppe's League (Top 3)", "🏆"), unsafe_allow_html=True)
             st.markdown(gerar_html_podio(df_votos["Pereba"], "Pereba da Choppe's League (Top 3)", "🐢"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
 
 
 
@@ -971,7 +984,7 @@ else:
 
     # Tela das Regras
     def tela_regras():
-        st.markdown("<h1 style='font-size:23px;'>📜 Regras Oficiais – Chopp's League</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='font-size:23px;'>🛑 Regras Oficiais</h1>", unsafe_allow_html=True)
         st.markdown("---")
         def subtitulo(txt):
             st.markdown(f'<h3 style="font-size:20px; margin-top: 1em;">{txt}</h3>', unsafe_allow_html=True)
@@ -1043,8 +1056,9 @@ else:
         subtitulo("⭐ 10. Avaliação Pós-Jogo: Péreba e Craque")
         st.markdown("""
         - Após cada partida, será feita uma votação divertida para eleger:
-            - **Péreba**: jogador com a pior performance da rodada.
-            - **Craque**: jogador com a melhor performance.
+            - **⭐ Craque**: jogador com a melhor performance.
+            - **🐢 Péreba**: jogador com a pior performance da rodada.
+            - **🧤 Paredão:** goleiro com a melhor atuação defensiva da rodada.
         - A votação é **exclusiva para quem confirmou presença e jogou na partida do dia**.
         - Somente jogadores presentes poderão votar.
         - A finalidade é **uma brincadeira para animar o grupo e fortalecer o espírito da Choppe's League**.
