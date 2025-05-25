@@ -442,10 +442,10 @@ else:
         st.markdown("---")
 
         borussia_gols = 18
-        borussia_vitorias = 7
+        borussia_vitorias = 17
         inter_gols = 21
-        inter_vitorias = 9
-        empates = 2
+        inter_vitorias = 19
+        empates = 12
 
 
         # Caminhos das imagens na pasta 'imagens'
