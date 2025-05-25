@@ -557,9 +557,9 @@ else:
                 flex-wrap: wrap;
             ">
                 {escudo_borussia}
-                <div style="text-align: center; font-size: 60px; font-weight: bold; line-height: 1;">
-                    ⚔️
-                    <p style="font-size: 16px; margin-top: 0.5rem;"><strong>🤝 Empates:</strong> {empates}</p>
+            <div style="text-align: center; font-size: 60px; font-weight: bold; line-height: 1;">
+                ⚔️
+            <p style="font-size: 16px; margin-top: 0.5rem;"><strong>🤝 Empates:</strong> {empates}</p>
                 </div>
                 {escudo_inter}
             </div>
