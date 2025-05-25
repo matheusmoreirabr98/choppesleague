@@ -537,7 +537,7 @@ else:
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    gap: 500px;
+                    gap: 50px;
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
