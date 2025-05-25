@@ -541,9 +541,8 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
-                        <div style="font-size: 60px; font-weight: bold; line-height: 1;">
-                        ⚔️
-                        </div>
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                </div>
                     {escudo_inter}
                 </div>
             """, unsafe_allow_html=True)
