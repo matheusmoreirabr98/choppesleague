@@ -965,7 +965,7 @@ else:
 
     # Tela das Regras
     def tela_regras():
-        st.markdown("<h1 style='font-size:20px;'>📜 Regras Oficiais – Chopp's League</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='font-size:25px;'>📜 Regras Oficiais – Chopp's League</h1>", unsafe_allow_html=True)
 
         def subtitulo(txt):
             st.markdown(f'<h3 style="font-size:20px; margin-top: 1em;">{txt}</h3>', unsafe_allow_html=True)
