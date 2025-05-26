@@ -477,7 +477,6 @@ else:
         with col2:
             if st.button("👤 Meu Perfil"):
                 st.session_state.pagina_atual = "👤 Meu Perfil"
-                st.rerun()
 
     # SIDEBAR - botão logout
     with st.sidebar:
