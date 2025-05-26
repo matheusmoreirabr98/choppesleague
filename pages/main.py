@@ -621,12 +621,12 @@ else:
             """
             <style>
                 [data-testid="stSidebar"] {
-                    width: 180px !important;
+                    width: 200px !important;
                 }
 
                 /* Corrige o conteúdo principal para não ser cortado */
                 [data-testid="stSidebarContent"] {
-                    width: 200px !important;
+                    width: 230px !important;
                 }
             </style>
             """,
