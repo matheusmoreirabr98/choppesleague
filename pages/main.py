@@ -486,14 +486,14 @@ else:
             with col2:
                 if st.button("🚪 Logout", key="botao_logout"):
                     st.session_state.confirmar_logout = True
-                    st.experimental_rerun()
+                    st.rerun()
         else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
             with col1:
                 if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
                     st.session_state.confirmar_logout = False
-                    st.experimental_rerun()
+                    st.rerun()
             with col2:
                 if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
                     usuarios = st.session_state.get("usuarios", {})
@@ -501,7 +501,7 @@ else:
                     st.session_state.usuario_logado = False
                     st.session_state.usuarios = usuarios
                     st.session_state.pagina_atual = "login"
-                st.rerun()
+                    st.rerun()
 
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
