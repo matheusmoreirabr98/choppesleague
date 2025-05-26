@@ -29,9 +29,6 @@ EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
 
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
-# Garantir que todas as abas necessárias existam
-init_data_gsheets()
-
 # -----------------------------------------
 # Autenticação
 # -----------------------------------------
