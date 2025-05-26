@@ -425,6 +425,7 @@ else:
             "💬 Fórum",
             "📣 Comunicado à Gestão",
             "📜 Regras Chopp's League",
+            "👤 Meu Perfil"
         ]
     else:
         opcoes = [
@@ -436,6 +437,7 @@ else:
             "💬 Fórum",
             "📣 Comunicado à Gestão",
             "📜 Regras Chopp's League",
+            "👤 Meu Perfil"
         ]
 
     pagina_escolhida = st.selectbox(
@@ -447,6 +449,10 @@ else:
 
     if pagina_escolhida != st.session_state.pagina_atual:
         st.session_state.pagina_atual = pagina_escolhida
+        st.rerun()
+
+    if st.button("👤 Meu Perfil"):
+        st.session_state.pagina_atual = "👤 Meu Perfil"
         st.rerun()
 
     # --- Confirmação de logout ---
