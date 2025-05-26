@@ -478,22 +478,22 @@ else:
             if st.button("👤 Meu Perfil"):
                 st.session_state.pagina_atual = "👤 Meu Perfil"
 
-        # Centraliza botão Logout
-        if not st.session_state.confirmar_logout:
+        st.markdown("---")
+
+        # Centraliza botão Logout ou confirma/cancela
+        if not st.session_state.get("confirmar_logout", False):
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
                 if st.button("🚪 Logout", key="botao_logout"):
                     st.session_state.confirmar_logout = True
-                    logout_clicado = True
-                    st.stop()  # ⛔ Impede execução do resto da interface até o próximo clique
+                    st.experimental_rerun()
         else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
             with col1:
                 if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
                     st.session_state.confirmar_logout = False
-                    cancelar_clicado = True
-                    st.rerun()
+                    st.experimental_rerun()
             with col2:
                 if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
                     usuarios = st.session_state.get("usuarios", {})
@@ -501,8 +501,7 @@ else:
                     st.session_state.usuario_logado = False
                     st.session_state.usuarios = usuarios
                     st.session_state.pagina_atual = "login"
-                    confirmar_clicado = True
-                    st.rerun()
+                    st.experimental_rerun()
 
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
