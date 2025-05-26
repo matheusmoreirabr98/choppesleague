@@ -285,6 +285,9 @@ if not st.session_state.usuario_logado:
     tela_login()
 else:
 
+    if "tipo_usuario" not in st.session_state:
+        st.session_state.tipo_usuario = "usuario"
+        
     if "presencas_confirmadas" not in st.session_state:
         st.session_state.presencas_confirmadas = {}
 
