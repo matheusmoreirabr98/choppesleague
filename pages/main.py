@@ -409,14 +409,7 @@ else:
 
     # --- SIDEBAR --- (imagem e nome apenas)
     with st.sidebar:
-        st.markdown(
-            """
-            <div style="text-align: center;">
-                <img src="./imagens/logo.png" width="100">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.image("./imagens/logo.png", width=200)
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
 
