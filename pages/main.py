@@ -180,7 +180,7 @@ def tela_login():
     st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
-    partidas, jogadores, usuarios, presencas = load_data()
+    partidas, jogadores, usuarios = load_data()
 
     # LOGIN
     if aba == "Login":
