@@ -627,7 +627,7 @@ else:
 
                 /* Corrige o conteúdo principal para não ser cortado */
                 [data-testid="stSidebarContent"] {
-                    width: 220px !important;
+                    width: 250px !important;
                 }
             </style>
             """,
