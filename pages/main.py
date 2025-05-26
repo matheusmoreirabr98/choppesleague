@@ -613,7 +613,7 @@ else:
                 partidas, jogadores, _ = load_data()
                 save_data(partidas, jogadores, usuarios)
                 st.success("✅ Informações atualizadas com sucesso!")
-        st.stop()
+                st.stop()
 
     elif pag == "🚪 Sair":
         for k in list(st.session_state.keys()):
