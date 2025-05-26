@@ -625,7 +625,7 @@ else:
             """
             <style>
                 [data-testid="stSidebar"] {
-                    width: 50px !important;
+                    width: 120px !important;
                 }
 
                 /* Corrige o conteúdo principal para não ser cortado */
