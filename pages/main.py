@@ -415,7 +415,7 @@ else:
 
         st.markdown("---")
 
-    if st.button("👤 Meu Perfil"):
+        st.button("👤 Meu Perfil"):
         st.session_state.pagina_atual = "👤 Meu Perfil"
         st.rerun()
 
