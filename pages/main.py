@@ -631,7 +631,6 @@ else:
                 st.sidebar.markdown(
                     f"""
                     <style>
-                        /* Esconde a linha do tempo */
                         audio::-webkit-media-controls-timeline {{
                             display: none !important;
                         }}
@@ -641,11 +640,13 @@ else:
                         }}
                     </style>
 
-                    <p style='text-align: center; font-weight: bold;'>🎵 Música Ambiente</p>
-                    <audio controls style="width: 60%;">
-                        <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-                        Seu navegador não suporta áudio.
-                    </audio>
+                    <div style="text-align: center;">
+                        <p style='font-weight: bold;'>🎵 Música Ambiente</p>
+                        <audio controls style="width: 60%;">
+                            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+                            Seu navegador não suporta áudio.
+                        </audio>
+                    </div>
                     """,
                     unsafe_allow_html=True,
                 )
