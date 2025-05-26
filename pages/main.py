@@ -9,7 +9,7 @@ import os
 import re
 import urllib.parse
 import base64
-from datetime import datetime, timedelta, date, timezone
+from datetime import datetime, timedelta, date
 import streamlit.components.v1 as components
 import gspread
 import pandas as pd
@@ -20,7 +20,7 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
 
-EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
+EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
 
 
 
@@ -76,13 +76,6 @@ def init_data_gsheets():
         sh.add_worksheet(title="Jogadores", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Jogadores"), df_jogadores)
 
-    if "Presenças" not in existentes:
-        df_presencas = pd.DataFrame(columns=[
-            "Nome", "Posição", "Presença", "DataPartida", "Data"
-        ])
-        sh.add_worksheet(title="Presenças", rows="100", cols="10")
-        set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
-
 # -----------------------------------------
 # Carregar dados das planilhas
 # -----------------------------------------
@@ -91,7 +84,7 @@ def load_data_gsheets():
     sh = gc.open(NOME_PLANILHA)
 
     # Lista das abas obrigatórias
-    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças"]
+    abas_necessarias = ["Partidas", "Jogadores", "Usuarios"]
     abas_existentes = [w.title for w in sh.worksheets()]
 
     # Cria as abas que estiverem faltando
@@ -103,7 +96,6 @@ def load_data_gsheets():
     partidas = get_as_dataframe(sh.worksheet("Partidas")).dropna(how='all')
     jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how='all')
     usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how='all')
-    presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how='all')
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
@@ -112,21 +104,17 @@ def load_data_gsheets():
             if pd.notna(row['email']):
                 usuarios[row['email']] = row.drop(labels='email').to_dict()
 
-    return partidas, jogadores, usuarios, presencas
+    return partidas, jogadores, usuarios
 
 # -----------------------------------------
 # Salvar dados nas planilhas
 # -----------------------------------------
-def save_data_gsheets(partidas, jogadores, usuarios, presencas):
+def save_data_gsheets(partidas, jogadores, usuarios):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
-    if isinstance(partidas, list):
-        partidas = pd.DataFrame(partidas)
-    if isinstance(jogadores, list):
-        jogadores = pd.DataFrame(jogadores)
-    if isinstance(presencas, list):
-        presencas = pd.DataFrame(presencas)
+    if isinstance(partidas, list): partidas = pd.DataFrame(partidas)
+    if isinstance(jogadores, list): jogadores = pd.DataFrame(jogadores)
 
     # Converter dicionário de usuários para DataFrame
     usuarios_df = pd.DataFrame.from_dict(usuarios, orient='index').reset_index().rename(columns={"index": "email"})
@@ -134,7 +122,6 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     set_with_dataframe(sh.worksheet("Partidas"), partidas)
     set_with_dataframe(sh.worksheet("Jogadores"), jogadores)
     set_with_dataframe(sh.worksheet("Usuarios"), usuarios_df)
-    set_with_dataframe(sh.worksheet("Presenças"), presencas)
 
 # -----------------------------------------
 # Abstrações para carregar/salvar
@@ -142,8 +129,8 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
 def load_data():
     return load_data_gsheets()
 
-def save_data(partidas, jogadores, usuarios, presencas):
-    save_data_gsheets(partidas, jogadores, usuarios, presencas)
+def save_data(partidas, jogadores, usuarios):
+    save_data_gsheets(partidas, jogadores, usuarios)
 
 # Sessões iniciais
 if "usuario_logado" not in st.session_state:
@@ -180,7 +167,7 @@ def tela_login():
     st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
-    partidas, jogadores, usuarios, presencas = load_data()
+    _, _, usuarios = load_data()  # ← lê os usuários direto da planilha
 
     # LOGIN
     if aba == "Login":
@@ -229,7 +216,7 @@ def tela_login():
                         st.error("As novas senhas não coincidem.")
                     else:
                         usuarios[email]["senha"] = nova_senha
-                        usuarios = load_data()
+                        partidas, jogadores, _ = load_data()
                         save_data(partidas, jogadores, usuarios)
                         st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
@@ -288,8 +275,8 @@ def tela_login():
                         "tipo": "admin" if email in EMAILS_ADMIN else "usuario"
                     }
 
-                    usuarios = load_data()
-                    save_data(usuarios)
+                    partidas, jogadores, _ = load_data()
+                    save_data(partidas, jogadores, usuarios)
 
                     st.success("Cadastro realizado! Agora faça login.")
 
