@@ -428,8 +428,7 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Chopp's League",
-            "👤 Meu Perfil"
+            "📜 Regras Chopp's League"
         ]
     else:
         opcoes = [
@@ -440,8 +439,7 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Chopp's League",
-            "👤 Meu Perfil"
+            "📜 Regras Chopp's League"
         ]
 
     pagina_escolhida = st.selectbox(
