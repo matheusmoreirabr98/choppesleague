@@ -413,6 +413,12 @@ else:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
 
+        st.markdown("---")
+
+    if st.button("👤 Meu Perfil"):
+        st.session_state.pagina_atual = "👤 Meu Perfil"
+        st.rerun()
+
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
             "🏠 Tela Principal",
@@ -449,10 +455,6 @@ else:
 
     if pagina_escolhida != st.session_state.pagina_atual:
         st.session_state.pagina_atual = pagina_escolhida
-        st.rerun()
-
-    if st.button("👤 Meu Perfil"):
-        st.session_state.pagina_atual = "👤 Meu Perfil"
         st.rerun()
 
     # --- Confirmação de logout ---
