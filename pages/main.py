@@ -621,6 +621,21 @@ else:
 
     # Música ambiente (apenas se logado)
     if st.session_state.usuario_logado:
+        st.markdown(
+            """
+            <style>
+                [data-testid="stSidebar"] {
+                    width: 200px !important;
+                }
+
+                /* Corrige o conteúdo principal para não ser cortado */
+                [data-testid="stSidebarContent"] {
+                    width: 200px !important;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
 
         def tocar_musica_sidebar():
             caminho_musica = "audio/musica.mp3"
