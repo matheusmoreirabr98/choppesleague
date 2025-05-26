@@ -622,12 +622,12 @@ else:
             """
             <style>
                 [data-testid="stSidebar"] {
-                    width: 300px !important;
+                    width: 180px !important;
                 }
 
                 /* Corrige o conteúdo principal para não ser cortado */
                 [data-testid="stSidebarContent"] {
-                    width: 300px !important;
+                    width: 200px !important;
                 }
             </style>
             """,
