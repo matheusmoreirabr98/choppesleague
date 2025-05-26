@@ -412,7 +412,7 @@ else:
         st.markdown(
             """
             <div style="text-align: center;">
-                <img src="./imagens/logo.png" width="150">
+                <img src="./imagens/logo.png" width="100">
             </div>
             """,
             unsafe_allow_html=True
