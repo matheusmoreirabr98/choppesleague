@@ -78,7 +78,7 @@ def init_data_gsheets():
 
     if "Presenças" not in existentes:
         df_presencas = pd.DataFrame(columns=[
-            "Nome", "Posição", "Presença", "DataPartida", "Data"
+            "Nome", "Posição", "DataPartida", "Data", "Presença", "Justificativa"
         ])
         sh.add_worksheet(title="Presenças", rows="100", cols="10")
         set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
@@ -840,12 +840,16 @@ else:
                 fuso_utc_minus_3 = timezone(timedelta(hours=-3))
                 data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
                 data_partida = horario_partida.strftime("%d/%m/%Y")
+                
+                justificativa = motivo_outros.strip() if (presenca == "❌ Não" and motivo == "Outros") else (motivo if presenca == "❌ Não" else "")
+                
                 nova_linha = {
                     "Nome": nome,
                     "Posição": posicao,
                     "Presença": "Sim" if presenca == "✅ Sim" else "Não",
                     "DataPartida": data_partida,
-                    "Data": data_envio
+                    "Data": data_envio,
+                    "Motivo": justificativa
                 }
 
                 # Carrega planilha e adiciona linha
@@ -856,10 +860,9 @@ else:
                 df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
                 set_with_dataframe(aba_presencas, df_presencas)
 
-                # Atualiza session_state também
                 st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
                 if presenca == "❌ Não":
-                    st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
+                    st.session_state["motivo"] = justificativa
 
                 st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
