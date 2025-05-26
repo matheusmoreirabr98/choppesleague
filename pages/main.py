@@ -75,7 +75,7 @@ def init_data_gsheets():
         sh.add_worksheet(title="Jogadores", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Jogadores"), df_jogadores)
 
-    if "Presenças" not in existentes:
+    if "presenca" not in existentes:
         df_presencas = pd.DataFrame(columns=[
             "Nome", "Posição", "Presença", "DataPartida", "Data"
         ])
