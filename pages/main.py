@@ -500,7 +500,7 @@ else:
                     st.session_state.usuarios = usuarios
                     st.session_state.pagina_atual = "login"
                     confirmar_clicado = True
-            st.markdown("---")
+        st.markdown("---")
 
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
