@@ -9,7 +9,7 @@ import os
 import re
 import urllib.parse
 import base64
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 import streamlit.components.v1 as components
 import gspread
 import pandas as pd
@@ -287,7 +287,7 @@ else:
 
     if "tipo_usuario" not in st.session_state:
         st.session_state.tipo_usuario = "usuario"
-        
+
     if "presencas_confirmadas" not in st.session_state:
         st.session_state.presencas_confirmadas = {}
 
