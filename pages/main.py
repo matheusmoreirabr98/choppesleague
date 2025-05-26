@@ -630,12 +630,23 @@ else:
                 audio_base64 = base64.b64encode(audio_bytes).decode()
                 st.sidebar.markdown(
                     f"""
+                    <style>
+                        /* Esconde a linha do tempo */
+                        audio::-webkit-media-controls-timeline {{
+                            display: none !important;
+                        }}
+                        audio::-webkit-media-controls-current-time-display,
+                        audio::-webkit-media-controls-time-remaining-display {{
+                            display: none !important;
+                        }}
+                    </style>
+
                     <p style='text-align: center; font-weight: bold;'>🎵 Música Ambiente</p>
-                    <audio controls style="width: 50%;">
+                    <audio controls style="width: 100%;">
                         <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
                         Seu navegador não suporta áudio.
                     </audio>
-                """,
+                    """,
                     unsafe_allow_html=True,
                 )
             else:
