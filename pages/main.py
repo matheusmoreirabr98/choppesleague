@@ -77,7 +77,7 @@ def init_data_gsheets():
 
     if "Presenças" not in existentes:
         df_presencas = pd.DataFrame(columns=[
-            "Nome", "Posição", "DataPartida", "Data", "Presença", "Justificativa"
+            "Nome", "Posição", "Presença", "DataPartida", "Data"
         ])
         sh.add_worksheet(title="Presenças", rows="100", cols="10")
         set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
@@ -90,7 +90,7 @@ def load_data_gsheets():
     sh = gc.open(NOME_PLANILHA)
 
     # Lista das abas obrigatórias
-    abas_necessarias = ["Partidas", "Jogadores", "Usuarios"]
+    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças"]
     abas_existentes = [w.title for w in sh.worksheets()]
 
     # Cria as abas que estiverem faltando
@@ -102,6 +102,7 @@ def load_data_gsheets():
     partidas = get_as_dataframe(sh.worksheet("Partidas")).dropna(how='all')
     jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how='all')
     usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how='all')
+    presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how='all')
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
