@@ -75,7 +75,7 @@ def init_data_gsheets():
         sh.add_worksheet(title="Jogadores", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Jogadores"), df_jogadores)
 
-    if "presenca" not in existentes:
+    if "Presenças" not in existentes:
         df_presencas = pd.DataFrame(columns=[
             "Nome", "Posição", "Presença", "DataPartida", "Data"
         ])
@@ -116,12 +116,16 @@ def load_data_gsheets():
 # -----------------------------------------
 # Salvar dados nas planilhas
 # -----------------------------------------
-def save_data_gsheets(partidas, jogadores, usuarios):
+def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
-    if isinstance(partidas, list): partidas = pd.DataFrame(partidas)
-    if isinstance(jogadores, list): jogadores = pd.DataFrame(jogadores)
+    if isinstance(partidas, list):
+        partidas = pd.DataFrame(partidas)
+    if isinstance(jogadores, list):
+        jogadores = pd.DataFrame(jogadores)
+    if isinstance(presencas, list):
+        presencas = pd.DataFrame(presencas)
 
     # Converter dicionário de usuários para DataFrame
     usuarios_df = pd.DataFrame.from_dict(usuarios, orient='index').reset_index().rename(columns={"index": "email"})
