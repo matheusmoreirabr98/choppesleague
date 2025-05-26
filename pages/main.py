@@ -473,13 +473,15 @@ else:
 
 
     with st.sidebar:
+        # Centraliza botão Meu Perfil
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             if st.button("👤 Meu Perfil"):
                 st.session_state.pagina_atual = "👤 Meu Perfil"
 
-    # SIDEBAR - botão logout
-    with st.sidebar:
+        st.markdown("---")
+
+        # Centraliza botão Logout
         if not st.session_state.confirmar_logout:
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
@@ -490,15 +492,11 @@ else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
             with col1:
-                if st.button(
-                    "❌ Cancelar", key="cancelar_logout", use_container_width=True
-                ):
+                if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
                     st.session_state.confirmar_logout = False
                     cancelar_clicado = True
             with col2:
-                if st.button(
-                    "✅ Confirmar", key="confirmar_logout_btn", use_container_width=True
-                ):
+                if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
                     usuarios = st.session_state.get("usuarios", {})
                     st.session_state.clear()
                     st.session_state.usuario_logado = False
