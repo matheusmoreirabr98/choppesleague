@@ -640,7 +640,7 @@ else:
                         }}
                     </style>
 
-                    <div style="text-align: center;">
+                    <div style="text-align: right;">
                         <p style='font-weight: bold;'>🎵 Música Ambiente</p>
                         <audio controls style="width: 60%;">
                             <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
