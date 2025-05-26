@@ -447,7 +447,7 @@ else:
             index=opcoes.index(pagina_ativa),
             key="menu_topo",
         )
-        
+
     # garante que sempre selecionamos uma opção válida da lista
     pagina_ativa = (
         st.session_state.pagina_atual
@@ -455,17 +455,19 @@ else:
         else opcoes[0]
     )
 
-    pagina_escolhida = st.selectbox(
-        "",  # label obrigatória
-        opcoes,
-        index=opcoes.index(pagina_ativa),
-        key="menu_topo",
-    )
+    # exibe o selectbox somente se não estiver no Meu Perfil
+    if pagina_ativa != "👤 Meu Perfil":
+        pagina_escolhida = st.selectbox(
+            "",  # label obrigatória
+            opcoes,
+            index=opcoes.index(pagina_ativa),
+            key="menu_topo",
+        )
 
-    # atualiza a página apenas se for diferente
-    if pagina_escolhida != st.session_state.pagina_atual:
-        st.session_state.pagina_atual = pagina_escolhida
-        st.rerun()
+        # atualiza a página apenas se for diferente
+        if pagina_escolhida != st.session_state.pagina_atual:
+            st.session_state.pagina_atual = pagina_escolhida
+            st.rerun()
 
     # --- Confirmação de logout ---
     # Inicializa controle de logout apenas uma vez
