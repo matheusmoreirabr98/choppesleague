@@ -398,6 +398,23 @@ def tela_login():
 
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
 if not st.session_state.usuario_logado:
+    # Se estiver em processo de logout, renderiza a confirmação antes de qualquer outra coisa
+    if st.session_state.get("confirmar_logout", False):
+        st.sidebar.warning("Tem certeza que deseja sair?")
+        col1, col2 = st.sidebar.columns(2)
+        with col1:
+            if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
+                st.session_state.confirmar_logout = False
+                st.rerun()
+        with col2:
+            if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
+                usuarios = st.session_state.get("usuarios", {})
+                st.session_state.clear()
+                st.session_state.usuario_logado = False
+                st.session_state.usuarios = usuarios
+                st.session_state.pagina_atual = "login"
+                st.rerun()
+        st.stop()  # Interrompe o restante da renderização
     tela_login()
 else:
 
