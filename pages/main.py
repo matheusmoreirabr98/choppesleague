@@ -479,8 +479,6 @@ else:
             if st.button("👤 Meu Perfil"):
                 st.session_state.pagina_atual = "👤 Meu Perfil"
 
-        st.markdown("---")
-
         # Centraliza botão Logout
         if not st.session_state.confirmar_logout:
             col1, col2, col3 = st.columns([1, 2, 1])
