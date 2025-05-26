@@ -1,15 +1,24 @@
 import streamlit as st
+import requests
+import json
 from io import BytesIO
 from PIL import Image
 import pandas as pd
+import random
 import os
 import re
 import urllib.parse
 import base64
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+import streamlit.components.v1 as components
+import gspread
+import pandas as pd
+from gspread_dataframe import get_as_dataframe, set_with_dataframe
 
 
-
+# Constantes
+NOME_PLANILHA = "ChoppsLeague"
+# CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
 
 EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
 
@@ -21,10 +30,107 @@ EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
 
+# -----------------------------------------
+# Autenticação
+# -----------------------------------------
+def autenticar_gsheets():
+    # Pega credenciais JSON da secret e converte pra dict
+    cred_json_str = st.secrets["gsheets_cred"]
+    cred_json = json.loads(cred_json_str)
 
+    scope = ['https://spreadsheets.google.com/feeds',
+             'https://www.googleapis.com/auth/drive']
 
+    creds = gspread.service_account_from_dict(cred_json, scopes=scope)
+    return creds
 
+# -----------------------------------------
+# Inicialização: cria planilhas se não existirem
+# -----------------------------------------
+def init_data_gsheets():
+    gc = autenticar_gsheets()
+    sh = gc.open(NOME_PLANILHA)
+    existentes = [ws.title for ws in sh.worksheets()]
 
+    if "Usuarios" not in existentes:
+        df_usuarios = pd.DataFrame(columns=[
+            "email", "nome", "posicao", "nascimento", "telefone", "senha",
+            "palavra_chave", "dica_palavra_chave", "tipo"
+        ])
+        sh.add_worksheet(title="Usuarios", rows="100", cols="20")
+        set_with_dataframe(sh.worksheet("Usuarios"), df_usuarios)
+
+    if "Partidas" not in existentes:
+        df_partidas = pd.DataFrame(columns=[
+            "Data da partida", "Nº Partida", "Placar Borrusia", "Gols Borrusia",
+            "Assistências Borrusia", "Placar Inter", "Gols Inter", "Assistências Inter"
+        ])
+        sh.add_worksheet(title="Partidas", rows="100", cols="20")
+        set_with_dataframe(sh.worksheet("Partidas"), df_partidas)
+
+    if "Jogadores" not in existentes:
+        df_jogadores = pd.DataFrame(columns=[
+            "Nome", "Time", "Gols", "Assistências", "Faltas",
+            "Cartões Amarelos", "Cartões Vermelhos"
+        ])
+        sh.add_worksheet(title="Jogadores", rows="100", cols="20")
+        set_with_dataframe(sh.worksheet("Jogadores"), df_jogadores)
+
+# -----------------------------------------
+# Carregar dados das planilhas
+# -----------------------------------------
+def load_data_gsheets():
+    gc = autenticar_gsheets()
+    sh = gc.open(NOME_PLANILHA)
+
+    # Lista das abas obrigatórias
+    abas_necessarias = ["Partidas", "Jogadores", "Usuarios"]
+    abas_existentes = [w.title for w in sh.worksheets()]
+
+    # Cria as abas que estiverem faltando
+    for aba in abas_necessarias:
+        if aba not in abas_existentes:
+            sh.add_worksheet(title=aba, rows=1000, cols=20)
+
+    # Carrega os dados das abas
+    partidas = get_as_dataframe(sh.worksheet("Partidas")).dropna(how='all')
+    jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how='all')
+    usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how='all')
+
+    # Converter para dicionário com e-mail como chave
+    usuarios = {}
+    if not usuarios_df.empty and 'email' in usuarios_df.columns:
+        for _, row in usuarios_df.iterrows():
+            if pd.notna(row['email']):
+                usuarios[row['email']] = row.drop(labels='email').to_dict()
+
+    return partidas, jogadores, usuarios
+
+# -----------------------------------------
+# Salvar dados nas planilhas
+# -----------------------------------------
+def save_data_gsheets(partidas, jogadores, usuarios):
+    gc = autenticar_gsheets()
+    sh = gc.open(NOME_PLANILHA)
+
+    if isinstance(partidas, list): partidas = pd.DataFrame(partidas)
+    if isinstance(jogadores, list): jogadores = pd.DataFrame(jogadores)
+
+    # Converter dicionário de usuários para DataFrame
+    usuarios_df = pd.DataFrame.from_dict(usuarios, orient='index').reset_index().rename(columns={"index": "email"})
+
+    set_with_dataframe(sh.worksheet("Partidas"), partidas)
+    set_with_dataframe(sh.worksheet("Jogadores"), jogadores)
+    set_with_dataframe(sh.worksheet("Usuarios"), usuarios_df)
+
+# -----------------------------------------
+# Abstrações para carregar/salvar
+# -----------------------------------------
+def load_data():
+    return load_data_gsheets()
+
+def save_data(partidas, jogadores, usuarios):
+    save_data_gsheets(partidas, jogadores, usuarios)
 
 # Sessões iniciais
 if "usuario_logado" not in st.session_state:
@@ -43,11 +149,7 @@ if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
 if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
-
-
-
-
-
+    
 # Funções auxiliares
 
 def email_valido(email):
@@ -61,121 +163,122 @@ def formatar_telefone(numero):
 
     # --- TELA DE LOGIN / CADASTRO ---
 def tela_login():
-        st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
-        aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
-        # LOGIN NORMAL OU RECUPERAÇÃO
-        if aba == "Login":
+    st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
+    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
-            if not st.session_state.modo_recuperacao:
-                with st.form("form_login"):
-                    email = st.text_input("E-mail", key="login_email")
-                    senha = st.text_input("Senha", type="password", key="login_senha")
-                    st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
-                    submit = st.form_submit_button("Entrar")
+    _, _, usuarios = load_data()  # ← lê os usuários direto da planilha
 
-                if submit:
-                    usuarios = st.session_state.usuarios
-                    if email in usuarios and usuarios[email]["senha"] == senha:
-                        st.session_state.usuario_logado = True
-                        st.session_state.nome = usuarios[email]["nome"]
-                        st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
-                        st.session_state.email = email  # <--- ESSENCIAL!
-                        st.session_state.pagina_atual = "🏠 Tela Principal"
-                        st.rerun()
-                    else:
-                        st.error("E-mail ou senha inválidos.")
+    # LOGIN
+    if aba == "Login":
+        if not st.session_state.modo_recuperacao:
+            with st.form("form_login"):
+                email = st.text_input("E-mail", key="login_email")
+                senha = st.text_input("Senha", type="password", key="login_senha")
+                st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+                submit = st.form_submit_button("Entrar")
 
-            if not st.session_state.modo_recuperacao:
-                if st.button("Esqueci minha senha"):
-                    st.session_state.modo_recuperacao = True
+            if submit:
+                if email in usuarios and usuarios[email]["senha"] == senha:
+                    st.session_state.usuario_logado = True
+                    st.session_state.nome = usuarios[email]["nome"]
+                    st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
+                    st.session_state.email = email
+                    st.session_state.pagina_atual = "🏠 Tela Principal"
                     st.rerun()
+                else:
+                    st.error("E-mail ou senha inválidos.")
 
-            if st.session_state.modo_recuperacao:
-                st.markdown("<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>", unsafe_allow_html=True)
+        if not st.session_state.modo_recuperacao:
+            if st.button("Esqueci minha senha"):
+                st.session_state.modo_recuperacao = True
+                st.rerun()
 
-                # Entrada do e-mail FORA do formulário para permitir reatividade
-                email = st.text_input("E-mail cadastrado", key="rec_email_final")
+        if st.session_state.modo_recuperacao:
+            st.markdown("<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>", unsafe_allow_html=True)
+            email = st.text_input("E-mail cadastrado", key="rec_email_final")
 
-                # Mostrar a dica da palavra-chave se o e-mail for válido
-                usuarios = st.session_state.usuarios
-                if email in usuarios and usuarios[email].get("dica_palavra_chave"):
-                    st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
+            if email in usuarios and usuarios[email].get("dica_palavra_chave"):
+                st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
 
-                # Formulário com o restante dos campos
-                with st.form("form_esqueci"):
-                    palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
-                    nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
-                    confirmar_nova_senha = st.text_input("Confirme a nova senha", type="password", key="conf_nova_senha_final")
-                    confirmar = st.form_submit_button("Atualizar senha")
+            with st.form("form_esqueci"):
+                palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
+                nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
+                confirmar_nova_senha = st.text_input("Confirme a nova senha", type="password", key="conf_nova_senha_final")
+                confirmar = st.form_submit_button("Atualizar senha")
 
-                    if confirmar:
-                        if email not in usuarios:
-                            st.error("E-mail não encontrado.")
-                        elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
-                            st.error("Palavra-chave incorreta.")
-                        elif nova_senha != confirmar_nova_senha:
-                            st.error("As novas senhas não coincidem.")
-                        else:
-                            usuarios[email]["senha"] = nova_senha
-                            st.success("Senha atualizada com sucesso! Agora faça login.")
-                            st.session_state.modo_recuperacao = False
-                            st.rerun()
-
-        # CADASTRO
-        elif aba == "Cadastro":
-            with st.form("form_cadastro"):
-                nome = st.text_input("Nome completo", key="cad_nome", placeholder="Digite seu nome completo", autocomplete="name")
-                posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
-                raw_nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="ddmmaaaa", autocomplete="bday")
-                nascimento = re.sub(r'\D', '', raw_nascimento)
-                if len(nascimento) >= 5:
-                    nascimento = nascimento[:2] + '/' + nascimento[2:4] + ('/' + nascimento[4:8] if len(nascimento) > 4 else '')
-                telefone = st.text_input("WhatsApp - Ex: 3199475512", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
-                email = st.text_input("E-mail", key="cad_email", autocomplete="email")
-                senha = st.text_input("Senha", type="password", key="cad_senha")
-                confirmar_senha = st.text_input("Confirme a senha", type="password", key="cad_conf_senha")
-                palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
-                dica_palavra_chave = st.text_input("Dica da palavra-chave", key="cad_dica", help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.")
-                submit = st.form_submit_button("Cadastrar")
-
-                erros = []
-
-                if submit:
-                    if not nome or not posicao or not nascimento or not telefone or not email or not senha or not confirmar_senha or not palavra_chave or not dica_palavra_chave:
-                        erros.append("⚠️ Todos os campos devem ser preenchidos.")
-                    if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
-                        erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
-                    if not telefone.isdigit():
-                        erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
-                    if not email_valido(email):
-                        erros.append("✉️ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
-                    if senha != confirmar_senha:
-                        erros.append("🔐 As senhas não coincidem.")
-
-                    if erros:
-                        for erro in erros:
-                            st.warning(erro)
-                        submit = False
-
-                if submit:
-                    if email in st.session_state.usuarios:
-                        st.warning("Este e-mail já está cadastrado.")
-                    elif len(re.sub(r'\D', '', telefone)) != 11:
-                        st.warning("Telefone deve conter 11 dígitos.")
+                if confirmar:
+                    if email not in usuarios:
+                        st.error("E-mail não encontrado.")
+                    elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
+                        st.error("Palavra-chave incorreta.")
+                    elif nova_senha != confirmar_nova_senha:
+                        st.error("As novas senhas não coincidem.")
                     else:
-                        tipo = "admin" if email in EMAILS_ADMIN else "usuario"
-                        st.session_state.usuarios[email] = {
-                            "nome": nome,
-                            "posicao": posicao,
-                            "nascimento": str(nascimento),
-                            "telefone": formatar_telefone(telefone),
-                            "senha": senha,
-                            "palavra_chave": palavra_chave,
-                            "dica_palavra_chave": dica_palavra_chave,
-                            "tipo": tipo
-                        }
-                        st.success("Cadastro realizado! Agora faça login.")
+                        usuarios[email]["senha"] = nova_senha
+                        partidas, jogadores, _ = load_data()
+                        save_data(partidas, jogadores, usuarios)
+                        st.success("Senha atualizada com sucesso! Agora faça login.")
+                        st.session_state.modo_recuperacao = False
+                        st.rerun()
+
+    # CADASTRO
+    elif aba == "Cadastro":
+        with st.form("form_cadastro"):
+            nome = st.text_input("Nome completo", key="cad_nome", placeholder="Digite seu nome completo", autocomplete="name")
+            posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
+            raw_nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="ddmmaaaa", autocomplete="bday")
+            nascimento = re.sub(r'\D', '', raw_nascimento)
+            if len(nascimento) >= 5:
+                nascimento = nascimento[:2] + '/' + nascimento[2:4] + ('/' + nascimento[4:8] if len(nascimento) > 4 else '')
+            telefone = st.text_input("WhatsApp - Ex: 3199475512", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
+            email = st.text_input("E-mail", key="cad_email", autocomplete="email")
+            senha = st.text_input("Senha", type="password", key="cad_senha")
+            confirmar_senha = st.text_input("Confirme a senha", type="password", key="cad_conf_senha")
+            palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
+            dica_palavra_chave = st.text_input("Dica da palavra-chave", key="cad_dica", help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.")
+            submit = st.form_submit_button("Cadastrar")
+
+            erros = []
+
+            if submit:
+                if not nome or not posicao or not nascimento or not telefone or not email or not senha or not confirmar_senha or not palavra_chave or not dica_palavra_chave:
+                    erros.append("⚠ Todos os campos devem ser preenchidos.")
+                if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
+                    erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
+                if not telefone.isdigit():
+                    erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
+                if not email_valido(email):
+                    erros.append("✉ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
+                if senha != confirmar_senha:
+                    erros.append("🔐 As senhas não coincidem.")
+
+                if erros:
+                    for erro in erros:
+                        st.warning(erro)
+                    submit = False
+
+            if submit:
+                if email in usuarios:
+                    st.warning("Este e-mail já está cadastrado.")
+                elif len(re.sub(r'\D', '', telefone)) != 11:
+                    st.warning("Telefone deve conter 11 dígitos.")
+                else:
+                    usuarios[email] = {
+                        "nome": nome,
+                        "posicao": posicao,
+                        "nascimento": str(nascimento),
+                        "telefone": formatar_telefone(telefone),
+                        "senha": senha,
+                        "palavra_chave": palavra_chave,
+                        "dica_palavra_chave": dica_palavra_chave,
+                        "tipo": "admin" if email in EMAILS_ADMIN else "usuario"
+                    }
+
+                    partidas, jogadores, _ = load_data()
+                    save_data(partidas, jogadores, usuarios)
+
+                    st.success("Cadastro realizado! Agora faça login.")
 
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
 if not st.session_state.usuario_logado:
@@ -650,22 +753,27 @@ else:
 
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
+        
         st.markdown("<br>", unsafe_allow_html=True)
         nome = st.session_state.get("nome", "usuário")
+        usuarios = st.session_state.get("usuarios", {})
+        email = st.session_state.get("email", "")
+
+        posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
         agora = datetime.now()
         hoje = agora.weekday()  # segunda = 0 ... domingo = 6
         dias_para_quinta = (3 - hoje) % 7
         proxima_quinta = agora + timedelta(days=dias_para_quinta)
         horario_partida = proxima_quinta.replace(hour=20, minute=0, second=0, microsecond=0)
+        data_formatada = horario_partida.strftime("%d/%m/%Y")
+        data_display = horario_partida.strftime("%d/%m/%Y às %Hh")
 
-        # Exibe a data da próxima partida
-        data_formatada = horario_partida.strftime("%d/%m/%Y às %Hh")
         st.markdown(
-            f"<p style='font-size:18px; font-weight:bold; text-align:center;'>📅 Próxima partida: {data_formatada}</p>",
+            f"<p style='font-size:18px; font-weight:bold; text-align:center;'>📅 Próxima partida: {data_display}</p>",
             unsafe_allow_html=True
         )
-        # Define o prazo de quarta-feira às 22h
+
         dias_para_quarta = (2 - hoje) % 7
         proxima_quarta = agora + timedelta(days=dias_para_quarta)
         prazo_limite = proxima_quarta.replace(hour=22, minute=0, second=0, microsecond=0)
@@ -701,7 +809,6 @@ else:
             return
 
         presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
-
         motivo = ""
         motivo_outros = ""
 
@@ -718,26 +825,34 @@ else:
             else:
                 email = st.session_state.get("email")
                 nome = st.session_state.get("nome", "Jogador")
+                posicao = usuarios.get(email, {}).get("posicao", "Linha")
+                fuso_utc_minus_3 = timezone(timedelta(hours=-3))
+                data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
+                data_partida = horario_partida.strftime("%d/%m/%Y")
+                nova_linha = {
+                    "Nome": nome,
+                    "Posição": posicao,
+                    "Presença": "Sim" if presenca == "✅ Sim" else "Não",
+                    "DataPartida": data_partida,
+                    "Data": data_envio
+                }
 
-                if presenca == "✅ Sim":
-                    st.session_state["presenca_confirmada"] = "sim"
-                    if email:
-                        st.session_state.presencas_confirmadas[email] = {
-                            "nome": nome,
-                            "presenca": "sim"
-                        }
-                else:
-                    st.session_state["presenca_confirmada"] = "nao"
+                # Carrega planilha e adiciona linha
+                gc = autenticar_gsheets()
+                sh = gc.open(NOME_PLANILHA)
+                aba_presencas = sh.worksheet("Presenças")
+                df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
+                df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
+                set_with_dataframe(aba_presencas, df_presencas)
+
+                # Atualiza session_state também
+                st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
+                if presenca == "❌ Não":
                     st.session_state["motivo"] = motivo_outros.strip() if motivo == "Outros" else motivo
-                    if email:
-                        st.session_state.presencas_confirmadas[email] = {
-                            "nome": nome,
-                            "presenca": "nao",
-                            "motivo": st.session_state["motivo"]
-                        }
 
+                st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
-
+        
 
 
 
