@@ -440,12 +440,18 @@ else:
             "📜 Regras Chopp's League"
         ]
 
-    pagina_escolhida = st.selectbox(
-        "",  # label obrigatória
-        opcoes,
-        index=opcoes.index(st.session_state.pagina_atual),
-        key="menu_topo",
-    )
+        Pagina_atual = (
+            st.session_state.pagina_atual
+            if st.session_state.pagina_atual in opcoes
+            else opcoes[0]
+        )
+
+        pagina_escolhida = st.selectbox(
+            "",  # label obrigatória
+            opcoes,
+            index=opcoes.index(pagina_atual),
+            key="menu_topo",
+        )
 
     if pagina_escolhida != st.session_state.pagina_atual:
         st.session_state.pagina_atual = pagina_escolhida
