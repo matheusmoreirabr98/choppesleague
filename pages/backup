@@ -23,11 +23,8 @@ NOME_PLANILHA = "ChoppsLeague"
 EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
 
 
-
-
-
-
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
+
 
 # -----------------------------------------
 # Autenticação
@@ -37,11 +34,14 @@ def autenticar_gsheets():
     cred_json_str = st.secrets["gsheets_cred"]
     cred_json = json.loads(cred_json_str)
 
-    scope = ['https://spreadsheets.google.com/feeds',
-             'https://www.googleapis.com/auth/drive']
+    scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive",
+    ]
 
     creds = gspread.service_account_from_dict(cred_json, scopes=scope)
     return creds
+
 
 # -----------------------------------------
 # Inicialização: cria planilhas se não existirem
@@ -52,35 +52,60 @@ def init_data_gsheets():
     existentes = [ws.title for ws in sh.worksheets()]
 
     if "Usuarios" not in existentes:
-        df_usuarios = pd.DataFrame(columns=[
-            "email", "nome", "posicao", "nascimento", "telefone", "senha",
-            "palavra_chave", "dica_palavra_chave", "tipo"
-        ])
+        df_usuarios = pd.DataFrame(
+            columns=[
+                "email",
+                "nome",
+                "posicao",
+                "nascimento",
+                "telefone",
+                "senha",
+                "palavra_chave",
+                "dica_palavra_chave",
+                "tipo",
+            ]
+        )
         sh.add_worksheet(title="Usuarios", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Usuarios"), df_usuarios)
 
     if "Partidas" not in existentes:
-        df_partidas = pd.DataFrame(columns=[
-            "Data da partida", "Nº Partida", "Placar Borrusia", "Gols Borrusia",
-            "Assistências Borrusia", "Placar Inter", "Gols Inter", "Assistências Inter"
-        ])
+        df_partidas = pd.DataFrame(
+            columns=[
+                "Data da partida",
+                "Nº Partida",
+                "Placar Borrusia",
+                "Gols Borrusia",
+                "Assistências Borrusia",
+                "Placar Inter",
+                "Gols Inter",
+                "Assistências Inter",
+            ]
+        )
         sh.add_worksheet(title="Partidas", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Partidas"), df_partidas)
 
     if "Jogadores" not in existentes:
-        df_jogadores = pd.DataFrame(columns=[
-            "Nome", "Time", "Gols", "Assistências", "Faltas",
-            "Cartões Amarelos", "Cartões Vermelhos"
-        ])
+        df_jogadores = pd.DataFrame(
+            columns=[
+                "Nome",
+                "Time",
+                "Gols",
+                "Assistências",
+                "Faltas",
+                "Cartões Amarelos",
+                "Cartões Vermelhos",
+            ]
+        )
         sh.add_worksheet(title="Jogadores", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Jogadores"), df_jogadores)
 
     if "Presenças" not in existentes:
-        df_presencas = pd.DataFrame(columns=[
-            "Nome", "Posição", "Presença", "DataPartida", "Data"
-        ])
+        df_presencas = pd.DataFrame(
+            columns=["Nome", "Posição", "Presença", "DataPartida", "Data"]
+        )
         sh.add_worksheet(title="Presenças", rows="100", cols="10")
         set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
+
 
 # -----------------------------------------
 # Carregar dados das planilhas
@@ -99,19 +124,20 @@ def load_data_gsheets():
             sh.add_worksheet(title=aba, rows=1000, cols=20)
 
     # Carrega os dados das abas
-    partidas = get_as_dataframe(sh.worksheet("Partidas")).dropna(how='all')
-    jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how='all')
-    usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how='all')
-    presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how='all')
+    partidas = get_as_dataframe(sh.worksheet("Partidas")).dropna(how="all")
+    jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how="all")
+    usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how="all")
+    presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how="all")
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
-    if not usuarios_df.empty and 'email' in usuarios_df.columns:
+    if not usuarios_df.empty and "email" in usuarios_df.columns:
         for _, row in usuarios_df.iterrows():
-            if pd.notna(row['email']):
-                usuarios[row['email']] = row.drop(labels='email').to_dict()
+            if pd.notna(row["email"]):
+                usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
     return partidas, jogadores, usuarios
+
 
 # -----------------------------------------
 # Salvar dados nas planilhas
@@ -128,12 +154,17 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
         presencas = pd.DataFrame(presencas)
 
     # Converter dicionário de usuários para DataFrame
-    usuarios_df = pd.DataFrame.from_dict(usuarios, orient='index').reset_index().rename(columns={"index": "email"})
+    usuarios_df = (
+        pd.DataFrame.from_dict(usuarios, orient="index")
+        .reset_index()
+        .rename(columns={"index": "email"})
+    )
 
     set_with_dataframe(sh.worksheet("Partidas"), partidas)
     set_with_dataframe(sh.worksheet("Jogadores"), jogadores)
     set_with_dataframe(sh.worksheet("Usuarios"), usuarios_df)
     set_with_dataframe(sh.worksheet("Presenças"), presencas)
+
 
 # -----------------------------------------
 # Abstrações para carregar/salvar
@@ -141,8 +172,10 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
 def load_data():
     return load_data_gsheets()
 
+
 def save_data(partidas, jogadores, usuarios):
     save_data_gsheets(partidas, jogadores, usuarios)
+
 
 # Sessões iniciais
 if "usuario_logado" not in st.session_state:
@@ -161,23 +194,32 @@ if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
 if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
-    
+
 # Funções auxiliares
 
+
 def email_valido(email):
-        return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+
 
 def formatar_telefone(numero):
-    numeros = re.sub(r'\D', '', numero)
+    numeros = re.sub(r"\D", "", numero)
     if len(numeros) == 11:
         return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
     return numero
 
     # --- TELA DE LOGIN / CADASTRO ---
+
+
 def tela_login():
 
-    st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
-    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
+    st.markdown(
+        "<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>",
+        unsafe_allow_html=True,
+    )
+    aba = st.radio(
+        "Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True
+    )
 
     _, _, usuarios = load_data()  # ← lê os usuários direto da planilha
 
@@ -187,14 +229,18 @@ def tela_login():
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
                 senha = st.text_input("Senha", type="password", key="login_senha")
-                st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+                st.markdown(
+                    "<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True
+                )
                 submit = st.form_submit_button("Entrar")
 
             if submit:
                 if email in usuarios and usuarios[email]["senha"] == senha:
                     st.session_state.usuario_logado = True
                     st.session_state.nome = usuarios[email]["nome"]
-                    st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
+                    st.session_state.tipo_usuario = usuarios[email].get(
+                        "tipo", "usuario"
+                    )
                     st.session_state.email = email
                     st.session_state.pagina_atual = "🏠 Tela Principal"
                     st.rerun()
@@ -207,16 +253,27 @@ def tela_login():
                 st.rerun()
 
         if st.session_state.modo_recuperacao:
-            st.markdown("<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>", unsafe_allow_html=True)
+            st.markdown(
+                "<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>",
+                unsafe_allow_html=True,
+            )
             email = st.text_input("E-mail cadastrado", key="rec_email_final")
 
             if email in usuarios and usuarios[email].get("dica_palavra_chave"):
                 st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
 
             with st.form("form_esqueci"):
-                palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
-                nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
-                confirmar_nova_senha = st.text_input("Confirme a nova senha", type="password", key="conf_nova_senha_final")
+                palavra_chave_rec = st.text_input(
+                    "Palavra-chave", key="palavra_chave_rec_final"
+                )
+                nova_senha = st.text_input(
+                    "Nova senha", type="password", key="nova_senha_final"
+                )
+                confirmar_nova_senha = st.text_input(
+                    "Confirme a nova senha",
+                    type="password",
+                    key="conf_nova_senha_final",
+                )
                 confirmar = st.form_submit_button("Atualizar senha")
 
                 if confirmar:
@@ -237,31 +294,77 @@ def tela_login():
     # CADASTRO
     elif aba == "Cadastro":
         with st.form("form_cadastro"):
-            nome = st.text_input("Nome completo", key="cad_nome", placeholder="Digite seu nome completo", autocomplete="name")
-            posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
-            raw_nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="ddmmaaaa", autocomplete="bday")
-            nascimento = re.sub(r'\D', '', raw_nascimento)
+            nome = st.text_input(
+                "Nome completo",
+                key="cad_nome",
+                placeholder="Digite seu nome completo",
+                autocomplete="name",
+            )
+            posicao = st.selectbox(
+                "Posição que joga", ["Linha", "Goleiro"], key="cad_pos"
+            )
+            raw_nascimento = st.text_input(
+                "Data de nascimento (DD/MM/AAAA)",
+                key="cad_nasc",
+                placeholder="ddmmaaaa",
+                autocomplete="bday",
+            )
+            nascimento = re.sub(r"\D", "", raw_nascimento)
             if len(nascimento) >= 5:
-                nascimento = nascimento[:2] + '/' + nascimento[2:4] + ('/' + nascimento[4:8] if len(nascimento) > 4 else '')
-            telefone = st.text_input("WhatsApp - Ex: 3199475512", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
+                nascimento = (
+                    nascimento[:2]
+                    + "/"
+                    + nascimento[2:4]
+                    + ("/" + nascimento[4:8] if len(nascimento) > 4 else "")
+                )
+            telefone = st.text_input(
+                "WhatsApp - Ex: 3199475512",
+                key="cad_tel",
+                placeholder="(DDD) número",
+                autocomplete="tel",
+            )
             email = st.text_input("E-mail", key="cad_email", autocomplete="email")
             senha = st.text_input("Senha", type="password", key="cad_senha")
-            confirmar_senha = st.text_input("Confirme a senha", type="password", key="cad_conf_senha")
-            palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
-            dica_palavra_chave = st.text_input("Dica da palavra-chave", key="cad_dica", help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.")
+            confirmar_senha = st.text_input(
+                "Confirme a senha", type="password", key="cad_conf_senha"
+            )
+            palavra_chave = st.text_input(
+                "Palavra-chave (para recuperar a senha)",
+                key="cad_palavra",
+                help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.",
+            )
+            dica_palavra_chave = st.text_input(
+                "Dica da palavra-chave",
+                key="cad_dica",
+                help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.",
+            )
             submit = st.form_submit_button("Cadastrar")
 
             erros = []
 
             if submit:
-                if not nome or not posicao or not nascimento or not telefone or not email or not senha or not confirmar_senha or not palavra_chave or not dica_palavra_chave:
+                if (
+                    not nome
+                    or not posicao
+                    or not nascimento
+                    or not telefone
+                    or not email
+                    or not senha
+                    or not confirmar_senha
+                    or not palavra_chave
+                    or not dica_palavra_chave
+                ):
                     erros.append("⚠ Todos os campos devem ser preenchidos.")
-                if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
-                    erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
+                if not re.match(r"^\d{2}/\d{2}/\d{4}$", nascimento):
+                    erros.append(
+                        "📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA."
+                    )
                 if not telefone.isdigit():
                     erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
                 if not email_valido(email):
-                    erros.append("✉ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
+                    erros.append(
+                        "✉ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com)."
+                    )
                 if senha != confirmar_senha:
                     erros.append("🔐 As senhas não coincidem.")
 
@@ -273,7 +376,7 @@ def tela_login():
             if submit:
                 if email in usuarios:
                     st.warning("Este e-mail já está cadastrado.")
-                elif len(re.sub(r'\D', '', telefone)) != 11:
+                elif len(re.sub(r"\D", "", telefone)) != 11:
                     st.warning("Telefone deve conter 11 dígitos.")
                 else:
                     usuarios[email] = {
@@ -284,13 +387,14 @@ def tela_login():
                         "senha": senha,
                         "palavra_chave": palavra_chave,
                         "dica_palavra_chave": dica_palavra_chave,
-                        "tipo": "admin" if email in EMAILS_ADMIN else "usuario"
+                        "tipo": "admin" if email in EMAILS_ADMIN else "usuario",
                     }
 
                     partidas, jogadores, _ = load_data()
                     save_data(partidas, jogadores, usuarios)
 
                     st.success("Cadastro realizado! Agora faça login.")
+
 
 # BLOQUEIA TUDO SE NÃO ESTIVER LOGADO
 if not st.session_state.usuario_logado:
@@ -320,7 +424,7 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League"
+            "📜 Regras Choppe's League",
         ]
     else:
         opcoes = [
@@ -331,22 +435,19 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League"
+            "📜 Regras Choppe's League",
         ]
 
     pagina_escolhida = st.selectbox(
         "",  # label obrigatória
         opcoes,
         index=opcoes.index(st.session_state.pagina_atual),
-        key="menu_topo"
+        key="menu_topo",
     )
 
     if pagina_escolhida != st.session_state.pagina_atual:
         st.session_state.pagina_atual = pagina_escolhida
         st.rerun()
-
-
-        
 
     # --- Confirmação de logout ---
     # Inicializa controle de logout apenas uma vez
@@ -370,11 +471,15 @@ else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
             with col1:
-                if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
+                if st.button(
+                    "❌ Cancelar", key="cancelar_logout", use_container_width=True
+                ):
                     st.session_state.confirmar_logout = False
                     cancelar_clicado = True
             with col2:
-                if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
+                if st.button(
+                    "✅ Confirmar", key="confirmar_logout_btn", use_container_width=True
+                ):
                     usuarios = st.session_state.get("usuarios", {})
                     st.session_state.clear()
                     st.session_state.usuario_logado = False
@@ -417,7 +522,6 @@ else:
     def tela_regras():
         pass
 
-
     partidas = st.session_state.get("partidas", [])
     jogadores = st.session_state.get("jogadores", [])
 
@@ -449,53 +553,62 @@ else:
             del st.session_state[k]
         st.rerun()
 
-
-
-
-
     # Música ambiente (apenas se logado)
     if st.session_state.usuario_logado:
+
         def tocar_musica_sidebar():
             caminho_musica = "audio/musica.mp3"
             if os.path.exists(caminho_musica):
                 with open(caminho_musica, "rb") as f:
                     audio_bytes = f.read()
                 audio_base64 = base64.b64encode(audio_bytes).decode()
-                st.sidebar.markdown(f"""
+                st.sidebar.markdown(
+                    f"""
                     <p style='text-align: center; font-weight: bold;'>🎵 Música Ambiente</p>
                     <audio controls style="width: 100%;">
                         <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
                         Seu navegador não suporta áudio.
                     </audio>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
             else:
                 st.sidebar.warning("🔇 Música não encontrada.")
 
         tocar_musica_sidebar()
 
-
-
-
-
     # Arquivos CSV
     FILE_PARTIDAS = "partidas.csv"
     FILE_JOGADORES = "jogadores.csv"
 
-
-
-
-
     def init_data():
         if not os.path.exists(FILE_PARTIDAS):
-            df = pd.DataFrame(columns=[
-                "Data", "Número da Partida",
-                "Placar Borussia", "Gols Borussia", "Assistências Borussia",
-                "Placar Inter", "Gols Inter", "Assistências Inter"
-            ])
+            df = pd.DataFrame(
+                columns=[
+                    "Data",
+                    "Número da Partida",
+                    "Placar Borussia",
+                    "Gols Borussia",
+                    "Assistências Borussia",
+                    "Placar Inter",
+                    "Gols Inter",
+                    "Assistências Inter",
+                ]
+            )
             df.to_csv(FILE_PARTIDAS, index=False)
 
         if not os.path.exists(FILE_JOGADORES):
-            df = pd.DataFrame(columns=["Nome", "Time", "Gols", "Assistências", "Faltas", "Cartões Amarelos", "Cartões Vermelhos"])
+            df = pd.DataFrame(
+                columns=[
+                    "Nome",
+                    "Time",
+                    "Gols",
+                    "Assistências",
+                    "Faltas",
+                    "Cartões Amarelos",
+                    "Cartões Vermelhos",
+                ]
+            )
             df.to_csv(FILE_JOGADORES, index=False)
 
     def load_data():
@@ -507,29 +620,42 @@ else:
         partidas.to_csv(FILE_PARTIDAS, index=False)
         jogadores.to_csv(FILE_JOGADORES, index=False)
 
-
-
-
-
     # Carrega dados com segurança
     def load_data_safe():
         try:
             partidas = pd.read_csv(FILE_PARTIDAS)
         except:
-            partidas = pd.DataFrame(columns=[
-                "Data", "Número da Partida",
-                "Placar Borussia", "Gols Borussia", "Assistências Borussia",
-                "Placar Inter", "Gols Inter", "Assistências Inter"
-            ])
+            partidas = pd.DataFrame(
+                columns=[
+                    "Data",
+                    "Número da Partida",
+                    "Placar Borussia",
+                    "Gols Borussia",
+                    "Assistências Borussia",
+                    "Placar Inter",
+                    "Gols Inter",
+                    "Assistências Inter",
+                ]
+            )
         try:
             jogadores = pd.read_csv(FILE_JOGADORES)
         except:
-            jogadores = pd.DataFrame(columns=["Nome", "Time", "Gols", "Assistências", "Faltas", "Cartões Amarelos", "Cartões Vermelhos"])
+            jogadores = pd.DataFrame(
+                columns=[
+                    "Nome",
+                    "Time",
+                    "Gols",
+                    "Assistências",
+                    "Faltas",
+                    "Cartões Amarelos",
+                    "Cartões Vermelhos",
+                ]
+            )
         return partidas, jogadores
 
     partidas, jogadores = load_data_safe()
 
-      # Tela Principal
+    # Tela Principal
     def imagem_base64(path, legenda):
         if os.path.exists(path):
             img = Image.open(path)
@@ -547,7 +673,10 @@ else:
 
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
-        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h5>", unsafe_allow_html=True)
+        st.markdown(
+            "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h5>",
+            unsafe_allow_html=True,
+        )
         st.markdown("---")
 
         borussia_gols = 18
@@ -556,13 +685,13 @@ else:
         inter_vitorias = 19
         empates = 12
 
-
         # Caminhos das imagens na pasta 'imagens'
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
         # Container com as imagens e o "X"
-        st.markdown(f"""
+        st.markdown(
+            f"""
                 <div style="
                     display: flex;
                     justify-content: center;
@@ -575,9 +704,12 @@ else:
                 </div>
                     {escudo_inter}
                 </div>
-            """, unsafe_allow_html=True)
+            """,
+            unsafe_allow_html=True,
+        )
 
-        st.markdown(f"""
+        st.markdown(
+            f"""
             <div style="
                 display: flex;
                 justify-content: space-between;
@@ -605,7 +737,9 @@ else:
                     ⚽ - {inter_gols}
                 </p>
             </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown("---")
 
@@ -628,29 +762,38 @@ else:
                     break
             linhas_html += f"<li>{status} {nome}</li>"
 
-        st.markdown(f"""
+        st.markdown(
+            f"""
             <div style="text-align: center; margin-top: 2rem;">
                 <h6 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h6>
                 <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
                     {linhas_html}
                 </ul>
             </div>
-        """, unsafe_allow_html=True)
-
-
-
-
-
+        """,
+            unsafe_allow_html=True,
+        )
 
     # Tela de registro das partidas
     def registrar_partidas(partidas):
         st.title("Registrar Estatísticas da Partida")
 
-        jogadores_originais = st.session_state.get("jogadores_presentes", [
-            "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
-            "Lula", "Juninho", "Jesus", "Gabriel", "Arthur"
-        ])
-        
+        jogadores_originais = st.session_state.get(
+            "jogadores_presentes",
+            [
+                "Matheus Moreira",
+                "José Moreira",
+                "Lucas",
+                "Alex",
+                "Gustavo",
+                "Lula",
+                "Juninho",
+                "Jesus",
+                "Gabriel",
+                "Arthur",
+            ],
+        )
+
         numero_partida = len(partidas) + 1
         data = st.date_input("Data da partida")
         st.markdown(f"**Número da Partida:** {numero_partida}")
@@ -667,7 +810,10 @@ else:
             st.markdown("</div>", unsafe_allow_html=True)
 
         with col_b:
-            st.markdown("<div style='text-align:center; margin-top: 50px; font-size: 48px;'>✖</div>", unsafe_allow_html=True)
+            st.markdown(
+                "<div style='text-align:center; margin-top: 50px; font-size: 48px;'>✖</div>",
+                unsafe_allow_html=True,
+            )
 
         with col_c:
             st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
@@ -682,12 +828,21 @@ else:
 
         with col1:
             lista_borussia = ["Ninguém marcou"] + jogadores_originais * 2
-            gols_borussia = st.multiselect("Goleadores (Borussia)", lista_borussia, key="gols_borussia")
-            placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
-            st.markdown(f"<div style='text-align:center; font-size: 28px; font-weight:bold;'>{placar_borussia} gol(s)</div>", unsafe_allow_html=True)
+            gols_borussia = st.multiselect(
+                "Goleadores (Borussia)", lista_borussia, key="gols_borussia"
+            )
+            placar_borussia = (
+                0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
+            )
+            st.markdown(
+                f"<div style='text-align:center; font-size: 28px; font-weight:bold;'>{placar_borussia} gol(s)</div>",
+                unsafe_allow_html=True,
+            )
 
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
-                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
+                st.warning(
+                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
+                )
                 gols_borussia = ["Ninguém marcou"]
                 st.session_state["gols_borussia"] = ["Ninguém marcou"]
 
@@ -698,18 +853,27 @@ else:
                     f"Garçons Borussia (máx {max_assists})",
                     [j for j in jogadores_originais if j not in gols_borussia],
                     max_selections=max_assists,
-                    key="assist_borussia"
+                    key="assist_borussia",
                 )
 
         with col2:
             jogadores_indisponiveis = set(gols_borussia + assist_borussia)
-            lista_inter = ["Ninguém marcou"] + [j for j in jogadores_originais if j not in jogadores_indisponiveis] * 2
-            gols_inter = st.multiselect("Goleadores (Inter)", lista_inter, key="gols_inter")
+            lista_inter = ["Ninguém marcou"] + [
+                j for j in jogadores_originais if j not in jogadores_indisponiveis
+            ] * 2
+            gols_inter = st.multiselect(
+                "Goleadores (Inter)", lista_inter, key="gols_inter"
+            )
             placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
-            st.markdown(f"<div style='text-align:center; font-size: 28px; font-weight:bold;'>{placar_inter} gol(s)</div>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div style='text-align:center; font-size: 28px; font-weight:bold;'>{placar_inter} gol(s)</div>",
+                unsafe_allow_html=True,
+            )
 
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
-                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
+                st.warning(
+                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
+                )
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
 
@@ -720,7 +884,7 @@ else:
                     f"Garçons Inter (máx {max_assists})",
                     [j for j in jogadores_originais if j not in gols_inter],
                     max_selections=max_assists,
-                    key="assist_inter"
+                    key="assist_inter",
                 )
 
         # Registro final
@@ -733,7 +897,7 @@ else:
                 "Assistências Borussia": ", ".join(assist_borussia),
                 "Placar Inter": placar_inter,
                 "Gols Inter": ", ".join(gols_inter),
-                "Assistências Inter": ", ".join(assist_inter)
+                "Assistências Inter": ", ".join(assist_inter),
             }
             partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
             partidas.to_csv("partidas.csv", index=False)
@@ -745,30 +909,19 @@ else:
 
         return partidas
 
-
-
-
-
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
         st.title("Estatísticas dos Jogadores")
         st.markdown("⚠️ Em breve...")
-
-
-
 
     # Tela de sorteio
     def tela_sorteio():
         st.title("🎲 Sorteio de Times")
         st.markdown("⚠️ Em breve...")
 
-
-
-
-
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
-        
+
         st.markdown("<br>", unsafe_allow_html=True)
         nome = st.session_state.get("nome", "usuário")
         usuarios = st.session_state.get("usuarios", {})
@@ -780,31 +933,39 @@ else:
         hoje = agora.weekday()  # segunda = 0 ... domingo = 6
         dias_para_quinta = (3 - hoje) % 7
         proxima_quinta = agora + timedelta(days=dias_para_quinta)
-        horario_partida = proxima_quinta.replace(hour=20, minute=0, second=0, microsecond=0)
+        horario_partida = proxima_quinta.replace(
+            hour=20, minute=0, second=0, microsecond=0
+        )
         data_formatada = horario_partida.strftime("%d/%m/%Y")
         data_display = horario_partida.strftime("%d/%m/%Y às %Hh")
 
         st.markdown(
             f"<p style='font-size:18px; font-weight:bold; text-align:center;'>📅 Próxima partida: {data_display}</p>",
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
         dias_para_quarta = (2 - hoje) % 7
         proxima_quarta = agora + timedelta(days=dias_para_quarta)
-        prazo_limite = proxima_quarta.replace(hour=22, minute=0, second=0, microsecond=0)
+        prazo_limite = proxima_quarta.replace(
+            hour=22, minute=0, second=0, microsecond=0
+        )
 
         passou_do_prazo = agora > prazo_limite
         resposta_enviada = "presenca_confirmada" in st.session_state
 
         if passou_do_prazo:
-            st.warning("⚠️ O prazo para confirmar presença ou ausência é toda **quarta-feira até às 22h**.")
+            st.warning(
+                "⚠️ O prazo para confirmar presença ou ausência é toda **quarta-feira até às 22h**."
+            )
             if resposta_enviada:
                 status = st.session_state["presenca_confirmada"]
                 if status == "sim":
                     st.info(f"{nome}, você **confirmou presença** para esta semana. ✅")
                 else:
                     motivo = st.session_state.get("motivo", "não informado")
-                    st.info(f"{nome}, você **informou ausência** com o motivo: **{motivo}** ❌")
+                    st.info(
+                        f"{nome}, você **informou ausência** com o motivo: **{motivo}** ❌"
+                    )
             else:
                 st.info("Você não informou sua presença ou ausência esta semana.")
             return
@@ -814,8 +975,10 @@ else:
                 st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
             else:
                 motivo = st.session_state.get("motivo", "não informado")
-                st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
-            
+                st.success(
+                    f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌"
+                )
+
             if st.button("🔁 Mudar de ideia"):
                 for key in ["presenca_confirmada", "motivo"]:
                     if key in st.session_state:
@@ -823,37 +986,58 @@ else:
                 st.rerun()
             return
 
-        presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
+        presenca = st.radio(
+            "Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True
+        )
         motivo = ""
         motivo_outros = ""
 
         if presenca == "❌ Não":
-            motivo = st.selectbox("Qual o motivo da ausência?", [
-                "Saúde", "Trabalho", "Compromisso acadêmico", "Viagem", "Problemas pessoais", "Lesão", "Outros"
-            ])
+            motivo = st.selectbox(
+                "Qual o motivo da ausência?",
+                [
+                    "Saúde",
+                    "Trabalho",
+                    "Compromisso acadêmico",
+                    "Viagem",
+                    "Problemas pessoais",
+                    "Lesão",
+                    "Outros",
+                ],
+            )
             if motivo == "Outros":
                 motivo_outros = st.text_area("Descreva o motivo")
 
         if st.button("Enviar resposta"):
-            if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
+            if (
+                presenca == "❌ Não"
+                and motivo == "Outros"
+                and not motivo_outros.strip()
+            ):
                 st.warning("Descreva o motivo da ausência.")
             else:
                 email = st.session_state.get("email")
                 nome = st.session_state.get("nome", "Jogador")
                 posicao = usuarios.get(email, {}).get("posicao", "Linha")
                 fuso_utc_minus_3 = timezone(timedelta(hours=-3))
-                data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
+                data_envio = datetime.now(fuso_utc_minus_3).strftime(
+                    "%d/%m/%Y %H:%M:%S"
+                )
                 data_partida = horario_partida.strftime("%d/%m/%Y")
-                
-                justificativa = motivo_outros.strip() if (presenca == "❌ Não" and motivo == "Outros") else (motivo if presenca == "❌ Não" else "")
-                
+
+                justificativa = (
+                    motivo_outros.strip()
+                    if (presenca == "❌ Não" and motivo == "Outros")
+                    else (motivo if presenca == "❌ Não" else "")
+                )
+
                 nova_linha = {
                     "Nome": nome,
                     "Posição": posicao,
                     "Presença": "Sim" if presenca == "✅ Sim" else "Não",
                     "DataPartida": data_partida,
                     "Data": data_envio,
-                    "Motivo": justificativa
+                    "Motivo": justificativa,
                 }
 
                 # Carrega planilha e adiciona linha
@@ -861,22 +1045,21 @@ else:
                 sh = gc.open(NOME_PLANILHA)
                 aba_presencas = sh.worksheet("Presenças")
                 df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
-                df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
+                df_presencas = pd.concat(
+                    [df_presencas, pd.DataFrame([nova_linha])], ignore_index=True
+                )
                 set_with_dataframe(aba_presencas, df_presencas)
 
-                st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
+                st.session_state["presenca_confirmada"] = (
+                    "sim" if presenca == "✅ Sim" else "nao"
+                )
                 if presenca == "❌ Não":
                     st.session_state["motivo"] = justificativa
 
                 st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
-        
 
-
-
-
-
-    #Tela da avaliação pós-jogo
+    # Tela da avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
 
@@ -903,8 +1086,13 @@ else:
                     else:
                         linha.append(j)
 
-        st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
-        st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
+        st.markdown(
+            "<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            "Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤"
+        )
 
         votante = st.session_state.get("nome", "usuário")
         linha = [j for j in linha if j != votante]
@@ -913,10 +1101,16 @@ else:
 
         if not ja_votou:
             with st.form("votacao_form"):
-                craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione")
+                craque = st.selectbox(
+                    "⭐ Craque da rodada", linha, placeholder="Selecione"
+                )
                 pereba_opcoes = [j for j in linha if j != craque]
-                pereba = st.selectbox("🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione")
-                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione")
+                pereba = st.selectbox(
+                    "🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione"
+                )
+                goleiro = st.selectbox(
+                    "🧤 Melhor goleiro", goleiros, placeholder="Selecione"
+                )
                 submit = st.form_submit_button("Votar")
 
                 if submit:
@@ -925,18 +1119,23 @@ else:
                     elif goleiro == "":
                         st.error("Escolha um goleiro.")
                     else:
-                        novo_voto = pd.DataFrame([{
-                            "Votante": votante,
-                            "Craque": craque,
-                            "Pereba": pereba,
-                            "Goleiro": goleiro
-                        }])
+                        novo_voto = pd.DataFrame(
+                            [
+                                {
+                                    "Votante": votante,
+                                    "Craque": craque,
+                                    "Pereba": pereba,
+                                    "Goleiro": goleiro,
+                                }
+                            ]
+                        )
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
                         df_votos.to_csv(FILE_VOTOS, index=False)
                         st.success("✅ Voto registrado com sucesso!")
                         ja_votou = True
 
         if ja_votou and not df_votos.empty:
+
             def gerar_html_podio(serie, titulo, icone):
                 df = serie.value_counts().reset_index()
                 df.columns = ["Jogador", "Votos"]
@@ -969,19 +1168,32 @@ else:
                 podium_html += "</div>"
                 return podium_html
 
-            st.markdown(gerar_html_podio(df_votos["Craque"], "Craque da Choppe's League (Top 3)", "🏆"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos["Pereba"], "Pereba da Choppe's League (Top 3)", "🐢"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
-
-
-
-
+            st.markdown(
+                gerar_html_podio(
+                    df_votos["Craque"], "Craque da Choppe's League (Top 3)", "🏆"
+                ),
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                gerar_html_podio(
+                    df_votos["Pereba"], "Pereba da Choppe's League (Top 3)", "🐢"
+                ),
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                gerar_html_podio(
+                    df_votos["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"
+                ),
+                unsafe_allow_html=True,
+            )
 
     # Midias
     def tela_galeria_momentos():
         st.title("📸 Galeria de Momentos da Chopp's League")
 
-        st.markdown("Veja os melhores registros da Choppe's League: gols, resenhas e lembranças 🍻⚽")
+        st.markdown(
+            "Veja os melhores registros da Choppe's League: gols, resenhas e lembranças 🍻⚽"
+        )
 
         # --- TÓPICOS DA GALERIA ---
         topicos = {
@@ -989,7 +1201,7 @@ else:
             "🔥 Jogadas Bonitas": "midia/jogadas_bonitas",
             "😂 Lances Engraçados": "midia/lances_engracados",
             "🥅 Gols Incríveis": "midia/gols_incriveis",
-            "🎉 Bastidores & Zoações": "midia/bastidores"
+            "🎉 Bastidores & Zoações": "midia/bastidores",
         }
 
         for titulo, pasta in topicos.items():
@@ -1000,24 +1212,26 @@ else:
                 continue
 
             arquivos = sorted(os.listdir(pasta))
-            imagens = [a for a in arquivos if a.lower().endswith(('.png', '.jpg', '.jpeg'))]
-            videos = [a for a in arquivos if a.lower().endswith(('.mp4', '.mov', '.webm'))]
+            imagens = [
+                a for a in arquivos if a.lower().endswith((".png", ".jpg", ".jpeg"))
+            ]
+            videos = [
+                a for a in arquivos if a.lower().endswith((".mp4", ".mov", ".webm"))
+            ]
 
             col1, col2 = st.columns(2)
 
             with col1:
                 for img in imagens:
-                    st.image(os.path.join(pasta, img), caption=img, use_container_width=True)
+                    st.image(
+                        os.path.join(pasta, img), caption=img, use_container_width=True
+                    )
 
             with col2:
                 for vid in videos:
                     st.video(os.path.join(pasta, vid))
 
             st.markdown("---")
-
-
-
-
 
     # Fórum
     def tela_forum():
@@ -1037,18 +1251,29 @@ else:
         # --- Campo para novo comentário ---
         with st.form("form_comentario"):
             st.markdown(f"Escreva algo, **{nome}**:")
-            mensagem = st.text_area("Mensagem", placeholder="Digite seu comentário aqui...", max_chars=500, label_visibility="collapsed")
+            mensagem = st.text_area(
+                "Mensagem",
+                placeholder="Digite seu comentário aqui...",
+                max_chars=500,
+                label_visibility="collapsed",
+            )
             enviar = st.form_submit_button("Enviar")
 
             if enviar:
                 if mensagem.strip() == "":
                     st.warning("O comentário não pode estar vazio.")
                 else:
-                    novo = pd.DataFrame([{
-                        "Autor": nome,
-                        "Mensagem": mensagem.strip(),
-                        "DataHora": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    }])
+                    novo = pd.DataFrame(
+                        [
+                            {
+                                "Autor": nome,
+                                "Mensagem": mensagem.strip(),
+                                "DataHora": datetime.now().strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ),
+                            }
+                        ]
+                    )
                     df_forum = pd.concat([df_forum, novo], ignore_index=True)
                     df_forum.to_csv(FILE_FORUM, index=False)
                     st.success("Comentário publicado!")
@@ -1064,16 +1289,15 @@ else:
             df_forum = df_forum.sort_values(by="DataHora", ascending=False)
 
             for _, row in df_forum.iterrows():
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                 <div style='border:1px solid #ddd; border-radius:8px; padding:10px; margin-bottom:10px; background-color: #f9f9f9;'>
                     <strong>{row['Autor']}</strong> <span style='color:gray; font-size:12px;'>({row['DataHora'].strftime('%d/%m/%Y %H:%M')})</span>
                     <div style='margin-top:5px;'>{row['Mensagem']}</div>
                 </div>
-                """, unsafe_allow_html=True)
-
-
-
-
+                """,
+                    unsafe_allow_html=True,
+                )
 
     # Tela de mensagem a gestão
     def tela_comunicado():
@@ -1083,12 +1307,19 @@ else:
         telefone = st.session_state.get("telefone", "não informado")
         email = st.session_state.get("email", "não informado")
 
-        st.markdown(f"""
+        st.markdown(
+            f"""
             <p>Use o espaço abaixo para enviar um comunicado à organização. 
             Assim que você clicar em <strong>Enviar via WhatsApp</strong>, a mensagem será aberta no aplicativo do WhatsApp com seus dados preenchidos.</p>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
-        mensagem = st.text_area("✉️ Sua mensagem", height=150, placeholder="Digite aqui sua sugestão, reclamação ou comunicado...")
+        mensagem = st.text_area(
+            "✉️ Sua mensagem",
+            height=150,
+            placeholder="Digite aqui sua sugestão, reclamação ou comunicado...",
+        )
 
         if st.button("📤 Enviar via WhatsApp"):
             if not mensagem.strip():
@@ -1105,86 +1336,110 @@ else:
     """
                 texto_codificado = urllib.parse.quote(texto)
                 link = f"https://wa.me/{numero_destino}?text={texto_codificado}"
-                st.success("Clique no botão abaixo para abrir o WhatsApp com sua mensagem:")
+                st.success(
+                    "Clique no botão abaixo para abrir o WhatsApp com sua mensagem:"
+                )
                 st.markdown(f"[📲 Abrir WhatsApp]({link})", unsafe_allow_html=True)
-
-
-
-
 
     # Tela das Regras
     def tela_regras():
-        st.markdown("<h1 style='font-size:23px;'>🛑 Regras Oficiais</h1>", unsafe_allow_html=True)
+        st.markdown(
+            "<h1 style='font-size:23px;'>🛑 Regras Oficiais</h1>",
+            unsafe_allow_html=True,
+        )
         st.markdown("---")
+
         def subtitulo(txt):
-            st.markdown(f'<h3 style="font-size:20px; margin-top: 1em;">{txt}</h3>', unsafe_allow_html=True)
+            st.markdown(
+                f'<h3 style="font-size:20px; margin-top: 1em;">{txt}</h3>',
+                unsafe_allow_html=True,
+            )
 
         subtitulo("✅ 1. Confirmação de Presença")
-        st.markdown("""
+        st.markdown(
+            """
         - Os jogadores devem confirmar presença **até as 22h de quarta-feira**.
         - Quem não confirmar no prazo **não poderá jogar**.
-        """)
+        """
+        )
 
         subtitulo("⌛ 2. Tempo de Jogo e Rodízio")
-        st.markdown("""
+        st.markdown(
+            """
         - Cada partida terá duração de **7 minutos ou até 2 gols**, o que ocorrer primeiro.
         - O **time que entra joga pelo empate**:
             - Se empatar, o **time vencedor da partida anterior sai**.
             - Se perder, o **time que entrou sai normalmente**.
-        """)
+        """
+        )
 
         subtitulo("👕 3. Uniforme Obrigatório")
-        st.markdown("""
+        st.markdown(
+            """
         - É obrigatório comparecer com o uniforme padrão completo:
             - Camisa do **Borussia Dortmund**
             - Camisa da **Inter de Milão**
             - **Calção preto**
             - **Meião preto**
         - Jogadores sem o uniforme completo **não poderão jogar**.
-        """)
+        """
+        )
 
         subtitulo("💰 4. Mensalidade e Pagamento")
-        st.markdown("""
+        st.markdown(
+            """
         - A mensalidade deve ser paga **até o dia 10 de cada mês**.
         - **Jogadores inadimplentes não poderão jogar até quitar sua dívida**.
         - **Goleiros são isentos da mensalidade**, mas devem pagar **o uniforme**.
-        """)
+        """
+        )
 
         subtitulo("💸 5. Contribuição para o Caixa")
-        st.markdown("""
+        st.markdown(
+            """
         - Todos os jogadores, incluindo goleiros, devem contribuir com **R$20,00 adicionais**.
         - O valor será utilizado exclusivamente para:
             - **Materiais esportivos** (bolas, bomba de encher bola, etc.)
             - **Itens médicos** (Gelol, faixa, esparadrapo, gelo, etc.)
             - **Água**
             - **Confraternizações** ou outras necessidades da Choppe's League
-        """)
+        """
+        )
 
         subtitulo("📅 6. Comprometimento")
-        st.markdown("""
+        st.markdown(
+            """
         - Ao confirmar presença, o jogador assume o compromisso de comparecer.
         - **Faltas não justificadas** podem resultar em **suspensão da próxima rodada**.
-        """)
+        """
+        )
 
         subtitulo("⚠️ 7. Comportamento")
-        st.markdown("""
+        st.markdown(
+            """
         - Discussões, brigas ou qualquer tipo de agressividade resultam em **suspensão automática da próxima rodada**.
         - Em caso de reincidência, o jogador poderá ser **banido temporariamente ou definitivamente**, conforme decisão da gestão.
-        """)
+        """
+        )
 
         subtitulo("🧤 8. Goleiros e Rodízio")
-        st.markdown("""
+        st.markdown(
+            """
         - Na ausência de goleiro fixo, haverá **rodízio entre os jogadores de linha** para cobrir o gol.
-        """)
+        """
+        )
 
         subtitulo("🔐 9. Responsabilidade")
-        st.markdown("""
+        st.markdown(
+            """
         - Comprometimento com **pagamentos, presença e respeito** é essencial para manter a organização.
         - **Quem não estiver em dia com os compromissos não joga.**
-        """)
+        """
+        )
 
         subtitulo("⭐ 10. Avaliação Pós-Jogo: Péreba e Craque")
-        st.markdown("""
+        st.markdown(
+            """
         - Após cada partida, será feita uma votação divertida para eleger:
             - **⭐ Craque**: jogador com a melhor performance.
             - **🐢 Péreba**: jogador com a pior performance da rodada.
@@ -1193,12 +1448,8 @@ else:
         - Somente jogadores presentes poderão votar.
         - A finalidade é **uma brincadeira para animar o grupo e fortalecer o espírito da Choppe's League**.
         - Os resultados serão divulgados para descontração na tela **'Avaliação pós-jogo'**.
-        """)
-
-
-
-
-
+        """
+        )
 
     # Inicialização de sessão
     if "pagina_atual" not in st.session_state:
@@ -1209,17 +1460,20 @@ else:
 
     # Dados fictícios para partidas
     if "partidas" not in st.session_state:
-        st.session_state.partidas = pd.DataFrame(columns=[
-            "Data", "Número da Partida",
-            "Placar Borussia", "Gols Borussia", "Assistências Borussia",
-            "Placar Inter", "Gols Inter", "Assistências Inter"
-        ])
+        st.session_state.partidas = pd.DataFrame(
+            columns=[
+                "Data",
+                "Número da Partida",
+                "Placar Borussia",
+                "Gols Borussia",
+                "Assistências Borussia",
+                "Placar Inter",
+                "Gols Inter",
+                "Assistências Inter",
+            ]
+        )
 
     partidas = st.session_state.partidas
-
-
-
-
 
     # Roteador de páginas
     if st.session_state.pagina_atual == "🏠 Tela Principal":
