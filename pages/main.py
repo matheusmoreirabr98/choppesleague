@@ -180,7 +180,7 @@ def tela_login():
     st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
     aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
 
-    partidas, jogadores, usuarios, _ = load_data()
+    partidas, jogadores, usuarios, presencas = load_data()
 
     # LOGIN
     if aba == "Login":
@@ -229,7 +229,7 @@ def tela_login():
                         st.error("As novas senhas não coincidem.")
                     else:
                         usuarios[email]["senha"] = nova_senha
-                        partidas, jogadores, _ = load_data()
+                        usuarios = load_data()
                         save_data(partidas, jogadores, usuarios)
                         st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
@@ -288,8 +288,8 @@ def tela_login():
                         "tipo": "admin" if email in EMAILS_ADMIN else "usuario"
                     }
 
-                    partidas, jogadores, _ = load_data()
-                    save_data(partidas, jogadores, usuarios)
+                    usuarios = load_data()
+                    save_data(usuarios)
 
                     st.success("Cadastro realizado! Agora faça login.")
 
