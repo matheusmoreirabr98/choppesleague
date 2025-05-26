@@ -642,7 +642,7 @@ else:
                     </style>
 
                     <p style='text-align: center; font-weight: bold;'>🎵 Música Ambiente</p>
-                    <audio controls style="width: 100%;">
+                    <audio controls style="width: 60%;">
                         <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
                         Seu navegador não suporta áudio.
                     </audio>
