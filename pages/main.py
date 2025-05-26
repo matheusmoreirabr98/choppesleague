@@ -424,7 +424,7 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League",
+            "📜 Regras Chopp's League",
         ]
     else:
         opcoes = [
@@ -435,7 +435,7 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League",
+            "📜 Regras Chopp's League",
         ]
 
     pagina_escolhida = st.selectbox(
@@ -546,7 +546,7 @@ else:
         tela_forum()
     elif pag == "📣 Comunicado à Gestão":
         tela_comunicado()
-    elif pag == "📜 Regras Choppe's League":
+    elif pag == "📜 Regras Chopp's League":
         tela_regras()
     elif pag == "🚪 Sair":
         for k in list(st.session_state.keys()):
@@ -674,7 +674,7 @@ else:
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
         st.markdown(
-            "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h5>",
+            "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Chopp's League! 🍻</h5>",
             unsafe_allow_html=True,
         )
         st.markdown("---")
@@ -1170,13 +1170,13 @@ else:
 
             st.markdown(
                 gerar_html_podio(
-                    df_votos["Craque"], "Craque da Choppe's League (Top 3)", "🏆"
+                    df_votos["Craque"], "Craque da Chopp's League (Top 3)", "🏆"
                 ),
                 unsafe_allow_html=True,
             )
             st.markdown(
                 gerar_html_podio(
-                    df_votos["Pereba"], "Pereba da Choppe's League (Top 3)", "🐢"
+                    df_votos["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"
                 ),
                 unsafe_allow_html=True,
             )
@@ -1192,7 +1192,7 @@ else:
         st.title("📸 Galeria de Momentos da Chopp's League")
 
         st.markdown(
-            "Veja os melhores registros da Choppe's League: gols, resenhas e lembranças 🍻⚽"
+            "Veja os melhores registros da Chopp's League: gols, resenhas e lembranças 🍻⚽"
         )
 
         # --- TÓPICOS DA GALERIA ---
@@ -1402,7 +1402,7 @@ else:
             - **Materiais esportivos** (bolas, bomba de encher bola, etc.)
             - **Itens médicos** (Gelol, faixa, esparadrapo, gelo, etc.)
             - **Água**
-            - **Confraternizações** ou outras necessidades da Choppe's League
+            - **Confraternizações** ou outras necessidades da Chopp's League
         """
         )
 
@@ -1446,7 +1446,7 @@ else:
             - **🧤 Paredão:** goleiro com a melhor atuação defensiva da rodada.
         - A votação é **exclusiva para quem confirmou presença e jogou na partida do dia**.
         - Somente jogadores presentes poderão votar.
-        - A finalidade é **uma brincadeira para animar o grupo e fortalecer o espírito da Choppe's League**.
+        - A finalidade é **uma brincadeira para animar o grupo e fortalecer o espírito da Chopp's League**.
         - Os resultados serão divulgados para descontração na tela **'Avaliação pós-jogo'**.
         """
         )
@@ -1494,5 +1494,5 @@ else:
         tela_forum()
     elif st.session_state.pagina_atual == "📣 Comunicado à Gestão":
         tela_comunicado()
-    elif st.session_state.pagina_atual == "📜 Regras Choppe's League":
+    elif st.session_state.pagina_atual == "📜 Regras Chopp's League":
         tela_regras()
