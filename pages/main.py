@@ -415,8 +415,6 @@ else:
 
         st.markdown("---")
 
-        st.button("👤 Meu Perfil")
-
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
             "🏠 Tela Principal",
@@ -463,6 +461,13 @@ else:
     cancelar_clicado = False
     confirmar_clicado = False
 
+
+    with st.sidebar:
+        st.markdown("### ⚙️ Configurações")
+        if st.button("👤 Meu Perfil"):
+            st.session_state.pagina_atual = "👤 Meu Perfil"
+            st.rerun()
+            
     # SIDEBAR - botão logout
     with st.sidebar:
         if not st.session_state.confirmar_logout:
