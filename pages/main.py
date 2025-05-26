@@ -122,6 +122,7 @@ def save_data_gsheets(partidas, jogadores, usuarios):
     set_with_dataframe(sh.worksheet("Partidas"), partidas)
     set_with_dataframe(sh.worksheet("Jogadores"), jogadores)
     set_with_dataframe(sh.worksheet("Usuarios"), usuarios_df)
+    set_with_dataframe(sh.worksheet("Presenças"), presencas)
 
 # -----------------------------------------
 # Abstrações para carregar/salvar
