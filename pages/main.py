@@ -440,14 +440,6 @@ else:
             "📜 Regras Chopp's League"
         ]
 
-    if st.session_state.pagina_atual != "👤 Meu Perfil":
-        pagina_escolhida = st.selectbox(
-            "",  # label obrigatória
-            opcoes,
-            index=opcoes.index(pagina_ativa),
-            key="menu_topo",
-        )
-
         # garante que sempre selecionamos uma opção válida da lista
         pagina_ativa = (
             st.session_state.pagina_atual
