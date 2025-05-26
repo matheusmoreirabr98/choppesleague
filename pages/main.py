@@ -453,10 +453,6 @@ else:
             key="menu_topo",
         )
 
-    if pagina_escolhida != st.session_state.pagina_atual:
-        st.session_state.pagina_atual = pagina_escolhida
-        st.rerun()
-
     # --- Confirmação de logout ---
     # Inicializa controle de logout apenas uma vez
     if "confirmar_logout" not in st.session_state:
