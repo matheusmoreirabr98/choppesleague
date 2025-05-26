@@ -440,7 +440,8 @@ else:
             "📜 Regras Chopp's League"
         ]
 
-        Pagina_atual = (
+        # garante que sempre selecionamos uma opção válida da lista
+        pagina_ativa = (
             st.session_state.pagina_atual
             if st.session_state.pagina_atual in opcoes
             else opcoes[0]
@@ -449,9 +450,14 @@ else:
         pagina_escolhida = st.selectbox(
             "",  # label obrigatória
             opcoes,
-            index=opcoes.index(pagina_atual),
+            index=opcoes.index(pagina_ativa),
             key="menu_topo",
         )
+
+        # atualiza a página apenas se for diferente
+        if pagina_escolhida != st.session_state.pagina_atual:
+            st.session_state.pagina_atual = pagina_escolhida
+            st.rerun()
 
     # --- Confirmação de logout ---
     # Inicializa controle de logout apenas uma vez
