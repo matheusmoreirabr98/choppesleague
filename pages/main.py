@@ -415,9 +415,7 @@ else:
 
         st.markdown("---")
 
-        st.button("👤 Meu Perfil"):
-        st.session_state.pagina_atual = "👤 Meu Perfil"
-        st.rerun()
+        st.button("👤 Meu Perfil")
 
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
