@@ -921,10 +921,6 @@ else:
         data = st.date_input("Data da partida")
         st.markdown(f"**Número da Partida:** {numero_partida}")
 
-        # Escudos com estilo da tela principal
-        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
-
         st.markdown(
             f"""
             <div style="
