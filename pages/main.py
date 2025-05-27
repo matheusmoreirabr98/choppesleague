@@ -14,6 +14,8 @@ import streamlit.components.v1 as components
 import gspread
 import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
+import time
+
 
 
 # Constantes
@@ -789,10 +791,6 @@ else:
         inter_vitorias = 19
         empates = 12
 
-        numero_partida = len(partidas) + 1
-        data = st.date_input("Data da partida")
-        st.markdown(f"**Número da Partida:** {numero_partida}")
-
         # Caminhos das imagens na pasta 'imagens'
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
@@ -887,7 +885,40 @@ else:
         st.title("Registrar Estatísticas da Partida")
         st.markdown("---")
 
-                # Exibe escudos e placar
+    def cronometro_7_minutos():
+        st.subheader("⏱️ Cronômetro da Partida (7 minutos)")
+
+        if "cronometro_ativo" not in st.session_state:
+            st.session_state.cronometro_ativo = False
+
+        # botão de início
+        if st.button("▶️ Iniciar Cronômetro"):
+            st.session_state.cronometro_ativo = True
+
+        placeholder = st.empty()
+
+        # se o botão foi pressionado, começa contagem regressiva
+        if st.session_state.cronometro_ativo:
+            total_segundos = 7 * 60  # 420 segundos
+
+            for segundos_restantes in range(total_segundos, -1, -1):
+                minutos = segundos_restantes // 60
+                segundos = segundos_restantes % 60
+                placeholder.markdown(
+                    f"<h2 style='text-align: center;'>⏳ {minutos:02d}:{segundos:02d}</h2>",
+                    unsafe_allow_html=True,
+                )
+                time.sleep(1)
+
+            placeholder.markdown(
+                "<h2 style='text-align: center; color: red;'>⏰ Tempo esgotado!</h2>",
+                unsafe_allow_html=True,
+            )
+            st.session_state.cronometro_ativo = False
+        cronometro_7_minutos()
+
+
+        # Exibe escudos e placar
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
@@ -924,6 +955,10 @@ else:
                 "Arthur",
             ],
         )
+
+        numero_partida = len(partidas) + 1
+        data = st.date_input("Data da partida")
+        st.markdown(f"**Número da Partida:** {numero_partida}")
 
         # Inputs de gols antes de mostrar placares
         col1, col2 = st.columns(2)
