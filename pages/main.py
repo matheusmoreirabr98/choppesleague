@@ -604,7 +604,7 @@ else:
                     usuarios[email] = usuarios.pop(email_antigo)
                     st.session_state.email = email
 
-                presencas = st.session_state.get("Usuarios", pd.DataFrame())
+                usuarios = st.session_state.get("Usuarios", pd.DataFrame())
                 save_data_gsheets(partidas, jogadores, usuarios, presencas)
                 
                 st.success("✅ Informações atualizadas com sucesso!")
