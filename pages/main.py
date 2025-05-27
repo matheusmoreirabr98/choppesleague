@@ -881,21 +881,24 @@ else:
         )
 
 
+    # Cronômetro de 7 minutos
     def cronometro_7_minutos():
         st.subheader("⏱️ Cronômetro da Partida")
 
+        # Inicializa os estados necessários
         if "tempo_restante" not in st.session_state:
-            st.session_state.tempo_restante = 7 * 60  # 420 segundos
+            st.session_state.tempo_restante = 7 * 60
         if "cronometro_rodando" not in st.session_state:
             st.session_state.cronometro_rodando = False
-        if "ultimo_tempo" not in st.session_state:
-            st.session_state.ultimo_tempo = time.time()
+        if "ultimo_tick" not in st.session_state:
+            st.session_state.ultimo_tick = time.time()
 
+        # Cria os botões lado a lado
         col1, col2, col3 = st.columns(3)
         with col1:
             if st.button("▶️ Iniciar"):
                 st.session_state.cronometro_rodando = True
-                st.session_state.ultimo_tempo = time.time()
+                st.session_state.ultimo_tick = time.time()
         with col2:
             if st.button("⏸️ Pausar"):
                 st.session_state.cronometro_rodando = False
@@ -904,16 +907,18 @@ else:
                 st.session_state.tempo_restante = 7 * 60
                 st.session_state.cronometro_rodando = False
 
-        # Atualiza tempo
+        # Atualiza tempo se cronômetro estiver rodando
         if st.session_state.cronometro_rodando:
-            tempo_atual = time.time()
-            decorrido = int(tempo_atual - st.session_state.ultimo_tempo)
-            st.session_state.ultimo_tempo = tempo_atual
-            st.session_state.tempo_restante -= decorrido
-            if st.session_state.tempo_restante <= 0:
-                st.session_state.tempo_restante = 0
-                st.session_state.cronometro_rodando = False
+            agora = time.time()
+            decorrido = int(agora - st.session_state.ultimo_tick)
+            if decorrido >= 1:
+                st.session_state.tempo_restante -= decorrido
+                st.session_state.ultimo_tick = agora
+                if st.session_state.tempo_restante <= 0:
+                    st.session_state.tempo_restante = 0
+                    st.session_state.cronometro_rodando = False
 
+        # Mostra o tempo formatado
         minutos = st.session_state.tempo_restante // 60
         segundos = st.session_state.tempo_restante % 60
         st.markdown(
@@ -921,12 +926,13 @@ else:
             unsafe_allow_html=True
         )
 
+        # Alerta de término
         if st.session_state.tempo_restante == 0:
             st.success("⏰ Tempo esgotado!")
 
-        # Auto refresh a cada segundo se rodando
+        # Auto-refresh a cada segundo, somente se o cronômetro estiver rodando
         if st.session_state.cronometro_rodando:
-            st.rerun()
+            st.experimental_rerun()
 
     # Tela de registro das partidas
     def registrar_partidas(partidas):
