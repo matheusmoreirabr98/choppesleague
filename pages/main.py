@@ -921,23 +921,13 @@ else:
         data = st.date_input("Data da partida")
         st.markdown(f"**Número da Partida:** {numero_partida}")
 
-        st.markdown(
-            f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 50px;
-                flex-wrap: nowrap;
-                margin-bottom: 1rem;
-            ">
-                {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
-                {escudo_inter}
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
+            st.image("imagens/escudo_borussia.png", caption="Borussia", width=80)
+        with col2:
+            st.markdown("<div style='text-align: center; font-size: 50px;'>⚔️</div>", unsafe_allow_html=True)
+        with col3:
+            st.image("imagens/escudo_inter.png", caption="Inter", width=80)
 
         # Colunas para inputs
         col1, col2 = st.columns(2)
