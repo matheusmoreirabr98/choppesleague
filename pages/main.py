@@ -902,33 +902,27 @@ else:
         data = st.date_input("Data da partida")
         st.markdown(f"**Número da Partida:** {numero_partida}")
 
-        # Escudos
-        col_a, col_b, col_c = st.columns([3, 1, 3])
+        # Escudos com estilo da tela principal
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
-        with col_a:
-            st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-            if os.path.exists("./imagens/escudo_borussia.png"):
-                st.image("./imagens/escudo_borussia.png", use_container_width=True)
-            else:
-                st.warning("Imagem do Borussia não encontrada.")
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        with col_b:
-            st.markdown(
-                "<div style='text-align:center; margin-top: 50px; font-size: 48px;'>✖</div>",
-                unsafe_allow_html=True,
-            )
-
-        with col_c:
-            st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-            if os.path.exists("./imagens/escudo_inter.png"):
-                st.image("./imagens/escudo_inter.png", use_container_width=True)
-            else:
-                st.warning("Imagem da Inter não encontrada.")
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        # Seções de input
-        col1, col2 = st.columns(2)
+        st.markdown(
+            f"""
+            <div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 50px;
+                flex-wrap: nowrap;
+                margin-bottom: 1rem;
+            ">
+                {escudo_borussia}
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
+                {escudo_inter}
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         with col1:
             lista_borussia = ["Ninguém marcou"] + jogadores_originais * 2
