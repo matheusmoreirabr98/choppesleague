@@ -194,6 +194,9 @@ if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
 if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
+if "presencas" not in st.session_state:
+    st.session_state.presencas = pd.DataFrame()
+# Inicializa as planilhas se necessário
 
 # Funções auxiliares
 
@@ -601,8 +604,9 @@ else:
                     usuarios[email] = usuarios.pop(email_antigo)
                     st.session_state.email = email
 
-                partidas, jogadores, _ = load_data()
-                save_data(partidas, jogadores, usuarios)
+            def save_data(partidas, jogadores, usuarios):
+                presencas = st.session_state.get("presencas", pd.DataFrame())
+                save_data_gsheets(partidas, jogadores, usuarios, presencas)
                 
                 st.success("✅ Informações atualizadas com sucesso!")
                 for campo in [
