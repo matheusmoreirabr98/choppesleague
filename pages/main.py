@@ -715,9 +715,8 @@ else:
             )
             df.to_csv(FILE_JOGADORES, index=False)
 
-    def load_data():
-        partidas = pd.read_csv(FILE_PARTIDAS)
-        jogadores = pd.read_csv(FILE_JOGADORES)
+    def load_data_csv():
+        partidas, jogadores = load_data_safe_csv()
         return partidas, jogadores
 
     def save_data(partidas, jogadores):
@@ -729,32 +728,13 @@ else:
         try:
             partidas = pd.read_csv(FILE_PARTIDAS)
         except:
-            partidas = pd.DataFrame(
-                columns=[
-                    "Data",
-                    "Número da Partida",
-                    "Placar Borussia",
-                    "Gols Borussia",
-                    "Assistências Borussia",
-                    "Placar Inter",
-                    "Gols Inter",
-                    "Assistências Inter",
-                ]
-            )
+            partidas = pd.DataFrame([...])
+
         try:
             jogadores = pd.read_csv(FILE_JOGADORES)
         except:
-            jogadores = pd.DataFrame(
-                columns=[
-                    "Nome",
-                    "Time",
-                    "Gols",
-                    "Assistências",
-                    "Faltas",
-                    "Cartões Amarelos",
-                    "Cartões Vermelhos",
-                ]
-            )
+            jogadores = pd.DataFrame([...])
+
         return partidas, jogadores
 
     partidas, jogadores = load_data_safe()
