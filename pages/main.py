@@ -20,7 +20,6 @@ from streamlit_extras.st_autorefresh import st_autorefresh
 
 
 
-
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
