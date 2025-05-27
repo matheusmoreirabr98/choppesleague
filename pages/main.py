@@ -971,27 +971,31 @@ else:
                     key="assist_inter",
                 )
 
-        st.markdown(
-            f"""
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 50px;
-                margin-top: 20px;
-                flex-wrap: wrap;
-            ">
-                <div style="text-align: center; min-width: 80px;">
-                    <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
-                </div>
+            st.markdown(
+                f"""
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 50px;
+                    margin-top: 20px;
+                    flex-wrap: wrap;
+                ">
+                    <div style="text-align: center; min-width: 80px;">
+                        <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
+                    </div>
 
-                <div style="text-align: center; min-width: 80px;">
-                    <p style="font-size: 30px;">🏆 - {placar_inter}</p>
+                    <div style="text-align: center; min-width: 80px;">
+                        <p style="font-size: 18px;">Partida #{numero_partida}<br>{data.strftime('%d/%m/%Y')}</p>
+                    </div>
+                    
+                    <div style="text-align: center; min-width: 80px;">
+                        <p style="font-size: 30px;">🏆 - {placar_inter}</p>
+                    </div>
                 </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+                """,
+                unsafe_allow_html=True,
+            )
 
         if st.button("Registrar"):
             nova = {
