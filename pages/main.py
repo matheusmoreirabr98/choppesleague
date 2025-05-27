@@ -425,7 +425,8 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Chopp's League"
+            "📜 Regras Chopp's League",
+            "👤 Meu Perfil",
         ]
     else:
         opcoes = [
@@ -436,7 +437,8 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Chopp's League"
+            "📜 Regras Chopp's League",
+            "👤 Meu Perfil",
         ]
 
     # garante que sempre selecionamos uma opção válida da lista
