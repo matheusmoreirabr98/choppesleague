@@ -136,7 +136,7 @@ def load_data_gsheets():
             if pd.notna(row["email"]):
                 usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios, presencas
+    return partidas, jogadores, usuarios
 
 
 # -----------------------------------------
@@ -172,8 +172,9 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
 def load_data():
     return load_data_gsheets()
 
-def save_data(partidas, jogadores, usuarios, presencas):
-    save_data_gsheets(partidas, jogadores, usuarios, presencas)
+
+def save_data(partidas, jogadores, usuarios):
+    save_data_gsheets(partidas, jogadores, usuarios)
 
 
 # Sessões iniciais
@@ -193,9 +194,6 @@ if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
 if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
-if "presencas" not in st.session_state:
-    st.session_state.presencas = pd.DataFrame()
-# Inicializa as planilhas se necessário
 
 # Funções auxiliares
 
@@ -548,7 +546,7 @@ else:
 
 
     def tela_meu_perfil():
-        _, _, usuarios, _ = load_data()
+        _, _, usuarios = load_data()
         st.session_state.usuarios = usuarios
         usuario = usuarios.get(st.session_state.email, {})
 
@@ -583,7 +581,7 @@ else:
             del st.session_state.atualizacao_sucesso  # remove a flag após exibir
 
         if salvar:
-            partidas, jogadores, usuarios, presencas = load_data_gsheets()
+            usuarios = st.session_state.usuarios
             email_antigo = st.session_state.email
 
             if senha_atual != usuarios[email_antigo]["senha"]:
@@ -603,8 +601,9 @@ else:
                     usuarios[email] = usuarios.pop(email_antigo)
                     st.session_state.email = email
 
-                save_data(partidas, jogadores, usuarios, presencas)
-
+                partidas, jogadores, _ = load_data()
+                save_data(partidas, jogadores, usuarios)
+                
                 st.success("✅ Informações atualizadas com sucesso!")
                 for campo in [
                     "perfil_senha_atual",
@@ -736,11 +735,11 @@ else:
             df.to_csv(FILE_JOGADORES, index=False)
 
     def load_data_csv():
-        partidas, jogadores = load_data_safe()
+        partidas, jogadores = load_data_safe_csv()
         return partidas, jogadores
 
-    def save_data(partidas, jogadores, usuarios, presencas):
-        save_data_gsheets(partidas, jogadores, usuarios, presencas)
+    def save_data(partidas, jogadores, usuarios):
+        save_data_gsheets(partidas, jogadores, usuarios, presencas=[])
 
     # Carrega dados com segurança
     def load_data_safe():
