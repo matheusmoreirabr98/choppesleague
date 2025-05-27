@@ -880,11 +880,8 @@ else:
             unsafe_allow_html=True,
         )
 
-    # Tela de registro das partidas
-    def registrar_partidas(partidas):
-        st.title("Registrar Estatísticas da Partida")
-        st.markdown("---")
 
+    #Cronometro de 7 minutos
     def cronometro_7_minutos():
         st.subheader("⏱️ Cronômetro da Partida (7 minutos)")
 
@@ -915,6 +912,12 @@ else:
                 unsafe_allow_html=True,
             )
             st.session_state.cronometro_ativo = False
+
+    # Tela de registro das partidas
+    def registrar_partidas(partidas):
+        st.title("Registrar Estatísticas da Partida")
+        st.markdown("---")
+
         cronometro_7_minutos()
 
 
