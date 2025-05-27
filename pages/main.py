@@ -879,6 +879,21 @@ else:
         )
 
     # Tela de registro das partidas
+    def imagem_base64(path, legenda):
+        if os.path.exists(path):
+            img = Image.open(path)
+            img = img.resize((200, 200))
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"""
+                <div style="text-align: center; min-width: 20px;">
+                    <img src="data:image/png;base64,{img_base64}" width="80">
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                </div>
+            """
+        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
+
     def registrar_partidas(partidas):
         st.title("Registrar Estatísticas da Partida")
 
@@ -924,6 +939,9 @@ else:
             unsafe_allow_html=True,
         )
 
+        # Colunas para inputs
+        col1, col2 = st.columns(2)
+
         with col1:
             lista_borussia = ["Ninguém marcou"] + jogadores_originais * 2
             gols_borussia = st.multiselect(
@@ -938,9 +956,7 @@ else:
             )
 
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
-                st.warning(
-                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
-                )
+                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
                 gols_borussia = ["Ninguém marcou"]
                 st.session_state["gols_borussia"] = ["Ninguém marcou"]
 
@@ -969,9 +985,7 @@ else:
             )
 
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
-                st.warning(
-                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
-                )
+                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
 
@@ -1006,6 +1020,7 @@ else:
         st.dataframe(partidas)
 
         return partidas
+
 
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
