@@ -440,7 +440,7 @@ else:
         ]
 
     # garante que sempre selecionamos uma opção válida da lista
-        pagina_ativa = st.session_state.pagina_atual
+    pagina_ativa = st.session_state.pagina_atual
 
     # exibe o selectbox somente se não estiver no Meu Perfil
     if pagina_ativa != "👤 Meu Perfil":
