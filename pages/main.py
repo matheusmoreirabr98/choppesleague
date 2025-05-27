@@ -563,6 +563,7 @@ else:
     elif pag == "📜 Regras Chopp's League":
         tela_regras()
     elif pag == "👤 Meu Perfil":
+        tela_meu_perfil()
         # Carrega dados atualizados da planilha
         _, _, usuarios = load_data()
         st.session_state.usuarios = usuarios  # opcional: atualizar o cache local
@@ -613,7 +614,6 @@ else:
                 partidas, jogadores, _ = load_data()
                 save_data(partidas, jogadores, usuarios)
                 st.success("✅ Informações atualizadas com sucesso!")
-                st.stop()
 
     elif pag == "🚪 Sair":
         for k in list(st.session_state.keys()):
