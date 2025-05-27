@@ -926,7 +926,7 @@ else:
 
         # Auto refresh a cada segundo se rodando
         if st.session_state.cronometro_rodando:
-            st.experimental_rerun()
+            st.rerun()
 
     # Tela de registro das partidas
     def registrar_partidas(partidas):
