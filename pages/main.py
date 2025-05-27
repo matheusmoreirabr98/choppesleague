@@ -440,11 +440,19 @@ else:
         ]
 
     # garante que sempre selecionamos uma opção válida da lista
-    pagina_ativa = (
-        st.session_state.pagina_atual
-        if st.session_state.pagina_atual in opcoes
-        else opcoes[0]
-    )
+        pagina_ativa = st.session_state.pagina_atual
+        # selectbox deve aparecer sempre
+        pagina_escolhida = st.selectbox(
+            "Escolha a página:",
+            opcoes,
+            index=opcoes.index(st.session_state.pagina_atual) if st.session_state.pagina_atual in opcoes else 0,
+            key="menu_topo"
+        )
+
+        # só muda a página se a pessoa clicou no selectbox
+        if pagina_escolhida != st.session_state.pagina_atual:
+            st.session_state.pagina_atual = pagina_escolhida
+            st.rerun()
 
     # exibe o selectbox somente se não estiver no Meu Perfil
     if pagina_ativa != "👤 Meu Perfil":
