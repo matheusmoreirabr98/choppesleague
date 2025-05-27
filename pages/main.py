@@ -20,6 +20,7 @@ import st_autorefresh
 
 
 
+
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
