@@ -883,6 +883,53 @@ else:
         st.title("Registrar Estatísticas da Partida")
         st.markdown("---")
 
+                # Exibe escudos e placar
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
+
+        st.markdown(
+            f"""
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 50px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                    <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
+                    {escudo_inter}
+                </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            f"""
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 50px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            ">
+                <div style="text-align: center; min-width: 80px;">
+                    <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
+                </div>
+
+                <div style="text-align: center; min-width: 80px;">
+                    <p style="font-size: 18px;">Partida #{numero_partida}<br>{data.strftime('%d/%m/%Y')}</p>
+                </div>
+
+                <div style="text-align: center; min-width: 80px;">
+                    <p style="font-size: 30px;">🏆 - {placar_inter}</p>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         jogadores_originais = st.session_state.get(
             "jogadores_presentes",
             [
@@ -948,55 +995,6 @@ else:
                     max_selections=max_assists,
                     key="assist_inter",
                 )
-
-        # Exibe escudos e placar
-        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
-
-        st.markdown(
-            f"""
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 50px;
-                    flex-wrap: nowrap;
-                ">
-                    {escudo_borussia}
-                    <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
-                    {escudo_inter}
-                </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.markdown(
-            f"""
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 50px;
-                margin-top: 20px;
-                flex-wrap: wrap;
-            ">
-                <div style="text-align: center; min-width: 80px;">
-                    <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
-                </div>
-
-                <div style="text-align: center; min-width: 80px;">
-                    <p style="font-size: 18px;">Partida #{numero_partida}<br>{data.strftime('%d/%m/%Y')}</p>
-                </div>
-
-                <div style="text-align: center; min-width: 80px;">
-                    <p style="font-size: 30px;">🏆 - {placar_inter}</p>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        st.divider()
 
         if st.button("Registrar"):
             nova = {
