@@ -598,7 +598,7 @@ else:
                 partidas, jogadores, _ = load_data()
                 save_data(partidas, jogadores, usuarios)
                 st.success("✅ Informações atualizadas com sucesso!")
-    st.rerun()
+        st.rerun()
 
 
     # Exibe as páginas conforme tipo
