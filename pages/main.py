@@ -440,11 +440,7 @@ else:
         ]
 
     # garante que sempre selecionamos uma opção válida da lista
-    pagina_ativa = (
-        st.session_state.pagina_atual
-        if st.session_state.pagina_atual in opcoes
-        else opcoes[0]
-    )
+        pagina_ativa = st.session_state.pagina_atual
 
     # exibe o selectbox somente se não estiver no Meu Perfil
     if pagina_ativa != "👤 Meu Perfil":
@@ -598,7 +594,7 @@ else:
                 save_data(partidas, jogadores, usuarios)
                 st.success("✅ Informações atualizadas com sucesso!")
                 st.session_state.pagina_atual = "👤 Meu Perfil"
-            st.experimental_rerun()
+                st.experimental_rerun()
 
 
 
