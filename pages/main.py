@@ -502,9 +502,9 @@ else:
                     st.session_state.pagina_atual = "login"
                     st.rerun()
 
-# Essas chamadas precisam estar fora do `with`
-if logout_clicado or cancelar_clicado or confirmar_clicado:
-    st.rerun()
+        # Essas chamadas precisam estar fora do `with`
+        if logout_clicado or cancelar_clicado or confirmar_clicado:
+            st.rerun()
 
     # --- ROTEADOR ---
     def tela_principal():
