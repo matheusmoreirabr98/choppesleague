@@ -881,64 +881,65 @@ else:
     # Tela de registro das partidas
     def registrar_partidas(partidas):
         st.title("Registrar Estatísticas da Partida")
+        st.markdown("---")
 
-        jogadores_originais = st.session_state.get(
-            "jogadores_presentes",
-            [
-                "Matheus Moreira",
-                "José Moreira",
-                "Lucas",
-                "Alex",
-                "Gustavo",
-                "Lula",
-                "Juninho",
-                "Jesus",
-                "Gabriel",
-                "Arthur",
-            ],
+        # Caminhos das imagens na pasta 'imagens'
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
+
+        # Container com as imagens e o "X"
+        st.markdown(
+            f"""
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 50px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                </div>
+                    {escudo_inter}
+                </div>
+            """,
+            unsafe_allow_html=True,
         )
 
-    def imagem_base64(path, legenda):
-        if os.path.exists(path):
-            img = Image.open(path)
-            img = img.resize((200, 200))
-            buffer = BytesIO()
-            img.save(buffer, format="PNG")
-            img_base64 = base64.b64encode(buffer.getvalue()).decode()
-            return f"""
-                <div style="text-align: center; min-width: 20px;">
-                    <img src="data:image/png;base64,{img_base64}" width="80">
-                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
-                </div>
-            """
-        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
-    
-    # Caminhos das imagens na pasta 'imagens'
-    escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-    escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
+        st.markdown(
+            f"""
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 50px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            ">
+            <div style="text-align: center; min-width: 80px;">
+                <p style="font-size: 30px;">
+                    🏆 - {placar_borussia}<br>
+                </p>
+            </div>
+
+            <div style="text-align: center; min-width: 80px;">
+                <p style="font-size: 30px;">
+                    teste
+                </p>
+            </div>
+
+            <div style="text-align: center; min-width: 80px;">
+                <p style="font-size: 30px;">
+                    🏆 - {placar_inter}<br>
+                </p>
+            </div>
+        """,
+            unsafe_allow_html=True,
+        )
 
     numero_partida = len(partidas) + 1
     data = st.date_input("Data da partida")
     st.markdown(f"**Número da Partida:** {numero_partida}")
-
-    st.markdown(
-        f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 50px;
-                flex-wrap: nowrap;
-            ">
-                {escudo_borussia}
-            <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-            </div>
-                {escudo_inter}
-            </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
 
 
     # Estatisticas dos jogadores
