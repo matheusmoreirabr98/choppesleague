@@ -883,7 +883,7 @@ else:
 
     #Cronometro de 7 minutos
     def cronometro_7_minutos():
-        st.subheader("⏱️ Cronômetro da Partida (7 minutos)")
+        st.subheader("⏱️ Cronômetro da Partida")
 
         if "cronometro_ativo" not in st.session_state:
             st.session_state.cronometro_ativo = False
