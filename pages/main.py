@@ -881,37 +881,52 @@ else:
         )
 
 
-    #Cronometro de 7 minutos
     def cronometro_7_minutos():
         st.subheader("⏱️ Cronômetro da Partida")
 
-        if "cronometro_ativo" not in st.session_state:
-            st.session_state.cronometro_ativo = False
+        if "tempo_restante" not in st.session_state:
+            st.session_state.tempo_restante = 7 * 60  # 420 segundos
+        if "cronometro_rodando" not in st.session_state:
+            st.session_state.cronometro_rodando = False
+        if "ultimo_tempo" not in st.session_state:
+            st.session_state.ultimo_tempo = time.time()
 
-        # botão de início
-        if st.button("▶️ Iniciar Cronômetro"):
-            st.session_state.cronometro_ativo = True
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("▶️ Iniciar"):
+                st.session_state.cronometro_rodando = True
+                st.session_state.ultimo_tempo = time.time()
+        with col2:
+            if st.button("⏸️ Pausar"):
+                st.session_state.cronometro_rodando = False
+        with col3:
+            if st.button("🔁 Reiniciar"):
+                st.session_state.tempo_restante = 7 * 60
+                st.session_state.cronometro_rodando = False
 
-        placeholder = st.empty()
+        # Atualiza tempo
+        if st.session_state.cronometro_rodando:
+            tempo_atual = time.time()
+            decorrido = int(tempo_atual - st.session_state.ultimo_tempo)
+            st.session_state.ultimo_tempo = tempo_atual
+            st.session_state.tempo_restante -= decorrido
+            if st.session_state.tempo_restante <= 0:
+                st.session_state.tempo_restante = 0
+                st.session_state.cronometro_rodando = False
 
-        # se o botão foi pressionado, começa contagem regressiva
-        if st.session_state.cronometro_ativo:
-            total_segundos = 7 * 60  # 420 segundos
+        minutos = st.session_state.tempo_restante // 60
+        segundos = st.session_state.tempo_restante % 60
+        st.markdown(
+            f"<h1 style='text-align:center;'>⏳ {minutos:02d}:{segundos:02d}</h1>",
+            unsafe_allow_html=True
+        )
 
-            for segundos_restantes in range(total_segundos, -1, -1):
-                minutos = segundos_restantes // 60
-                segundos = segundos_restantes % 60
-                placeholder.markdown(
-                    f"<h2 style='text-align: center;'>⏳ {minutos:02d}:{segundos:02d}</h2>",
-                    unsafe_allow_html=True,
-                )
-                time.sleep(1)
+        if st.session_state.tempo_restante == 0:
+            st.success("⏰ Tempo esgotado!")
 
-            placeholder.markdown(
-                "<h2 style='text-align: center; color: red;'>⏰ Tempo esgotado!</h2>",
-                unsafe_allow_html=True,
-            )
-            st.session_state.cronometro_ativo = False
+        # Auto refresh a cada segundo se rodando
+        if st.session_state.cronometro_rodando:
+            st.experimental_rerun()
 
     # Tela de registro das partidas
     def registrar_partidas(partidas):
