@@ -502,9 +502,9 @@ else:
                     st.session_state.pagina_atual = "login"
                     st.rerun()
 
-        # Essas chamadas precisam estar fora do `with`
-        if logout_clicado or cancelar_clicado or confirmar_clicado:
-            st.rerun()
+    # Essas chamadas precisam estar fora do `with`
+    if logout_clicado or cancelar_clicado or confirmar_clicado:
+        st.rerun()
 
     # --- ROTEADOR ---
     def tela_principal():
@@ -598,7 +598,8 @@ else:
                 partidas, jogadores, _ = load_data()
                 save_data(partidas, jogadores, usuarios)
                 st.success("✅ Informações atualizadas com sucesso!")
-            st.rerun()
+                st.session_state.pagina_atual = "👤 Meu Perfil"
+                st.rerun()
 
 
     # Exibe as páginas conforme tipo
