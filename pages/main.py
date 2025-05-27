@@ -543,10 +543,8 @@ else:
 
 
     def tela_meu_perfil():
-        # Carrega dados atualizados da planilha
         _, _, usuarios = load_data()
-        st.session_state.usuarios = usuarios  # opcional: atualizar o cache local
-
+        st.session_state.usuarios = usuarios
         usuario = usuarios.get(st.session_state.email, {})
 
         st.markdown("### 📋 Informações Cadastrais")
@@ -564,13 +562,16 @@ else:
         st.markdown("---")
         st.markdown("### 🔐 Atualizar Senha")
 
-        senha_atual = st.text_input("Senha atual", type="password")
-        nova_senha = st.text_input("Nova senha", type="password")
-        conf_nova_senha = st.text_input("Confirmar nova senha", type="password")
-        nova_palavra_chave = st.text_input("Nova palavra-chave (recuperação)")
-        nova_dica = st.text_input("Nova dica da palavra-chave")
+        with st.form("form_perfil"):
+            senha_atual = st.text_input("Senha atual", type="password")
+            nova_senha = st.text_input("Nova senha", type="password")
+            conf_nova_senha = st.text_input("Confirmar nova senha", type="password")
+            nova_palavra_chave = st.text_input("Nova palavra-chave (recuperação)")
+            nova_dica = st.text_input("Nova dica da palavra-chave")
 
-        if st.button("💾 Salvar alterações"):
+            salvar = st.form_submit_button("💾 Salvar alterações")
+
+        if salvar:
             usuarios = st.session_state.usuarios
             email_antigo = st.session_state.email
 
