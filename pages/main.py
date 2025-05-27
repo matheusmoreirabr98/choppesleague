@@ -583,7 +583,7 @@ else:
             del st.session_state.atualizacao_sucesso  # remove a flag após exibir
 
         if salvar:
-            partidas, jogadores, usuarios, presencas = load_data_gsheets()
+            partidas, jogadores, usuarios, presencas = load_data()
             email_antigo = st.session_state.email
 
             if senha_atual != usuarios[email_antigo]["senha"]:
@@ -603,7 +603,7 @@ else:
                     usuarios[email] = usuarios.pop(email_antigo)
                     st.session_state.email = email
 
-                save_data(partidas, jogadores, usuarios, presencas)
+                save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
                 st.success("✅ Informações atualizadas com sucesso!")
                 for campo in [
