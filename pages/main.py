@@ -623,8 +623,6 @@ else:
         tela_comunicado()
     elif pag == "📜 Regras Chopp's League":
         tela_regras()
-    elif pag == "👤 Meu Perfil":
-        tela_meu_perfil()
     elif pag == "🚪 Sair":
         for k in list(st.session_state.keys()):
             del st.session_state[k]
