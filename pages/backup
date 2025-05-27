@@ -409,13 +409,15 @@ else:
 
     # --- SIDEBAR --- (imagem e nome apenas)
     with st.sidebar:
-        st.image("./imagens/logo.png", use_container_width=True)
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(f"👤 Jogador: **{st.session_state.nome}**")
+        st.image("./imagens/logo.png", width=200)
+        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
+
+        st.markdown("---")
 
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
             "🏠 Tela Principal",
+            "👤 Meu Perfil",
             "📊 Registrar Partida",
             "👟 Estatísticas dos Jogadores",
             "🎲 Sorteio de Times",
@@ -424,28 +426,40 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League",
+            "📜 Regras Chopp's League"
         ]
     else:
         opcoes = [
             "🏠 Tela Principal",
+            "👤 Meu Perfil",
             "👟 Estatísticas dos Jogadores",
             "✅ Confirmar Presença/Ausência",
             "🏅 Avaliação Pós-Jogo",
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Choppe's League",
+            "📜 Regras Chopp's League"
         ]
 
+    # garante que sempre selecionamos uma opção válida da lista
+    pagina_ativa = st.session_state.pagina_atual
+
+
+    # exibe o selectbox somente se não estiver no Meu Perfil
+# exibimos o selectbox sempre — inclusive no perfil
     pagina_escolhida = st.selectbox(
         "",  # label obrigatória
         opcoes,
-        index=opcoes.index(st.session_state.pagina_atual),
+        index=opcoes.index(pagina_ativa) if pagina_ativa in opcoes else 0,
         key="menu_topo",
     )
 
-    if pagina_escolhida != st.session_state.pagina_atual:
+    # só atualiza a página se a escolhida for diferente
+    # e se ela for uma das opções válidas
+    if (
+        pagina_escolhida != st.session_state.pagina_atual
+        and pagina_escolhida in opcoes
+    ):
         st.session_state.pagina_atual = pagina_escolhida
         st.rerun()
 
@@ -459,33 +473,36 @@ else:
     cancelar_clicado = False
     confirmar_clicado = False
 
-    # SIDEBAR - botão logout
+
     with st.sidebar:
-        if not st.session_state.confirmar_logout:
+        # Centraliza botão Meu Perfil
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("👤 Meu Perfil"):
+                st.session_state.pagina_atual = "👤 Meu Perfil"
+
+        # Centraliza botão Logout ou confirma/cancela
+        if not st.session_state.get("confirmar_logout", False):
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
                 if st.button("🚪 Logout", key="botao_logout"):
                     st.session_state.confirmar_logout = True
-                    logout_clicado = True
+                    st.rerun()
         else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
             with col1:
-                if st.button(
-                    "❌ Cancelar", key="cancelar_logout", use_container_width=True
-                ):
+                if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
                     st.session_state.confirmar_logout = False
-                    cancelar_clicado = True
+                    st.rerun()
             with col2:
-                if st.button(
-                    "✅ Confirmar", key="confirmar_logout_btn", use_container_width=True
-                ):
+                if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
                     usuarios = st.session_state.get("usuarios", {})
                     st.session_state.clear()
                     st.session_state.usuario_logado = False
                     st.session_state.usuarios = usuarios
                     st.session_state.pagina_atual = "login"
-                    confirmar_clicado = True
+                    st.rerun()
 
     # Essas chamadas precisam estar fora do `with`
     if logout_clicado or cancelar_clicado or confirmar_clicado:
@@ -527,6 +544,81 @@ else:
 
     pag = st.session_state.pagina_atual
 
+
+    def tela_meu_perfil():
+        _, _, usuarios = load_data()
+        st.session_state.usuarios = usuarios
+        usuario = usuarios.get(st.session_state.email, {})
+
+        st.markdown("### 📋 Informações Cadastrais")
+        nome = usuario.get("nome", "")
+        posicao = usuario.get("posicao", "")
+        nascimento = usuario.get("nascimento", "")
+
+        st.markdown(f"- **Nome:** {nome}")
+        st.markdown(f"- **Posição:** {posicao}")
+        st.markdown(f"- **Data de Nascimento:** {nascimento}")
+
+        # Removido o input duplicado de telefone/email aqui
+
+        st.markdown("---")
+        st.markdown("### 🔐 Atualizar Dados")
+
+        with st.form("form_perfil"):
+            telefone = st.text_input("📱 Telefone", value=usuario.get("telefone", ""), key="perfil_telefone")
+            email = st.text_input("✉️ E-mail", value=st.session_state.email, key="perfil_email")
+
+            senha_atual = st.text_input("Senha atual", type="password", key="perfil_senha_atual")
+            nova_senha = st.text_input("Nova senha", type="password", key="perfil_nova_senha")
+            conf_nova_senha = st.text_input("Confirmar nova senha", type="password", key="perfil_conf_nova_senha")
+            nova_palavra_chave = st.text_input("Nova palavra-chave (recuperação)", key="perfil_palavra")
+            nova_dica = st.text_input("Nova dica da palavra-chave", key="perfil_dica")
+
+            salvar = st.form_submit_button("💾 Salvar alterações")
+
+        if st.session_state.get("atualizacao_sucesso"):
+            st.success("✅ Informações atualizadas com sucesso!")
+            del st.session_state.atualizacao_sucesso  # remove a flag após exibir
+
+        if salvar:
+            usuarios = st.session_state.usuarios
+            email_antigo = st.session_state.email
+
+            if senha_atual != usuarios[email_antigo]["senha"]:
+                st.error("❌ Senha atual incorreta.")
+            elif nova_senha != conf_nova_senha:
+                st.error("❌ As novas senhas não coincidem.")
+            elif not nova_palavra_chave or not nova_dica:
+                st.error("❌ A palavra-chave e a dica devem ser preenchidas.")
+            else:
+                usuarios[email_antigo]["telefone"] = telefone
+                usuarios[email_antigo]["senha"] = nova_senha
+                usuarios[email_antigo]["palavra_chave"] = nova_palavra_chave
+                usuarios[email_antigo]["dica_palavra_chave"] = nova_dica
+
+                # Atualiza o e-mail, se mudou
+                if email != email_antigo:
+                    usuarios[email] = usuarios.pop(email_antigo)
+                    st.session_state.email = email
+
+                partidas, jogadores, _ = load_data()
+                save_data(partidas, jogadores, usuarios)
+                
+                st.success("✅ Informações atualizadas com sucesso!")
+                for campo in [
+                    "perfil_senha_atual",
+                    "perfil_nova_senha",
+                    "perfil_conf_nova_senha",
+                    "perfil_palavra",
+                    "perfil_dica"
+                ]:
+                    if campo in st.session_state:
+                        del st.session_state[campo]
+
+                st.session_state.atualizacao_sucesso = True
+                st.rerun()
+
+
     # Exibe as páginas conforme tipo
     if pag == "🏠 Tela Principal":
         tela_principal()
@@ -546,7 +638,7 @@ else:
         tela_forum()
     elif pag == "📣 Comunicado à Gestão":
         tela_comunicado()
-    elif pag == "📜 Regras Choppe's League":
+    elif pag == "📜 Regras Chopp's League":
         tela_regras()
     elif pag == "🚪 Sair":
         for k in list(st.session_state.keys()):
@@ -555,6 +647,21 @@ else:
 
     # Música ambiente (apenas se logado)
     if st.session_state.usuario_logado:
+        st.markdown(
+            """
+            <style>
+                [data-testid="stSidebar"] {
+                    width: 250px !important;
+                }
+
+                /* Corrige o conteúdo principal para não ser cortado */
+                [data-testid="stSidebarContent"] {
+                    width: 250px !important;
+                }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
 
         def tocar_musica_sidebar():
             caminho_musica = "audio/musica.mp3"
@@ -564,12 +671,28 @@ else:
                 audio_base64 = base64.b64encode(audio_bytes).decode()
                 st.sidebar.markdown(
                     f"""
-                    <p style='text-align: center; font-weight: bold;'>🎵 Música Ambiente</p>
-                    <audio controls style="width: 100%;">
-                        <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-                        Seu navegador não suporta áudio.
-                    </audio>
-                """,
+                    <style>
+                        audio::-webkit-media-controls-timeline {{
+                            display: none !important;
+                        }}
+                        audio::-webkit-media-controls-current-time-display,
+                        audio::-webkit-media-controls-time-remaining-display {{
+                            display: none !important;
+                        }}
+                    </style>
+
+                    <div style="text-align: center;">
+                        <p style='font-weight: bold;'>🎵 Música Ambiente</p>
+                        </audio>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <audio controls style="width: 60%;">
+                            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+                            Seu navegador não suporta áudio.
+                        </audio>
+                    </div>
+                    """,
                     unsafe_allow_html=True,
                 )
             else:
@@ -611,46 +734,25 @@ else:
             )
             df.to_csv(FILE_JOGADORES, index=False)
 
-    def load_data():
-        partidas = pd.read_csv(FILE_PARTIDAS)
-        jogadores = pd.read_csv(FILE_JOGADORES)
+    def load_data_csv():
+        partidas, jogadores = load_data_safe_csv()
         return partidas, jogadores
 
-    def save_data(partidas, jogadores):
-        partidas.to_csv(FILE_PARTIDAS, index=False)
-        jogadores.to_csv(FILE_JOGADORES, index=False)
+    def save_data(partidas, jogadores, usuarios):
+        save_data_gsheets(partidas, jogadores, usuarios, presencas=[])
 
     # Carrega dados com segurança
     def load_data_safe():
         try:
             partidas = pd.read_csv(FILE_PARTIDAS)
         except:
-            partidas = pd.DataFrame(
-                columns=[
-                    "Data",
-                    "Número da Partida",
-                    "Placar Borussia",
-                    "Gols Borussia",
-                    "Assistências Borussia",
-                    "Placar Inter",
-                    "Gols Inter",
-                    "Assistências Inter",
-                ]
-            )
+            partidas = pd.DataFrame([...])
+
         try:
             jogadores = pd.read_csv(FILE_JOGADORES)
         except:
-            jogadores = pd.DataFrame(
-                columns=[
-                    "Nome",
-                    "Time",
-                    "Gols",
-                    "Assistências",
-                    "Faltas",
-                    "Cartões Amarelos",
-                    "Cartões Vermelhos",
-                ]
-            )
+            jogadores = pd.DataFrame([...])
+
         return partidas, jogadores
 
     partidas, jogadores = load_data_safe()
@@ -674,7 +776,7 @@ else:
     # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
         st.markdown(
-            "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Choppe's League! 🍻</h5>",
+            "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Chopp's League! 🍻</h5>",
             unsafe_allow_html=True,
         )
         st.markdown("---")
@@ -1170,13 +1272,13 @@ else:
 
             st.markdown(
                 gerar_html_podio(
-                    df_votos["Craque"], "Craque da Choppe's League (Top 3)", "🏆"
+                    df_votos["Craque"], "Craque da Chopp's League (Top 3)", "🏆"
                 ),
                 unsafe_allow_html=True,
             )
             st.markdown(
                 gerar_html_podio(
-                    df_votos["Pereba"], "Pereba da Choppe's League (Top 3)", "🐢"
+                    df_votos["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"
                 ),
                 unsafe_allow_html=True,
             )
@@ -1192,7 +1294,7 @@ else:
         st.title("📸 Galeria de Momentos da Chopp's League")
 
         st.markdown(
-            "Veja os melhores registros da Choppe's League: gols, resenhas e lembranças 🍻⚽"
+            "Veja os melhores registros da Chopp's League: gols, resenhas e lembranças 🍻⚽"
         )
 
         # --- TÓPICOS DA GALERIA ---
@@ -1402,7 +1504,7 @@ else:
             - **Materiais esportivos** (bolas, bomba de encher bola, etc.)
             - **Itens médicos** (Gelol, faixa, esparadrapo, gelo, etc.)
             - **Água**
-            - **Confraternizações** ou outras necessidades da Choppe's League
+            - **Confraternizações** ou outras necessidades da Chopp's League
         """
         )
 
@@ -1446,14 +1548,18 @@ else:
             - **🧤 Paredão:** goleiro com a melhor atuação defensiva da rodada.
         - A votação é **exclusiva para quem confirmou presença e jogou na partida do dia**.
         - Somente jogadores presentes poderão votar.
-        - A finalidade é **uma brincadeira para animar o grupo e fortalecer o espírito da Choppe's League**.
+        - A finalidade é **uma brincadeira para animar o grupo e fortalecer o espírito da Chopp's League**.
         - Os resultados serão divulgados para descontração na tela **'Avaliação pós-jogo'**.
         """
         )
 
+
+    
+
+
     # Inicialização de sessão
     if "pagina_atual" not in st.session_state:
-        st.session_state.pagina_atual = "🏠 Tela Principal"
+        st.session_state.pagina_atual = "login"
 
     if "nome" not in st.session_state:
         st.session_state.nome = "usuário"
@@ -1478,6 +1584,8 @@ else:
     # Roteador de páginas
     if st.session_state.pagina_atual == "🏠 Tela Principal":
         tela_principal(partidas, jogadores)
+    elif st.session_state.pagina_atual == "👤 Meu Perfil":
+        tela_meu_perfil()
     elif st.session_state.pagina_atual == "📊 Registrar Partida":
         partidas = registrar_partidas(partidas)
     elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
@@ -1494,5 +1602,5 @@ else:
         tela_forum()
     elif st.session_state.pagina_atual == "📣 Comunicado à Gestão":
         tela_comunicado()
-    elif st.session_state.pagina_atual == "📜 Regras Choppe's League":
+    elif st.session_state.pagina_atual == "📜 Regras Chopp's League":
         tela_regras()
