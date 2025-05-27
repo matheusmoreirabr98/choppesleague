@@ -15,6 +15,7 @@ import gspread
 import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
+from streamlit_extras.st_autorefresh import st_autorefresh
 
 
 
@@ -885,15 +886,15 @@ else:
     def cronometro_7_minutos():
         st.subheader("⏱️ Cronômetro da Partida")
 
-        # Inicializa os estados necessários
+        # inicialização dos estados
         if "tempo_restante" not in st.session_state:
-            st.session_state.tempo_restante = 7 * 60
+            st.session_state.tempo_restante = 7 * 60  # 7 minutos
         if "cronometro_rodando" not in st.session_state:
             st.session_state.cronometro_rodando = False
         if "ultimo_tick" not in st.session_state:
             st.session_state.ultimo_tick = time.time()
 
-        # Cria os botões lado a lado
+        # layout com os 3 botões
         col1, col2, col3 = st.columns(3)
         with col1:
             if st.button("▶️ Iniciar"):
@@ -907,18 +908,15 @@ else:
                 st.session_state.tempo_restante = 7 * 60
                 st.session_state.cronometro_rodando = False
 
-        # Atualiza tempo se cronômetro estiver rodando
+        # atualização do tempo
         if st.session_state.cronometro_rodando:
             agora = time.time()
             decorrido = int(agora - st.session_state.ultimo_tick)
             if decorrido >= 1:
-                st.session_state.tempo_restante -= decorrido
+                st.session_state.tempo_restante = max(0, st.session_state.tempo_restante - decorrido)
                 st.session_state.ultimo_tick = agora
-                if st.session_state.tempo_restante <= 0:
-                    st.session_state.tempo_restante = 0
-                    st.session_state.cronometro_rodando = False
 
-        # Mostra o tempo formatado
+        # exibição do tempo
         minutos = st.session_state.tempo_restante // 60
         segundos = st.session_state.tempo_restante % 60
         st.markdown(
@@ -926,13 +924,13 @@ else:
             unsafe_allow_html=True
         )
 
-        # Alerta de término
         if st.session_state.tempo_restante == 0:
             st.success("⏰ Tempo esgotado!")
+            st.session_state.cronometro_rodando = False
 
-        # Auto-refresh a cada segundo, somente se o cronômetro estiver rodando
+        # refresh automático a cada segundo, se rodando
         if st.session_state.cronometro_rodando:
-            st.experimental_rerun()
+            st_autorefresh(interval=1000, limit=10000, key="cronometro_refresh")
 
     # Tela de registro das partidas
     def registrar_partidas(partidas):

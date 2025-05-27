@@ -5,3 +5,4 @@ pandas
 requests
 Pillow
 gspread_dataframe
+streamlit-extras
