@@ -576,6 +576,10 @@ else:
 
             salvar = st.form_submit_button("💾 Salvar alterações")
 
+        if st.session_state.get("atualizacao_sucesso"):
+            st.success("✅ Informações atualizadas com sucesso!")
+            del st.session_state.atualizacao_sucesso  # remove a flag após exibir
+            
         if salvar:
             usuarios = st.session_state.usuarios
             email_antigo = st.session_state.email
@@ -600,6 +604,7 @@ else:
                 partidas, jogadores, _ = load_data()
                 save_data(partidas, jogadores, usuarios)
                 st.success("✅ Informações atualizadas com sucesso!")
+                st.session_state.atualizacao_sucesso = True
                 st.rerun()
 
 
