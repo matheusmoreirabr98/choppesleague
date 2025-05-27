@@ -417,6 +417,7 @@ else:
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
             "🏠 Tela Principal",
+            "👤 Meu Perfil",
             "📊 Registrar Partida",
             "👟 Estatísticas dos Jogadores",
             "🎲 Sorteio de Times",
@@ -425,20 +426,19 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Chopp's League",
-            #"👤 Meu Perfil",
+            "📜 Regras Chopp's League"
         ]
     else:
         opcoes = [
             "🏠 Tela Principal",
+            "👤 Meu Perfil",
             "👟 Estatísticas dos Jogadores",
             "✅ Confirmar Presença/Ausência",
             "🏅 Avaliação Pós-Jogo",
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Chopp's League",
-            #"👤 Meu Perfil",
+            "📜 Regras Chopp's League"
         ]
 
     # garante que sempre selecionamos uma opção válida da lista
