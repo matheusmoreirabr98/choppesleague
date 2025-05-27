@@ -440,25 +440,26 @@ else:
         ]
 
     # garante que sempre selecionamos uma opção válida da lista
-    pagina_ativa = (
-        st.session_state.pagina_atual
-        if st.session_state.pagina_atual in opcoes
-        else opcoes[0]
-    )
+    pagina_ativa = st.session_state.pagina_atual
+
 
     # exibe o selectbox somente se não estiver no Meu Perfil
-    if pagina_ativa != "👤 Meu Perfil":
-        pagina_escolhida = st.selectbox(
-            "",  # label obrigatória
-            opcoes,
-            index=opcoes.index(pagina_ativa),
-            key="menu_topo",
-        )
+# exibimos o selectbox sempre — inclusive no perfil
+    pagina_escolhida = st.selectbox(
+        "",  # label obrigatória
+        opcoes,
+        index=opcoes.index(pagina_ativa) if pagina_ativa in opcoes else 0,
+        key="menu_topo",
+    )
 
-        # atualiza a página apenas se for diferente
-        if pagina_escolhida != st.session_state.pagina_atual:
-            st.session_state.pagina_atual = pagina_escolhida
-            st.rerun()
+    # só atualiza a página se a escolhida for diferente
+    # e se ela for uma das opções válidas
+    if (
+        pagina_escolhida != st.session_state.pagina_atual
+        and pagina_escolhida in opcoes
+    ):
+        st.session_state.pagina_atual = pagina_escolhida
+        st.rerun()
 
     # --- Confirmação de logout ---
     # Inicializa controle de logout apenas uma vez
