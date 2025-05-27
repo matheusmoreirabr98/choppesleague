@@ -136,7 +136,7 @@ def load_data_gsheets():
             if pd.notna(row["email"]):
                 usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios, presencas
+    return partidas, jogadores, usuarios
 
 
 # -----------------------------------------
@@ -172,8 +172,9 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
 def load_data():
     return load_data_gsheets()
 
-def save_data(partidas, jogadores, usuarios, presencas):
-    save_data_gsheets(partidas, jogadores, usuarios, presencas)
+
+def save_data(partidas, jogadores, usuarios):
+    save_data_gsheets(partidas, jogadores, usuarios)
 
 
 # Sessões iniciais
