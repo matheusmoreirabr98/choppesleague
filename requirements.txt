@@ -6,3 +6,4 @@ requests
 Pillow
 gspread_dataframe
 streamlit-extras
+streamlit-extras==0.3.3
