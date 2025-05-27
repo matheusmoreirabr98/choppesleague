@@ -736,11 +736,11 @@ else:
             df.to_csv(FILE_JOGADORES, index=False)
 
     def load_data_csv():
-        partidas, jogadores = load_data_safe_csv()
+        partidas, jogadores = load_data_safe()
         return partidas, jogadores
 
-    def save_data(partidas, jogadores, usuarios):
-        save_data_gsheets(partidas, jogadores, usuarios, presencas=[])
+    def save_data(partidas, jogadores, usuarios, presencas):
+        save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
     # Carrega dados com segurança
     def load_data_safe():
