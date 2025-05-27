@@ -617,8 +617,6 @@ else:
 
                 st.session_state.atualizacao_sucesso = True
                 st.rerun()
-                st.session_state.atualizacao_sucesso = True
-                st.rerun()
 
 
     # Exibe as páginas conforme tipo
