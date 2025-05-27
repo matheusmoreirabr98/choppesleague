@@ -136,7 +136,7 @@ def load_data_gsheets():
             if pd.notna(row["email"]):
                 usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios
+    return partidas, jogadores, usuarios, presencas
 
 
 # -----------------------------------------
@@ -172,9 +172,8 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
 def load_data():
     return load_data_gsheets()
 
-
-def save_data(partidas, jogadores, usuarios):
-    save_data_gsheets(partidas, jogadores, usuarios)
+def save_data(partidas, jogadores, usuarios, presencas):
+    save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
 
 # Sessões iniciais
@@ -194,6 +193,9 @@ if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
 if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
+if "presencas" not in st.session_state:
+    st.session_state.presencas = pd.DataFrame()
+# Inicializa as planilhas se necessário
 
 # Funções auxiliares
 
@@ -581,7 +583,7 @@ else:
             del st.session_state.atualizacao_sucesso  # remove a flag após exibir
 
         if salvar:
-            usuarios = st.session_state.usuarios
+            partidas, jogadores, usuarios, presencas = load_data_gsheets()
             email_antigo = st.session_state.email
 
             if senha_atual != usuarios[email_antigo]["senha"]:
@@ -601,9 +603,8 @@ else:
                     usuarios[email] = usuarios.pop(email_antigo)
                     st.session_state.email = email
 
-                partidas, jogadores, _ = load_data()
-                save_data(partidas, jogadores, usuarios)
-                
+                save_data(partidas, jogadores, usuarios, presencas)
+
                 st.success("✅ Informações atualizadas com sucesso!")
                 for campo in [
                     "perfil_senha_atual",
