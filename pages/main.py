@@ -1020,11 +1020,6 @@ else:
         return partidas
 
 
-    numero_partida = len(partidas) + 1
-    data = st.date_input("Data da partida")
-    st.markdown(f"**Número da Partida:** {numero_partida}")
-
-
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
         st.title("Estatísticas dos Jogadores")
