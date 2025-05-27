@@ -1542,10 +1542,9 @@ else:
     
 
 
-
     # Inicialização de sessão
     if "pagina_atual" not in st.session_state:
-        st.session_state.pagina_atual = "🏠 Tela Principal"
+        st.session_state.pagina_atual = "login"
 
     if "nome" not in st.session_state:
         st.session_state.nome = "usuário"
