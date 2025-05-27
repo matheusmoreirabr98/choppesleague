@@ -893,6 +893,10 @@ else:
                 </div>
             """
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
+    
+    # Caminhos das imagens na pasta 'imagens'
+    escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+    escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
     def registrar_partidas(partidas):
         st.title("Registrar Estatísticas da Partida")
