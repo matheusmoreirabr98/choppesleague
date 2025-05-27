@@ -15,7 +15,7 @@ import gspread
 import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
-from streamlit_extras.st_autorefresh import st_autorefresh
+from streamlit_extras import st_autorefresh
 
 
 
