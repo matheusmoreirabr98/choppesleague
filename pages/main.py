@@ -426,7 +426,7 @@ else:
             "💬 Fórum",
             "📣 Comunicado à Gestão",
             "📜 Regras Chopp's League",
-            "👤 Meu Perfil",
+            #"👤 Meu Perfil",
         ]
     else:
         opcoes = [
@@ -438,7 +438,7 @@ else:
             "💬 Fórum",
             "📣 Comunicado à Gestão",
             "📜 Regras Chopp's League",
-            "👤 Meu Perfil",
+            #"👤 Meu Perfil",
         ]
 
     # garante que sempre selecionamos uma opção válida da lista
