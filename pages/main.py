@@ -579,7 +579,7 @@ else:
         if st.session_state.get("atualizacao_sucesso"):
             st.success("✅ Informações atualizadas com sucesso!")
             del st.session_state.atualizacao_sucesso  # remove a flag após exibir
-            
+
         if salvar:
             usuarios = st.session_state.usuarios
             email_antigo = st.session_state.email
@@ -603,7 +603,20 @@ else:
 
                 partidas, jogadores, _ = load_data()
                 save_data(partidas, jogadores, usuarios)
+                
                 st.success("✅ Informações atualizadas com sucesso!")
+                for campo in [
+                    "perfil_senha_atual",
+                    "perfil_nova_senha",
+                    "perfil_conf_nova_senha",
+                    "perfil_palavra",
+                    "perfil_dica"
+                ]:
+                    if campo in st.session_state:
+                        del st.session_state[campo]
+
+                st.session_state.atualizacao_sucesso = True
+                st.rerun()
                 st.session_state.atualizacao_sucesso = True
                 st.rerun()
 
