@@ -542,63 +542,63 @@ else:
     pag = st.session_state.pagina_atual
 
 
-def tela_meu_perfil():
-    _, _, usuarios = load_data()
-    st.session_state.usuarios = usuarios
-    usuario = usuarios.get(st.session_state.email, {})
+    def tela_meu_perfil():
+        _, _, usuarios = load_data()
+        st.session_state.usuarios = usuarios
+        usuario = usuarios.get(st.session_state.email, {})
 
-    st.markdown("### 📋 Informações Cadastrais")
-    nome = usuario.get("nome", "")
-    posicao = usuario.get("posicao", "")
-    nascimento = usuario.get("nascimento", "")
+        st.markdown("### 📋 Informações Cadastrais")
+        nome = usuario.get("nome", "")
+        posicao = usuario.get("posicao", "")
+        nascimento = usuario.get("nascimento", "")
 
-    st.markdown(f"- **Nome:** {nome}")
-    st.markdown(f"- **Posição:** {posicao}")
-    st.markdown(f"- **Data de Nascimento:** {nascimento}")
+        st.markdown(f"- **Nome:** {nome}")
+        st.markdown(f"- **Posição:** {posicao}")
+        st.markdown(f"- **Data de Nascimento:** {nascimento}")
 
-    # Removido o input duplicado de telefone/email aqui
+        # Removido o input duplicado de telefone/email aqui
 
-    st.markdown("---")
-    st.markdown("### 🔐 Atualizar Dados")
+        st.markdown("---")
+        st.markdown("### 🔐 Atualizar Dados")
 
-    with st.form("form_perfil"):
-        telefone = st.text_input("📱 Telefone", value=usuario.get("telefone", ""), key="perfil_telefone")
-        email = st.text_input("✉️ E-mail", value=st.session_state.email, key="perfil_email")
+        with st.form("form_perfil"):
+            telefone = st.text_input("📱 Telefone", value=usuario.get("telefone", ""), key="perfil_telefone")
+            email = st.text_input("✉️ E-mail", value=st.session_state.email, key="perfil_email")
 
-        senha_atual = st.text_input("Senha atual", type="password", key="perfil_senha_atual")
-        nova_senha = st.text_input("Nova senha", type="password", key="perfil_nova_senha")
-        conf_nova_senha = st.text_input("Confirmar nova senha", type="password", key="perfil_conf_nova_senha")
-        nova_palavra_chave = st.text_input("Nova palavra-chave (recuperação)", key="perfil_palavra")
-        nova_dica = st.text_input("Nova dica da palavra-chave", key="perfil_dica")
+            senha_atual = st.text_input("Senha atual", type="password", key="perfil_senha_atual")
+            nova_senha = st.text_input("Nova senha", type="password", key="perfil_nova_senha")
+            conf_nova_senha = st.text_input("Confirmar nova senha", type="password", key="perfil_conf_nova_senha")
+            nova_palavra_chave = st.text_input("Nova palavra-chave (recuperação)", key="perfil_palavra")
+            nova_dica = st.text_input("Nova dica da palavra-chave", key="perfil_dica")
 
-        salvar = st.form_submit_button("💾 Salvar alterações")
+            salvar = st.form_submit_button("💾 Salvar alterações")
 
-    if salvar:
-        usuarios = st.session_state.usuarios
-        email_antigo = st.session_state.email
+        if salvar:
+            usuarios = st.session_state.usuarios
+            email_antigo = st.session_state.email
 
-        if senha_atual != usuarios[email_antigo]["senha"]:
-            st.error("❌ Senha atual incorreta.")
-        elif nova_senha != conf_nova_senha:
-            st.error("❌ As novas senhas não coincidem.")
-        elif not nova_palavra_chave or not nova_dica:
-            st.error("❌ A palavra-chave e a dica devem ser preenchidas.")
-        else:
-            usuarios[email_antigo]["telefone"] = telefone
-            usuarios[email_antigo]["senha"] = nova_senha
-            usuarios[email_antigo]["palavra_chave"] = nova_palavra_chave
-            usuarios[email_antigo]["dica_palavra_chave"] = nova_dica
+            if senha_atual != usuarios[email_antigo]["senha"]:
+                st.error("❌ Senha atual incorreta.")
+            elif nova_senha != conf_nova_senha:
+                st.error("❌ As novas senhas não coincidem.")
+            elif not nova_palavra_chave or not nova_dica:
+                st.error("❌ A palavra-chave e a dica devem ser preenchidas.")
+            else:
+                usuarios[email_antigo]["telefone"] = telefone
+                usuarios[email_antigo]["senha"] = nova_senha
+                usuarios[email_antigo]["palavra_chave"] = nova_palavra_chave
+                usuarios[email_antigo]["dica_palavra_chave"] = nova_dica
 
-            # Atualiza o e-mail, se mudou
-            if email != email_antigo:
-                usuarios[email] = usuarios.pop(email_antigo)
-                st.session_state.email = email
+                # Atualiza o e-mail, se mudou
+                if email != email_antigo:
+                    usuarios[email] = usuarios.pop(email_antigo)
+                    st.session_state.email = email
 
-            partidas, jogadores, _ = load_data()
-            save_data(partidas, jogadores, usuarios)
-            st.success("✅ Informações atualizadas com sucesso!")
-            st.session_state.pagina_atual = "👤 Meu Perfil"
-            st.rerun()
+                partidas, jogadores, _ = load_data()
+                save_data(partidas, jogadores, usuarios)
+                st.success("✅ Informações atualizadas com sucesso!")
+                st.session_state.pagina_atual = "👤 Meu Perfil"
+                st.rerun()
 
 
 
