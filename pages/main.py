@@ -924,10 +924,17 @@ else:
         col1, col2, col3 = st.columns([1, 1, 1])
         with col1:
             st.image("imagens/escudo_borussia.png", caption="Borussia", width=80)
+            st.divider()
         with col2:
             st.markdown("<div style='text-align: center; font-size: 50px;'>⚔️</div>", unsafe_allow_html=True)
+            st.divider()
         with col3:
             st.image("imagens/escudo_inter.png", caption="Inter", width=80)
+            st.divider()
+
+        # separador visual entre escudos e inputs
+        st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
+
 
         # Colunas para inputs
         col1, col2 = st.columns(2)
