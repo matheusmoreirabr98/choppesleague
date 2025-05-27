@@ -879,25 +879,6 @@ else:
         )
 
     # Tela de registro das partidas
-    def imagem_base64(path, legenda):
-        if os.path.exists(path):
-            img = Image.open(path)
-            img = img.resize((200, 200))
-            buffer = BytesIO()
-            img.save(buffer, format="PNG")
-            img_base64 = base64.b64encode(buffer.getvalue()).decode()
-            return f"""
-                <div style="text-align: center; min-width: 20px;">
-                    <img src="data:image/png;base64,{img_base64}" width="80">
-                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
-                </div>
-            """
-        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
-    
-    # Caminhos das imagens na pasta 'imagens'
-    escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-    escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
-
     def registrar_partidas(partidas):
         st.title("Registrar Estatísticas da Partida")
 
@@ -917,103 +898,47 @@ else:
             ],
         )
 
-        numero_partida = len(partidas) + 1
-        data = st.date_input("Data da partida")
-        st.markdown(f"**Número da Partida:** {numero_partida}")
+    def imagem_base64(path, legenda):
+        if os.path.exists(path):
+            img = Image.open(path)
+            img = img.resize((200, 200))
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"""
+                <div style="text-align: center; min-width: 20px;">
+                    <img src="data:image/png;base64,{img_base64}" width="80">
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                </div>
+            """
+        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
+    
+    # Caminhos das imagens na pasta 'imagens'
+    escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+    escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col1:
-            st.image("imagens/escudo_borussia.png", caption="Borussia", width=80)
-        with col2:
-            st.markdown("<div style='text-align: center; font-size: 50px;'>⚔️</div>", unsafe_allow_html=True)
-        with col3:
-            st.image("imagens/escudo_inter.png", caption="Inter", width=80)
+    numero_partida = len(partidas) + 1
+    data = st.date_input("Data da partida")
+    st.markdown(f"**Número da Partida:** {numero_partida}")
 
-        # separador visual entre escudos e inputs
-        st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+            <div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 50px;
+                flex-wrap: nowrap;
+            ">
+                {escudo_borussia}
+            <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+            </div>
+                {escudo_inter}
+            </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-
-        # Colunas para inputs
-        col1, col2 = st.columns(2)
-
-        with col1:
-            lista_borussia = ["Ninguém marcou"] + jogadores_originais * 2
-            gols_borussia = st.multiselect(
-                "Goleadores (Borussia)", lista_borussia, key="gols_borussia"
-            )
-            placar_borussia = (
-                0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
-            )
-            st.markdown(
-                f"<div style='text-align:center; font-size: 28px; font-weight:bold;'>{placar_borussia} gol(s)</div>",
-                unsafe_allow_html=True,
-            )
-
-            if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
-                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
-                gols_borussia = ["Ninguém marcou"]
-                st.session_state["gols_borussia"] = ["Ninguém marcou"]
-
-            assist_borussia = []
-            if placar_borussia > 0 and "Ninguém marcou" not in gols_borussia:
-                max_assists = 2 if placar_borussia > 1 else 1
-                assist_borussia = st.multiselect(
-                    f"Garçons Borussia (máx {max_assists})",
-                    [j for j in jogadores_originais if j not in gols_borussia],
-                    max_selections=max_assists,
-                    key="assist_borussia",
-                )
-
-        with col2:
-            jogadores_indisponiveis = set(gols_borussia + assist_borussia)
-            lista_inter = ["Ninguém marcou"] + [
-                j for j in jogadores_originais if j not in jogadores_indisponiveis
-            ] * 2
-            gols_inter = st.multiselect(
-                "Goleadores (Inter)", lista_inter, key="gols_inter"
-            )
-            placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
-            st.markdown(
-                f"<div style='text-align:center; font-size: 28px; font-weight:bold;'>{placar_inter} gol(s)</div>",
-                unsafe_allow_html=True,
-            )
-
-            if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
-                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
-                gols_inter = ["Ninguém marcou"]
-                st.session_state["gols_inter"] = ["Ninguém marcou"]
-
-            assist_inter = []
-            if placar_inter > 0 and "Ninguém marcou" not in gols_inter:
-                max_assists = 2 if placar_inter > 1 else 1
-                assist_inter = st.multiselect(
-                    f"Garçons Inter (máx {max_assists})",
-                    [j for j in jogadores_originais if j not in gols_inter],
-                    max_selections=max_assists,
-                    key="assist_inter",
-                )
-
-        # Registro final
-        if st.button("Registrar"):
-            nova = {
-                "Data": data,
-                "Número da Partida": numero_partida,
-                "Placar Borussia": placar_borussia,
-                "Gols Borussia": ", ".join(gols_borussia),
-                "Assistências Borussia": ", ".join(assist_borussia),
-                "Placar Inter": placar_inter,
-                "Gols Inter": ", ".join(gols_inter),
-                "Assistências Inter": ", ".join(assist_inter),
-            }
-            partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
-            partidas.to_csv("partidas.csv", index=False)
-            st.success("✅ Partida registrada com sucesso!")
-
-        st.markdown("---")
-        st.subheader("📋 Histórico de Partidas Registradas:")
-        st.dataframe(partidas)
-
-        return partidas
 
 
     # Estatisticas dos jogadores
