@@ -789,6 +789,10 @@ else:
         inter_vitorias = 19
         empates = 12
 
+        numero_partida = len(partidas) + 1
+        data = st.date_input("Data da partida")
+        st.markdown(f"**Número da Partida:** {numero_partida}")
+
         # Caminhos das imagens na pasta 'imagens'
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
@@ -920,10 +924,6 @@ else:
                 "Arthur",
             ],
         )
-
-        numero_partida = len(partidas) + 1
-        data = st.date_input("Data da partida")
-        st.markdown(f"**Número da Partida:** {numero_partida}")
 
         # Inputs de gols antes de mostrar placares
         col1, col2 = st.columns(2)
