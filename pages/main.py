@@ -329,7 +329,7 @@ def tela_login():
                 placeholder="(DDD) número",
                 autocomplete="tel",
             )
-            email = st.text_input("E-mail", key="cad_email", autocomplete="email")
+            email = st.text_input("E-mail", key="cad_email", autocomplete="email").lower()
             senha = st.text_input("Senha", type="password", key="cad_senha")
             confirmar_senha = st.text_input(
                 "Confirme a senha", type="password", key="cad_conf_senha"
