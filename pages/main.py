@@ -9,14 +9,12 @@ import os
 import re
 import urllib.parse
 import base64
-from datetime import datetime, timedelta, date, timezone
+from datetime import datetime, timedelta, date
 import streamlit.components.v1 as components
 import gspread
 import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
-
-
 
 
 # Constantes
@@ -101,13 +99,6 @@ def init_data_gsheets():
         )
         sh.add_worksheet(title="Jogadores", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Jogadores"), df_jogadores)
-
-    if "Presenças" not in existentes:
-        df_presencas = pd.DataFrame(
-            columns=["Nome", "Posição", "Presença", "DataPartida", "Data"]
-        )
-        sh.add_worksheet(title="Presenças", rows="100", cols="10")
-        set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
 
 
 # -----------------------------------------
@@ -199,7 +190,6 @@ if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
 if "presencas" not in st.session_state:
     st.session_state.presencas = pd.DataFrame()
-# Inicializa as planilhas se necessário
 
 # Funções auxiliares
 
@@ -329,7 +319,9 @@ def tela_login():
                 placeholder="(DDD) número",
                 autocomplete="tel",
             )
-            email = st.text_input("E-mail", key="cad_email", autocomplete="email").lower()
+            email = st.text_input(
+                "E-mail", key="cad_email", autocomplete="email"
+            ).lower()
             senha = st.text_input("Senha", type="password", key="cad_senha")
             confirmar_senha = st.text_input(
                 "Confirme a senha", type="password", key="cad_conf_senha"
@@ -432,7 +424,7 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Chopp's League"
+            "📜 Regras Chopp's League",
         ]
     else:
         opcoes = [
@@ -444,15 +436,14 @@ else:
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
-            "📜 Regras Chopp's League"
+            "📜 Regras Chopp's League",
         ]
 
     # garante que sempre selecionamos uma opção válida da lista
     pagina_ativa = st.session_state.pagina_atual
 
-
     # exibe o selectbox somente se não estiver no Meu Perfil
-# exibimos o selectbox sempre — inclusive no perfil
+    # exibimos o selectbox sempre — inclusive no perfil
     pagina_escolhida = st.selectbox(
         "",  # label obrigatória
         opcoes,
@@ -462,10 +453,7 @@ else:
 
     # só atualiza a página se a escolhida for diferente
     # e se ela for uma das opções válidas
-    if (
-        pagina_escolhida != st.session_state.pagina_atual
-        and pagina_escolhida in opcoes
-    ):
+    if pagina_escolhida != st.session_state.pagina_atual and pagina_escolhida in opcoes:
         st.session_state.pagina_atual = pagina_escolhida
         st.rerun()
 
@@ -478,7 +466,6 @@ else:
     logout_clicado = False
     cancelar_clicado = False
     confirmar_clicado = False
-
 
     with st.sidebar:
         # Centraliza botão Meu Perfil
@@ -498,11 +485,15 @@ else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
             with col1:
-                if st.button("❌ Cancelar", key="cancelar_logout", use_container_width=True):
+                if st.button(
+                    "❌ Cancelar", key="cancelar_logout", use_container_width=True
+                ):
                     st.session_state.confirmar_logout = False
                     st.rerun()
             with col2:
-                if st.button("✅ Confirmar", key="confirmar_logout_btn", use_container_width=True):
+                if st.button(
+                    "✅ Confirmar", key="confirmar_logout_btn", use_container_width=True
+                ):
                     usuarios = st.session_state.get("usuarios", {})
                     st.session_state.clear()
                     st.session_state.usuario_logado = False
@@ -550,7 +541,6 @@ else:
 
     pag = st.session_state.pagina_atual
 
-
     def tela_meu_perfil():
         _, _, usuarios = load_data()
         st.session_state.usuarios = usuarios
@@ -571,13 +561,25 @@ else:
         st.markdown("### 🔐 Atualizar Dados")
 
         with st.form("form_perfil"):
-            telefone = st.text_input("📱 Telefone", value=usuario.get("telefone", ""), key="perfil_telefone")
-            email = st.text_input("✉️ E-mail", value=st.session_state.email, key="perfil_email")
+            telefone = st.text_input(
+                "📱 Telefone", value=usuario.get("telefone", ""), key="perfil_telefone"
+            )
+            email = st.text_input(
+                "✉️ E-mail", value=st.session_state.email, key="perfil_email"
+            )
 
-            senha_atual = st.text_input("Senha atual", type="password", key="perfil_senha_atual")
-            nova_senha = st.text_input("Nova senha", type="password", key="perfil_nova_senha")
-            conf_nova_senha = st.text_input("Confirmar nova senha", type="password", key="perfil_conf_nova_senha")
-            nova_palavra_chave = st.text_input("Nova palavra-chave (recuperação)", key="perfil_palavra")
+            senha_atual = st.text_input(
+                "Senha atual", type="password", key="perfil_senha_atual"
+            )
+            nova_senha = st.text_input(
+                "Nova senha", type="password", key="perfil_nova_senha"
+            )
+            conf_nova_senha = st.text_input(
+                "Confirmar nova senha", type="password", key="perfil_conf_nova_senha"
+            )
+            nova_palavra_chave = st.text_input(
+                "Nova palavra-chave (recuperação)", key="perfil_palavra"
+            )
             nova_dica = st.text_input("Nova dica da palavra-chave", key="perfil_dica")
 
             salvar = st.form_submit_button("💾 Salvar alterações")
@@ -615,14 +617,13 @@ else:
                     "perfil_nova_senha",
                     "perfil_conf_nova_senha",
                     "perfil_palavra",
-                    "perfil_dica"
+                    "perfil_dica",
                 ]:
                     if campo in st.session_state:
                         del st.session_state[campo]
 
                 st.session_state.atualizacao_sucesso = True
                 st.rerun()
-
 
     # Exibe as páginas conforme tipo
     if pag == "🏠 Tela Principal":
@@ -881,9 +882,6 @@ else:
             unsafe_allow_html=True,
         )
 
-
-
-
     # Tela de registro das partidas
     def registrar_partidas(partidas):
         st.title("Registrar Estatísticas da Partida")
@@ -936,11 +934,17 @@ else:
 
         with col1:
             lista_borussia = ["Ninguém marcou"] + jogadores_originais * 2
-            gols_borussia = st.multiselect("Goleadores (Borussia)", lista_borussia, key="gols_borussia")
-            placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
+            gols_borussia = st.multiselect(
+                "Goleadores (Borussia)", lista_borussia, key="gols_borussia"
+            )
+            placar_borussia = (
+                0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
+            )
 
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
-                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
+                st.warning(
+                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
+                )
                 gols_borussia = ["Ninguém marcou"]
                 st.session_state["gols_borussia"] = ["Ninguém marcou"]
 
@@ -959,11 +963,15 @@ else:
             lista_inter = ["Ninguém marcou"] + [
                 j for j in jogadores_originais if j not in jogadores_indisponiveis
             ] * 2
-            gols_inter = st.multiselect("Goleadores (Inter)", lista_inter, key="gols_inter")
+            gols_inter = st.multiselect(
+                "Goleadores (Inter)", lista_inter, key="gols_inter"
+            )
             placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
 
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
-                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
+                st.warning(
+                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
+                )
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
 
@@ -1023,7 +1031,6 @@ else:
         st.dataframe(partidas)
 
         return partidas
-
 
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
@@ -1566,10 +1573,6 @@ else:
         - Os resultados serão divulgados para descontração na tela **'Avaliação pós-jogo'**.
         """
         )
-
-
-    
-
 
     # Inicialização de sessão
     if "pagina_atual" not in st.session_state:

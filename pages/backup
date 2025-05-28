@@ -14,6 +14,9 @@ import streamlit.components.v1 as components
 import gspread
 import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
+import time
+
+
 
 
 # Constantes
@@ -34,14 +37,11 @@ def autenticar_gsheets():
     cred_json_str = st.secrets["gsheets_cred"]
     cred_json = json.loads(cred_json_str)
 
-    scope = [
-        "https://spreadsheets.google.com/feeds",
-        "https://www.googleapis.com/auth/drive",
-    ]
+    scope = ["https://spreadsheets.google.com/feeds",
+             "https://www.googleapis.com/auth/drive",]
 
     creds = gspread.service_account_from_dict(cred_json, scopes=scope)
     return creds
-
 
 # -----------------------------------------
 # Inicialização: cria planilhas se não existirem
@@ -194,6 +194,9 @@ if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
 if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
+if "presencas" not in st.session_state:
+    st.session_state.presencas = pd.DataFrame()
+# Inicializa as planilhas se necessário
 
 # Funções auxiliares
 
@@ -323,7 +326,7 @@ def tela_login():
                 placeholder="(DDD) número",
                 autocomplete="tel",
             )
-            email = st.text_input("E-mail", key="cad_email", autocomplete="email")
+            email = st.text_input("E-mail", key="cad_email", autocomplete="email").lower()
             senha = st.text_input("Senha", type="password", key="cad_senha")
             confirmar_senha = st.text_input(
                 "Confirme a senha", type="password", key="cad_conf_senha"
@@ -581,7 +584,7 @@ else:
             del st.session_state.atualizacao_sucesso  # remove a flag após exibir
 
         if salvar:
-            usuarios = st.session_state.usuarios
+            partidas, jogadores, usuarios, presencas = load_data()
             email_antigo = st.session_state.email
 
             if senha_atual != usuarios[email_antigo]["senha"]:
@@ -601,9 +604,8 @@ else:
                     usuarios[email] = usuarios.pop(email_antigo)
                     st.session_state.email = email
 
-                partidas, jogadores, _ = load_data()
-                save_data(partidas, jogadores, usuarios)
-                
+                save_data_gsheets(partidas, jogadores, usuarios, presencas)
+
                 st.success("✅ Informações atualizadas com sucesso!")
                 for campo in [
                     "perfil_senha_atual",
@@ -876,9 +878,35 @@ else:
             unsafe_allow_html=True,
         )
 
+
+
+
     # Tela de registro das partidas
     def registrar_partidas(partidas):
         st.title("Registrar Estatísticas da Partida")
+        st.markdown("---")
+
+        # Exibe escudos e placar
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
+
+        st.markdown(
+            f"""
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 50px;
+                    flex-wrap: nowrap;
+                ">
+                    {escudo_borussia}
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                </div>
+                    {escudo_inter}
+                </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         jogadores_originais = st.session_state.get(
             "jogadores_presentes",
@@ -900,51 +928,16 @@ else:
         data = st.date_input("Data da partida")
         st.markdown(f"**Número da Partida:** {numero_partida}")
 
-        # Escudos
-        col_a, col_b, col_c = st.columns([3, 1, 3])
-
-        with col_a:
-            st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-            if os.path.exists("./imagens/escudo_borussia.png"):
-                st.image("./imagens/escudo_borussia.png", use_container_width=True)
-            else:
-                st.warning("Imagem do Borussia não encontrada.")
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        with col_b:
-            st.markdown(
-                "<div style='text-align:center; margin-top: 50px; font-size: 48px;'>✖</div>",
-                unsafe_allow_html=True,
-            )
-
-        with col_c:
-            st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-            if os.path.exists("./imagens/escudo_inter.png"):
-                st.image("./imagens/escudo_inter.png", use_container_width=True)
-            else:
-                st.warning("Imagem da Inter não encontrada.")
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        # Seções de input
+        # Inputs de gols antes de mostrar placares
         col1, col2 = st.columns(2)
 
         with col1:
             lista_borussia = ["Ninguém marcou"] + jogadores_originais * 2
-            gols_borussia = st.multiselect(
-                "Goleadores (Borussia)", lista_borussia, key="gols_borussia"
-            )
-            placar_borussia = (
-                0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
-            )
-            st.markdown(
-                f"<div style='text-align:center; font-size: 28px; font-weight:bold;'>{placar_borussia} gol(s)</div>",
-                unsafe_allow_html=True,
-            )
+            gols_borussia = st.multiselect("Goleadores (Borussia)", lista_borussia, key="gols_borussia")
+            placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
 
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
-                st.warning(
-                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
-                )
+                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
                 gols_borussia = ["Ninguém marcou"]
                 st.session_state["gols_borussia"] = ["Ninguém marcou"]
 
@@ -963,19 +956,11 @@ else:
             lista_inter = ["Ninguém marcou"] + [
                 j for j in jogadores_originais if j not in jogadores_indisponiveis
             ] * 2
-            gols_inter = st.multiselect(
-                "Goleadores (Inter)", lista_inter, key="gols_inter"
-            )
+            gols_inter = st.multiselect("Goleadores (Inter)", lista_inter, key="gols_inter")
             placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
-            st.markdown(
-                f"<div style='text-align:center; font-size: 28px; font-weight:bold;'>{placar_inter} gol(s)</div>",
-                unsafe_allow_html=True,
-            )
 
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
-                st.warning(
-                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
-                )
+                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
 
@@ -989,7 +974,32 @@ else:
                     key="assist_inter",
                 )
 
-        # Registro final
+            st.markdown(
+                f"""
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 50px;
+                    margin-top: 20px;
+                    flex-wrap: wrap;
+                ">
+                    <div style="text-align: center; min-width: 80px;">
+                        <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
+                    </div>
+
+                    <div style="text-align: center; min-width: 80px;">
+                        <p style="font-size: 18px;">Partida #{numero_partida}<br>{data.strftime('%d/%m/%Y')}</p>
+                    </div>
+                    
+                    <div style="text-align: center; min-width: 80px;">
+                        <p style="font-size: 30px;">🏆 - {placar_inter}</p>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
         if st.button("Registrar"):
             nova = {
                 "Data": data,
@@ -1010,6 +1020,7 @@ else:
         st.dataframe(partidas)
 
         return partidas
+
 
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
