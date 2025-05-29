@@ -1261,7 +1261,7 @@ else:
                 data_envio = datetime.now(fuso_utc_minus_3).strftime(
                     "%d/%m/%Y %H:%M:%S"
                 )
-                data_partida = horario_partida.strftime("%d/%m/%Y")
+                data_partida = horario_partida.date()
 
                 justificativa = (
                     motivo_outros.strip()
