@@ -500,20 +500,14 @@ else:
     confirmar_clicado = False
 
     with st.sidebar:
-        # Centraliza botão Meu Perfil
-        col1, col2, col3 = st.columns([1, 2, 1])
+        # Botão "Meu Perfil" centralizado (opcional)
+        col1, col2, col3 = st.columns([1, 4, 1])
         with col2:
-            if st.button("👤 Meu Perfil"):
-                st.session_state.pagina_atual = "👤 Meu Perfil"
+            st.button("👤 Meu Perfil", use_container_width=True, on_click=lambda: st.session_state.update(pagina_atual="👤 Meu Perfil"))
 
-        # Centraliza botão Logout ou confirma/cancela
+        # Botão "Logout" ocupando toda a largura
         if not st.session_state.get("confirmar_logout", False):
-
-            col1, col2 = st.columns(2)
-            with col1, col2:
-                if st.button("🚪 Logout", key="botao_logout"):
-                    st.session_state.confirmar_logout = True
-                    st.rerun()
+            st.button("🚪 Logout", use_container_width=True, key="botao_logout", on_click=lambda: st.session_state.update(confirmar_logout=True))
         else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
