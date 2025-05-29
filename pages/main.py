@@ -952,8 +952,9 @@ else:
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
         st.markdown("---")
-        st.markdown("### ⚽ Resultado da Partida")
-
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>⚽ Resultado da Partida</h5>",
+        unsafe_allow_html=True,
+        )
         st.markdown(
             f"""
                 <div style="
