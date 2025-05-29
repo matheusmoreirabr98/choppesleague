@@ -1306,11 +1306,6 @@ else:
         st.title("🎲 Sorteio de Times")
         st.markdown("Selecione a data da partida para sortear os times.")
 
-        if st.button("🔄 Atualizar dados da planilha"):
-            st.session_state["dados_gsheets"] = load_data()
-            st.success("✅ Dados atualizados com sucesso!")
-        st.rerun()
-
         # Carrega os dados
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
@@ -1368,6 +1363,12 @@ else:
             for jogador in time:
                 st.markdown(f"- {jogador}")
             st.markdown("---")
+
+            
+    if st.button("🔄 Atualizar dados da planilha"):
+        st.session_state["dados_gsheets"] = load_data()
+        st.success("✅ Dados atualizados com sucesso!")
+        st.rerun()
 
 
 
