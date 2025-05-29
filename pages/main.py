@@ -850,7 +850,7 @@ else:
                 </p>
             </div>
 
-            <div style="text-align: center; min-width: 05px;">
+            <div style="text-align: center; min-width: 10px;">
                 <p style="font-size: 10px;">
                     🤝 - {empates}
                 </p>
