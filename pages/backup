@@ -9,7 +9,7 @@ import os
 import re
 import urllib.parse
 import base64
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, timezone
 import streamlit.components.v1 as components
 import gspread
 import pandas as pd
