@@ -1057,7 +1057,7 @@ else:
             index = opcoes.index(partida_escolhida)
             row = partidas.iloc[index]
 
-            # inicializa flag se ainda não existir
+            # flag de edição
             if "mostrar_edicao_partida" not in st.session_state:
                 st.session_state.mostrar_edicao_partida = False
 
@@ -1082,71 +1082,76 @@ else:
                     st.success("🗑️ Partida excluída com sucesso!")
                     st.rerun()
 
-                if st.session_state.mostrar_edicao_partida:
-                    jogadores = st.session_state["dados_gsheets"][1]
+            # se for para editar
+            if st.session_state.mostrar_edicao_partida:
+                jogadores_df = st.session_state["dados_gsheets"][1]
+                if "Nome" in jogadores_df.columns:
+                    jogadores_cadastrados = jogadores_df["Nome"].dropna().tolist()
+                else:
+                    st.error("⚠️ Nenhum jogador encontrado. A coluna 'Nome' está ausente.")
+                    jogadores_cadastrados = []
 
-                    with st.form("form_edicao_partida"):
-                        nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
+                with st.form("form_edicao_partida"):
+                    nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
+                    lista_borussia = ["Ninguém marcou"] + jogadores_cadastrados
+                    lista_inter = ["Ninguém marcou"] + jogadores_cadastrados
 
-                        jogadores_cadastrados = jogadores["Nome"].dropna().tolist()
-                        lista_borussia = ["Ninguém marcou"] + jogadores_cadastrados
-                        lista_inter = ["Ninguém marcou"] + jogadores_cadastrados
+                    novo_gols_borussia = st.multiselect(
+                        "Goleadores (Borussia)",
+                        options=lista_borussia,
+                        default=[nome.strip() for nome in row["Gols Borussia"].split(",")],
+                        max_selections=2,
+                        help="Máximo 2 jogadores"
+                    )
 
-                        novo_gols_borussia = st.multiselect(
-                            "Goleadores (Borussia)",
-                            options=lista_borussia,
-                            default=[nome.strip() for nome in row["Gols Borussia"].split(",")],
-                            max_selections=2,
-                            help="Máximo 2 jogadores"
-                        )
+                    if "Ninguém marcou" in novo_gols_borussia and len(novo_gols_borussia) > 1:
+                        st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
+                        novo_gols_borussia = ["Ninguém marcou"]
 
-                        if "Ninguém marcou" in novo_gols_borussia and len(novo_gols_borussia) > 1:
-                            st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
-                            novo_gols_borussia = ["Ninguém marcou"]
+                    placar_borussia = 0 if "Ninguém marcou" in novo_gols_borussia else len(novo_gols_borussia)
 
-                        placar_borussia = 0 if "Ninguém marcou" in novo_gols_borussia else len(novo_gols_borussia)
+                    novo_gols_inter = st.multiselect(
+                        "Goleadores (Inter)",
+                        options=lista_inter,
+                        default=[nome.strip() for nome in row["Gols Inter"].split(",")],
+                        max_selections=2,
+                        help="Máximo 2 jogadores"
+                    )
 
-                        novo_gols_inter = st.multiselect(
-                            "Goleadores (Inter)",
-                            options=lista_inter,
-                            default=[nome.strip() for nome in row["Gols Inter"].split(",")],
-                            max_selections=2,
-                            help="Máximo 2 jogadores"
-                        )
+                    if "Ninguém marcou" in novo_gols_inter and len(novo_gols_inter) > 1:
+                        st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
+                        novo_gols_inter = ["Ninguém marcou"]
 
-                        if "Ninguém marcou" in novo_gols_inter and len(novo_gols_inter) > 1:
-                            st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
-                            novo_gols_inter = ["Ninguém marcou"]
+                    placar_inter = 0 if "Ninguém marcou" in novo_gols_inter else len(novo_gols_inter)
 
-                        placar_inter = 0 if "Ninguém marcou" in novo_gols_inter else len(novo_gols_inter)
+                    if placar_borussia == 2 and placar_inter == 2:
+                        st.error("Empate em 2x2 não é permitido. Ajuste os goleadores.")
 
-                        if placar_borussia == 2 and placar_inter == 2:
-                            st.error("Empate em 2x2 não é permitido. Ajuste os goleadores.")
+                    salvar = st.form_submit_button("💾 Salvar Alterações")
 
-                        salvar = st.form_submit_button("💾 Salvar Alterações")
+                    if salvar:
+                        partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y")
+                        partidas.at[index, "Placar Borussia"] = placar_borussia
+                        partidas.at[index, "Gols Borussia"] = ", ".join(novo_gols_borussia)
+                        partidas.at[index, "Placar Inter"] = placar_inter
+                        partidas.at[index, "Gols Inter"] = ", ".join(novo_gols_inter)
 
-                        if salvar:
-                            partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
-                            partidas.at[index, "Placar Borussia"] = placar_borussia
-                            partidas.at[index, "Gols Borussia"] = ", ".join(novo_gols_borussia)
-                            partidas.at[index, "Placar Inter"] = placar_inter
-                            partidas.at[index, "Gols Inter"] = ", ".join(novo_gols_inter)
+                        # renumera
+                        partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce")
+                        partidas = partidas.sort_values(by="Data_Ordenada").reset_index(drop=True)
+                        partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
+                        partidas.drop(columns=["Data_Ordenada"], inplace=True)
 
-                            # renumera as partidas corretamente
-                            partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce")
-                            partidas = partidas.sort_values(by="Data_Ordenada").reset_index(drop=True)
-                            partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
-                            partidas.drop(columns=["Data_Ordenada"], inplace=True)
+                        jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
+                        save_data_gsheets(partidas, jogadores, usuarios, presencas)
+                        st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
-                            jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
-                            save_data_gsheets(partidas, jogadores, usuarios, presencas)
-                            st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
+                        st.success("✅ Partida editada com sucesso!")
+                        st.session_state.mostrar_edicao_partida = False
+                        st.rerun()
+        else:
+            st.info("Nenhuma partida registrada ainda.")
 
-                            st.success("✅ Partida editada com sucesso!")
-                            st.session_state.mostrar_edicao_partida = False
-                            st.rerun()
-                        else:
-                            st.info("Nenhuma partida registrada ainda.")
 
 
 
