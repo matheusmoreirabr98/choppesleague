@@ -857,7 +857,7 @@ else:
                 </p>
             </div>
 
-            <div style="text-align: left; min-width: 80px;">
+            <div style="text-align: left; min-width: 100px;">
                 <p style="font-size: 25px;">
                     {inter_vitorias} - 🏆<br>
                     {inter_gols} - ⚽
