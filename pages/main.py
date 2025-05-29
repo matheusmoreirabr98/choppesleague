@@ -1072,12 +1072,7 @@ else:
 
             save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo)
 
-
-            if st.session_state.get("registro_sucesso"):
-                st.success("✅ Partida registrada com sucesso!")
-                st.session_state["registro_sucesso"] = False
-            else:
-                st.session_state["registro_sucesso"] = True
+            st.success("✅ Partida registrada com sucesso!")
 
             # atualiza o estado com o novo DataFrame
             st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
