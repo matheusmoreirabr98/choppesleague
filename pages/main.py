@@ -1080,7 +1080,7 @@ else:
                     novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
                     novo_gols_inter = st.text_input("Goleadores Inter", value=row["Gols Inter"])
 
-                    col1, col2 = st.columns(2)
+                    col1, col2 = st.columns([1, 1])  # Largura adequada para os botões
                     with col1:
                         salvar = st.form_submit_button("💾 Salvar Alterações")
                     with col2:
