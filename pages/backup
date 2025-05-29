@@ -608,8 +608,9 @@ else:
             )
             nova_dica = st.text_input("Nova dica da palavra-chave", key="perfil_dica")
 
-            salvar = st.form_submit_button("💾 Salvar alterações", use_container_width=True)
-
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                salvar = st.form_submit_button("💾 Salvar alterações", use_container_width=True)
             #salvar = st.form_submit_button("💾 Salvar alterações")
 
 
