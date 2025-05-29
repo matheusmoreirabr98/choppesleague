@@ -1121,9 +1121,20 @@ else:
             st.info("Nenhuma partida registrada ainda.")
 
         st.subheader("📋 Histórico de Partidas Registradas:")
-        st.dataframe(partidas.reset_index(drop=True))
-        
+
+        # Limpa dados incompletos
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+
+        # Faz o índice começar de 1 e nomeia como "#"
+        partidas.index = partidas.index + 1
+        partidas.index.name = "#"
+
+        # Exibe o DataFrame com ajuste automático de colunas e índice começando em 1
+        st.dataframe(
+            partidas,
+            use_container_width=True,  # ocupa largura total disponível
+            hide_index=False           # mostra índice personalizado
+        )
 
 
 
