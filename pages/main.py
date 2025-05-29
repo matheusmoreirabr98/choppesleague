@@ -1662,7 +1662,7 @@ else:
     elif st.session_state.pagina_atual == "👤 Meu Perfil":
         tela_meu_perfil()
     elif st.session_state.pagina_atual == "📊 Registrar Partida":
-        partidas = registrar_partidas()
+        partidas = registrar_partidas(partidas)
     elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
         jogadores = tela_jogadores(jogadores)
     elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
