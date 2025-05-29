@@ -661,7 +661,7 @@ else:
     if pag == "🏠 Tela Principal":
         tela_principal()
     elif pag == "📊 Registrar Partida" and st.session_state.tipo_usuario == "admin":
-        partidas = registrar_partidas(partidas)
+        partidas = registrar_partidas()
     elif pag == "👟 Estatísticas dos Jogadores":
         jogadores = tela_jogadores(jogadores)
     elif pag == "🎲 Sorteio de Times" and st.session_state.tipo_usuario == "admin":
@@ -917,19 +917,21 @@ else:
 
 
     # Tela de registro das partidas
-    def registrar_partidas(partidas):
+    def registrar_partidas():
         st.markdown("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>", unsafe_allow_html=True)
         st.markdown("---")
-
-        data = st.date_input("📅 Data da partida")
 
         # carrega os dados logo no início
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
+
         partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
 
         # garante que a coluna de Data está no formato correto
-        partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True).dt.date
+        if not partidas.empty and "Data" in partidas.columns:
+            partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce").dt.date
+        else:
+            partidas["Data"] = pd.Series([], dtype="datetime64[ns]")  # inicializa vazio se necessário
 
         # define número da nova partida com base na data
         partidas_do_dia = partidas[partidas["Data"] == data]
@@ -1661,7 +1663,7 @@ else:
     elif st.session_state.pagina_atual == "👤 Meu Perfil":
         tela_meu_perfil()
     elif st.session_state.pagina_atual == "📊 Registrar Partida":
-        partidas = registrar_partidas(partidas)
+        partidas = registrar_partidas()
     elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
         jogadores = tela_jogadores(jogadores)
     elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
