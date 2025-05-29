@@ -1087,8 +1087,6 @@ else:
         st.subheader("📋 Histórico de Partidas Registradas:")
         st.dataframe(partidas)
 
-        return partidas
-
 
 
 
