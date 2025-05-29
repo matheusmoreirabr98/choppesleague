@@ -1043,7 +1043,7 @@ else:
         st.markdown("---")
         st.subheader("📋 Histórico de Partidas Registradas:")
         st.dataframe(partidas)
-        
+
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
 
 
@@ -1083,38 +1083,44 @@ else:
                     st.success("🗑️ Partida excluída com sucesso!")
                     st.rerun()
 
-            if st.session_state.mostrar_edicao_partida:
-                with st.form("form_edicao_partida"):
-                    nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
-                    novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
-                    novo_gols_borussia = st.text_input("Gols Borussia (separar por vírgula)", value=row["Gols Borussia"])
-                    novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
-                    novo_gols_inter = st.text_input("Gols Inter (separar por vírgula)", value=row["Gols Inter"])
+                if st.session_state.mostrar_edicao_partida:
+                    with st.form("form_edicao_partida"):
+                        nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
+                        novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
+                        novo_gols_borussia = st.text_input("Gols Borussia (separar por vírgula)", value=row["Gols Borussia"])
+                        novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
+                        novo_gols_inter = st.text_input("Gols Inter (separar por vírgula)", value=row["Gols Inter"])
 
-                    salvar = st.form_submit_button("💾 Salvar Alterações")
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            salvar = st.form_submit_button("💾 Salvar Alterações")
+                        with col2:
+                            cancelar = st.form_submit_button("❌ Cancelar Edição")
 
-                if salvar:
-                    partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
-                    partidas.at[index, "Placar Borussia"] = int(novo_placar_borussia)
-                    partidas.at[index, "Gols Borussia"] = novo_gols_borussia
-                    partidas.at[index, "Placar Inter"] = int(novo_placar_inter)
-                    partidas.at[index, "Gols Inter"] = novo_gols_inter
+                    if salvar:
+                        partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
+                        partidas.at[index, "Placar Borussia"] = int(novo_placar_borussia)
+                        partidas.at[index, "Gols Borussia"] = novo_gols_borussia
+                        partidas.at[index, "Placar Inter"] = int(novo_placar_inter)
+                        partidas.at[index, "Gols Inter"] = novo_gols_inter
 
-                    # renumera as partidas
-                    partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True)
-                    partidas = partidas.sort_values(by="Data_Ordenada").reset_index(drop=True)
-                    partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
-                    partidas.drop(columns=["Data_Ordenada"], inplace=True)
+                        # renumera as partidas
+                        partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True)
+                        partidas = partidas.sort_values(by="Data_Ordenada").reset_index(drop=True)
+                        partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
+                        partidas.drop(columns=["Data_Ordenada"], inplace=True)
 
-                    jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
-                    save_data_gsheets(partidas, jogadores, usuarios, presencas)
-                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
+                        jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
+                        save_data_gsheets(partidas, jogadores, usuarios, presencas)
+                        st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
-                    st.success("✅ Partida editada com sucesso!")
-                    st.session_state.mostrar_edicao_partida = False
-                    st.rerun()
-        else:
-            st.info("Nenhuma partida registrada ainda.")
+                        st.success("✅ Partida editada com sucesso!")
+                        st.session_state.mostrar_edicao_partida = False
+                        st.rerun()
+
+                    elif cancelar:
+                        st.session_state.mostrar_edicao_partida = False
+                        st.info("❌ Edição cancelada.")
 
 
 
