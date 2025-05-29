@@ -1326,8 +1326,6 @@ else:
             (presencas["Presença"].str.lower() == "sim")
         ]["Nome"].tolist()
 
-        presentes = presencas[(presencas["DataPartida"] == data_partida) & (presencas["Presença"] == "Sim")]["Nome"].tolist()
-
         if len(presentes) < 10:
             st.warning("⚠️ É necessário pelo menos 10 jogadores confirmados para realizar o sorteio.")
             return
