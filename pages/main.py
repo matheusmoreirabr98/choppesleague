@@ -1054,7 +1054,7 @@ else:
             if "mostrar_edicao_partida" not in st.session_state:
                 st.session_state.mostrar_edicao_partida = False
 
-            col1, col2 = st.columns(2)
+            col1, col2 = st.columns([1, 1])
             with col1:
                 if st.button("✏️ Editar Partida"):
                     st.session_state.mostrar_edicao_partida = True
