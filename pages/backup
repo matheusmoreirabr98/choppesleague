@@ -100,6 +100,18 @@ def init_data_gsheets():
         sh.add_worksheet(title="Jogadores", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Jogadores"), df_jogadores)
 
+    if "Presenças" not in existentes:
+        df_presencas = pd.DataFrame(
+            columns=[
+                "Data da partida",
+                "Nº Partida",
+                "Nome do Jogador",
+                "Presença"  # Sim ou Não
+            ]
+        )
+        sh.add_worksheet(title="Presenças", rows="100", cols="20")
+        set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
+
 
 # -----------------------------------------
 # Carregar dados das planilhas
@@ -217,7 +229,7 @@ def tela_login():
         "Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True
     )
 
-    _, _, usuarios, _ = load_data()  # ← lê os usuários direto da planilha
+    partidas, jogadores, usuarios, presencas = load_data()  # ← lê os usuários direto da planilha
 
     # LOGIN
     if aba == "Login":
@@ -388,7 +400,8 @@ def tela_login():
                         "tipo": "admin" if email in EMAILS_ADMIN else "usuario",
                     }
 
-                    partidas, jogadores, _ ,_ = load_data()
+                    partidas, jogadores, usuarios, presencas = load_data()
+
                     save_data(partidas, jogadores, usuarios, presencas)
 
                     st.success("Cadastro realizado! Agora faça login.")

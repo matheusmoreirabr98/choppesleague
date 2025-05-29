@@ -16,6 +16,7 @@ import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 
+TESTE
 
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
