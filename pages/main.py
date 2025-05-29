@@ -1040,16 +1040,16 @@ else:
             st.session_state["form_id"] += 1
             st.rerun()
 
-        st.markdown("---")
-        st.subheader("📋 Histórico de Partidas Registradas:")
+            st.markdown("---")
+            st.subheader("📋 Histórico de Partidas Registradas:")
 
-        # Converte para lista de dicionários
-        dados = partidas.reset_index(drop=True).to_dict(orient="records")
-        # Cria um novo DataFrame sem índice
-        df_sem_indice = pd.DataFrame(dados)
-        # Exibe sem índice
-        st.dataframe(df_sem_indice)
-        st.table(partidas.reset_index(drop=True))
+            # Garante que não existe nenhuma coluna de índice escondida
+            partidas_limpa = partidas.reset_index(drop=True)
+            if "Unnamed: 0" in partidas_limpa.columns:
+                partidas_limpa = partidas_limpa.drop(columns=["Unnamed: 0"])
+
+            # Exibe a tabela limpa sem índice
+            st.table(partidas_limpa)
 
 
         st.markdown("### ✏️ Editar ou Excluir Partida Registrada")
