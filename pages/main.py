@@ -1574,10 +1574,8 @@ else:
                 "Número da Partida",
                 "Placar Borussia",
                 "Gols Borussia",
-                "Assistências Borussia",
                 "Placar Inter",
                 "Gols Inter",
-                "Assistências Inter",
             ]
         )
 
