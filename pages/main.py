@@ -1042,12 +1042,14 @@ else:
 
         st.markdown("---")
         st.subheader("📋 Histórico de Partidas Registradas:")
-        df_sem_indice = partidas.reset_index(drop=True)
-        df_sem_indice.index = [''] * len(df_sem_indice)  # esconde visualmente o índice
 
+        # Converte para lista de dicionários
+        dados = partidas.reset_index(drop=True).to_dict(orient="records")
+        # Cria um novo DataFrame sem índice
+        df_sem_indice = pd.DataFrame(dados)
+        # Exibe sem índice
         st.dataframe(df_sem_indice)
-        
-        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+        st.table(partidas.reset_index(drop=True))
 
 
         st.markdown("### ✏️ Editar ou Excluir Partida Registrada")
