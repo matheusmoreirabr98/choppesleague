@@ -931,6 +931,10 @@ else:
             st.session_state["dados_gsheets"] = load_data()
         partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
 
+        if st.session_state.get("registro_sucesso"):
+            st.success("✅ Partida registrada com sucesso!")
+            st.session_state["registro_sucesso"] = False
+
         # 🟢 inicializa form_id para controle dos multiselects
         if "form_id" not in st.session_state:
             st.session_state["form_id"] = 0
@@ -1072,7 +1076,7 @@ else:
 
             save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo)
 
-            st.success("✅ Partida registrada com sucesso!")
+            st.session_state["registro_sucesso"] = True
 
             # atualiza o estado com o novo DataFrame
             st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)

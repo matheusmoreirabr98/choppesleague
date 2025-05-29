@@ -279,6 +279,11 @@ def tela_login():
                 "<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>",
                 unsafe_allow_html=True,
             )
+
+            if st.button("🔙 Voltar para o login"):
+                st.session_state.modo_recuperacao = False
+                st.rerun()
+
             email = st.text_input("E-mail cadastrado", key="rec_email_final")
 
             if email in usuarios and usuarios[email].get("dica_palavra_chave"):
@@ -656,7 +661,7 @@ else:
     if pag == "🏠 Tela Principal":
         tela_principal()
     elif pag == "📊 Registrar Partida" and st.session_state.tipo_usuario == "admin":
-        partidas = registrar_partidas(partidas)
+        partidas = registrar_partidas(st.session_state["dados_gsheets"][0])
     elif pag == "👟 Estatísticas dos Jogadores":
         jogadores = tela_jogadores(jogadores)
     elif pag == "🎲 Sorteio de Times" and st.session_state.tipo_usuario == "admin":
@@ -920,14 +925,31 @@ else:
 
         numero_partida = len(partidas) + 1
         data = st.date_input("📅 Data da partida")
+        
+        # carrega os dados logo no início
+        if "dados_gsheets" not in st.session_state:
+            st.session_state["dados_gsheets"] = load_data()
+        partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
 
-        jogadores_originais = st.session_state.get(
-            "jogadores_presentes",
-            [
-                "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
-                "Lula", "Juninho", "Jesus", "Gabriel", "Arthur",
-            ],
-        )
+        # 🟢 inicializa form_id para controle dos multiselects
+        if "form_id" not in st.session_state:
+            st.session_state["form_id"] = 0
+
+
+        # garante que a coluna esteja no formato correto
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
+
+        # filtra os jogadores que confirmaram presença na data escolhida
+        jogadores_presentes_data = presencas[
+            (presencas["DataPartida"] == data) & (presencas["Presença"] == "Sim")
+        ]["Nome"].tolist()
+
+        # se ninguém confirmou presença, avisa e interrompe
+        if not jogadores_presentes_data:
+            st.warning("⚠️ Nenhum jogador confirmou presença para esta data.")
+            return partidas
+
+        jogadores_originais = jogadores_presentes_data
 
         col1, col2 = st.columns(2)
 
@@ -938,7 +960,7 @@ else:
                 options=lista_borussia,
                 default=[],
                 max_selections=2,
-                key="gols_borussia",
+                key=f"gols_borussia_{st.session_state['form_id']}",
                 help="Máximo 2 jogadores"
             )
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
@@ -958,7 +980,7 @@ else:
                 options=lista_inter,
                 default=[],
                 max_selections=2,
-                key="gols_inter",
+                key=f"gols_inter_{st.session_state['form_id']}",
                 help="Máximo 2 jogadores"
             )
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
@@ -1045,9 +1067,6 @@ else:
 
             # 🧼 limpa o DataFrame antes de salvar
             partidas_limpo = partidas.fillna("").astype(str)
-
-            _, jogadores, usuarios, presencas = load_data()
-            partidas_limpo = partidas.fillna("").astype(str)
             jogadores_limpo = jogadores.fillna("").astype(str)
             presencas_limpo = presencas.fillna("").astype(str)
 
@@ -1055,9 +1074,11 @@ else:
 
             st.success("✅ Partida registrada com sucesso!")
 
-            for key in ["gols_borussia", "gols_inter"]:
-                if key in st.session_state:
-                    del st.session_state[key]
+            # atualiza o estado com o novo DataFrame
+            st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
+
+            # limpa seleção dos goleadores
+            st.session_state["form_id"] += 1
 
             st.rerun()
 
@@ -1640,7 +1661,7 @@ else:
     elif st.session_state.pagina_atual == "👤 Meu Perfil":
         tela_meu_perfil()
     elif st.session_state.pagina_atual == "📊 Registrar Partida":
-        partidas = registrar_partidas(partidas)
+        partidas = registrar_partidas(st.session_state["dados_gsheets"][0])
     elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
         jogadores = tela_jogadores(jogadores)
     elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
