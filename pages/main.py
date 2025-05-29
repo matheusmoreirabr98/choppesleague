@@ -661,7 +661,7 @@ else:
     if pag == "🏠 Tela Principal":
         tela_principal()
     elif pag == "📊 Registrar Partida" and st.session_state.tipo_usuario == "admin":
-        partidas = registrar_partidas()
+        partidas = registrar_partidas(st.session_state["dados_gsheets"][0])
     elif pag == "👟 Estatísticas dos Jogadores":
         jogadores = tela_jogadores(jogadores)
     elif pag == "🎲 Sorteio de Times" and st.session_state.tipo_usuario == "admin":
