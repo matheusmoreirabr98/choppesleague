@@ -1112,6 +1112,10 @@ else:
                     st.success("✅ Partida editada com sucesso!")
                     st.session_state.mostrar_edicao_partida = False
                     st.rerun()
+
+                if st.session_state.mostrar_edicao_partida:
+                    if st.button("❌ Cancelar Edição"):
+                        st.session_state.mostrar_edicao_partida = False
         else:
             st.info("Nenhuma partida registrada ainda.")
 
