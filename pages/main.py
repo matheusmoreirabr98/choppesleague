@@ -957,9 +957,9 @@ else:
 
         placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
 
-    # ❌ Impedir resultado 2x2
-    if placar_borussia == 2 and placar_inter == 2:
-        st.error("Empate em 2x2 não é permitido. Ajuste os goleadores.")
+        # ❌ Impedir resultado 2x2
+        if placar_borussia == 2 and placar_inter == 2:
+            st.error("Empate em 2x2 não é permitido. Ajuste os goleadores.")
 
 
         # Agora que os placares foram definidos, renderizamos os escudos e placares
