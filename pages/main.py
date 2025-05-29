@@ -917,7 +917,7 @@ else:
 
 
     # Tela de registro das partidas
-    def registrar_partidas():
+    def registrar_partidas(partidas):
         st.markdown("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>", unsafe_allow_html=True)
         st.markdown("---")
 
