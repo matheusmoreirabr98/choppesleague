@@ -1006,7 +1006,7 @@ else:
                     </div>
 
                     <div style="text-align: center; min-width: 80px;">
-                        <p style="font-size: 30px;">🏆 - {placar_inter}</p>
+                        <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
                     </div>
                 </div>
                 """,
