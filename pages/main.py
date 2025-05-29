@@ -154,7 +154,8 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     # Salvar partidas
     sheet_partidas = sh.worksheet("Partidas")
     sheet_partidas.clear()
-    sheet_partidas.update([partidas.columns.tolist()] + partidas.values.tolist())
+    partidas_limpo = clean_df_for_update(partidas)
+    sheet_partidas.update([partidas_limpo.columns.tolist()] + partidas_limpo.values.tolist())
 
     # Salvar jogadores
     sheet_jogadores = sh.worksheet("Jogadores")
