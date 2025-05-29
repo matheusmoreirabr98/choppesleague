@@ -922,14 +922,14 @@ else:
         unsafe_allow_html=True,
         )
         st.markdown("---")
-
-        numero_partida = len(partidas) + 1
-        data = st.date_input("📅 Data da partida")
         
         # carrega os dados logo no início
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
         partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
+
+        numero_partida = len(partidas) + 1
+        data = st.date_input("📅 Data da partida")
 
         # 🟢 inicializa form_id para controle dos multiselects
         if "form_id" not in st.session_state:
@@ -1086,6 +1086,8 @@ else:
         st.markdown("---")
         st.subheader("📋 Histórico de Partidas Registradas:")
         st.dataframe(partidas)
+
+        return partidas
 
 
 
