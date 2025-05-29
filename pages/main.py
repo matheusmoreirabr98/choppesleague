@@ -1042,7 +1042,10 @@ else:
 
         st.markdown("---")
         st.subheader("📋 Histórico de Partidas Registradas:")
-        st.dataframe(partidas.reset_index(drop=True))
+        df_sem_indice = partidas.reset_index(drop=True)
+        df_sem_indice.index = [''] * len(df_sem_indice)  # esconde visualmente o índice
+
+        st.dataframe(df_sem_indice)
         
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
 
