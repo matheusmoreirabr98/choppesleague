@@ -1076,6 +1076,7 @@ else:
                     st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
                     st.success("🗑️ Partida excluída com sucesso!")
+                    time.sleep(2)
                     st.rerun()
 
             if st.session_state.mostrar_edicao_partida:
@@ -1083,9 +1084,9 @@ else:
                     nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
 
                     novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
-                    novo_gols_borussia = st.text_input("Gols Borussia (separar por vírgula)", value=row["Gols Borussia"])
+                    novo_gols_borussia = st.text_input("Goleadores Borussia", value=row["Gols Borussia"])
                     novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
-                    novo_gols_inter = st.text_input("Gols Inter (separar por vírgula)", value=row["Gols Inter"])
+                    novo_gols_inter = st.text_input("Goleadores Inter", value=row["Gols Inter"])
 
                     col1, col2 = st.columns(2)
                     with col1:
@@ -1111,6 +1112,7 @@ else:
                     st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
                     st.success("✅ Partida editada com sucesso!")
+                    time.sleep(2)
                     st.session_state.mostrar_edicao_partida = False
                     st.rerun()
 
@@ -1121,9 +1123,31 @@ else:
             st.info("Nenhuma partida registrada ainda.")
 
         st.subheader("📋 Histórico de Partidas Registradas:")
-        st.dataframe(partidas.reset_index(drop=True))
-        
+
+        # Limpa dados incompletos
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+
+        # Estilo para reduzir a altura da célula
+        st.markdown(
+            """
+            <style>
+            div[data-testid="stDataFrame"] td {
+                padding-top: 2px !important;
+                padding-bottom: 2px !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Configura DataFrame com índice começando de 1
+        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+        partidas.index = partidas.index + 1
+        partidas.index.name = "#"
+
+        # Exibe com colunas ajustadas e célula mais compacta
+        st.dataframe(partidas, use_container_width=True, hide_index=False)
+
 
 
 
