@@ -713,7 +713,7 @@ else:
                             display: none !important;
                         }}
                     </style>
-
+                    st.markdown("")
                     <div style="text-align: center;">
                         <p style='font-weight: bold;'>🎵 Música Ambiente</p>
                         </audio>
