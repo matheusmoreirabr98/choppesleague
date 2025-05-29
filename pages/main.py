@@ -130,7 +130,7 @@ def load_data_gsheets():
             if pd.notna(row["email"]):
                 usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios
+    return partidas, jogadores, usuarios, presencas
 
 
 # -----------------------------------------
