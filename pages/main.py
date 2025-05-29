@@ -1070,6 +1070,10 @@ else:
 
             st.success("✅ Partida registrada com sucesso!")
 
+            # atualiza o estado com o novo DataFrame
+            st.session_state["partidas"] = partidas
+
+            # limpa seleção dos goleadores
             for key in ["gols_borussia", "gols_inter"]:
                 if key in st.session_state:
                     del st.session_state[key]
