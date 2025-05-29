@@ -1044,6 +1044,8 @@ else:
         st.subheader("📋 Histórico de Partidas Registradas:")
         st.dataframe(partidas)
 
+        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+
         st.markdown("### ✏️ Editar ou Excluir Partida Registrada")
 
         if not partidas.empty:
@@ -1065,11 +1067,11 @@ else:
                     st.session_state.mostrar_edicao_partida = True
             with col2:
                 if st.button("🗑️ Excluir Partida"):
-                    partidas = partidas.drop(index).reset_index(drop=True)
+                    partidas = partidas.drop(partidas.index[index]).reset_index(drop=True)
 
                     # renumera as partidas
-                    partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True)
-                    partidas = partidas.sort_values(by="Data_Ordenada").reset_index(drop=True)
+                    partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce")
+                    partidas = partidas.sort_values(by=["Data_Ordenada", "Número da Partida"]).reset_index(drop=True)
                     partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
                     partidas.drop(columns=["Data_Ordenada"], inplace=True)
 
