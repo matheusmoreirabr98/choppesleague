@@ -1314,12 +1314,22 @@ else:
         # Data da partida
         data_partida = st.date_input("📅 Data da Partida")
 
-        # Filtra jogadores presentes
-        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True, errors='coerce').dt.date
+        # Converte para datetime e extrai apenas a data (sem hora)
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors='coerce').dt.date
+
+        # Garante que o input do usuário também é uma data
+        data_partida = pd.to_datetime(data_partida).date()
+
+        # Filtra corretamente
+        presentes = presencas[
+            (presencas["DataPartida"] == data_partida) &
+            (presencas["Presença"].str.lower() == "sim")
+        ]["Nome"].tolist()
+
         presentes = presencas[(presencas["DataPartida"] == data_partida) & (presencas["Presença"] == "Sim")]["Nome"].tolist()
 
-        if len(presentes) < 5:
-            st.warning("⚠️ É necessário pelo menos 5 jogadores confirmados para realizar o sorteio.")
+        if len(presentes) < 10:
+            st.warning("⚠️ É necessário pelo menos 10 jogadores confirmados para realizar o sorteio.")
             return
 
         # Sorteio controlado via estado
@@ -1340,7 +1350,7 @@ else:
             st.markdown("---")
 
 
-            
+
 
     # Tela da avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
