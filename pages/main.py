@@ -388,7 +388,7 @@ def tela_login():
                         "tipo": "admin" if email in EMAILS_ADMIN else "usuario",
                     }
 
-                    partidas, jogadores, _ = load_data()
+                    partidas, jogadores, _ ,_ = load_data()
                     save_data(partidas, jogadores, usuarios)
 
                     st.success("Cadastro realizado! Agora faça login.")
