@@ -980,7 +980,20 @@ else:
                     <div style="text-align: center; min-width: 80px;">
                         <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
                     </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
+            st.markdown(
+                f"""
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 50px;
+                    margin-top: 20px;
+                    flex-wrap: wrap;
+                ">
                     <div style="text-align: center; min-width: 80px;">
                         <p style="font-size: 30px;">🏆 - {placar_inter}</p>
                     </div>
