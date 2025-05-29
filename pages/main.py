@@ -1085,6 +1085,8 @@ else:
 
             if st.session_state.mostrar_edicao_partida:
                 with st.form("form_edicao_partida"):
+                    nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
+                    
                     novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
                     novo_gols_borussia = st.text_input("Gols Borussia (separar por vírgula)", value=row["Gols Borussia"])
                     novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
