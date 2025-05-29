@@ -1091,10 +1091,10 @@ else:
                     novo_gols_inter = st.text_input("Gols Inter (separar por vírgula)", value=row["Gols Inter"])
 
                     salvar = st.form_submit_button("💾 Salvar Alterações")
+                    Cancelar = st.form_submit_button("❌ Cancelar Edição")
 
                 if st.session_state.mostrar_edicao_partida:
-                    if st.button("❌ Cancelar Edição"):
-                        st.session_state.mostrar_edicao_partida = False
+                    st.session_state.mostrar_edicao_partida = False
 
                 if salvar:
                     partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
