@@ -904,7 +904,12 @@ else:
         st.title("Registrar Estatísticas da Partida")
         st.markdown("---")
 
-        # Exibe escudos e placar
+        numero_partida = len(partidas) + 1
+        data = st.date_input("📅 Data da partida")
+        st.markdown(f"**Número da Partida:** {numero_partida}")
+
+        st.markdown("### 🛡️ Confronto")
+
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
@@ -918,8 +923,7 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-                </div>
+                    <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
                     {escudo_inter}
                 </div>
             """,
@@ -933,10 +937,6 @@ else:
                 "Lula", "Juninho", "Jesus", "Gabriel", "Arthur",
             ],
         )
-
-        numero_partida = len(partidas) + 1
-        data = st.date_input("Data da partida")
-        st.markdown(f"**Número da Partida:** {numero_partida}")
 
         col1, col2 = st.columns(2)
 
@@ -952,18 +952,8 @@ else:
                 gols_borussia = ["Ninguém marcou"]
                 st.session_state["gols_borussia"] = ["Ninguém marcou"]
 
-            assist_borussia = []
-            if placar_borussia > 0 and "Ninguém marcou" not in gols_borussia:
-                max_assists = 2 if placar_borussia > 1 else 1
-                assist_borussia = st.multiselect(
-                    f"Garçons Borussia (máx {max_assists})",
-                    [j for j in jogadores_originais if j not in gols_borussia],
-                    max_selections=max_assists,
-                    key="assist_borussia",
-                )
-
         with col2:
-            jogadores_indisponiveis = set(gols_borussia + assist_borussia)
+            jogadores_indisponiveis = set(gols_borussia)
             lista_inter = ["Ninguém marcou"] + [
                 j for j in jogadores_originais if j not in jogadores_indisponiveis
             ] * 2
@@ -976,16 +966,6 @@ else:
                 st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
-
-            assist_inter = []
-            if placar_inter > 0 and "Ninguém marcou" not in gols_inter:
-                max_assists = 2 if placar_inter > 1 else 1
-                assist_inter = st.multiselect(
-                    f"Garçons Inter (máx {max_assists})",
-                    [j for j in jogadores_originais if j not in gols_inter],
-                    max_selections=max_assists,
-                    key="assist_inter",
-                )
 
             st.markdown(
                 f"""
@@ -1000,6 +980,14 @@ else:
                     <div style="text-align: center; min-width: 80px;">
                         <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
                     </div>
+
+                    <div style="text-align: center; min-width: 80px;">
+                        <p style="font-size: 18px;">Partida #{numero_partida}<br>{data.strftime('%d/%m/%Y')}</p>
+                    </div>
+
+                    <div style="text-align: center; min-width: 80px;">
+                        <p style="font-size: 30px;">🏆 - {placar_inter}</p>
+                    </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -1011,10 +999,8 @@ else:
                 "Número da Partida": numero_partida,
                 "Placar Borussia": placar_borussia,
                 "Gols Borussia": ", ".join(gols_borussia),
-                "Assistências Borussia": ", ".join(assist_borussia),
                 "Placar Inter": placar_inter,
                 "Gols Inter": ", ".join(gols_inter),
-                "Assistências Inter": ", ".join(assist_inter),
             }
 
             partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
@@ -1026,8 +1012,8 @@ else:
 
             st.success("✅ Partida registrada com sucesso!")
 
-            # limpa os estados dos campos preenchidos
-            for key in ["gols_borussia", "assist_borussia", "gols_inter", "assist_inter"]:
+            # limpa os campos
+            for key in ["gols_borussia", "gols_inter"]:
                 if key in st.session_state:
                     del st.session_state[key]
 
@@ -1038,6 +1024,7 @@ else:
         st.dataframe(partidas)
 
         return partidas
+
 
 
     # Estatisticas dos jogadores
