@@ -405,7 +405,7 @@ def tela_login():
                         "tipo": "admin" if email in EMAILS_ADMIN else "usuario",
                     }
 
-                    partidas, jogadores, usuarios, presencas = load_data()
+                    # partidas, jogadores, usuarios, presencas = load_data()
 
                     save_data(partidas, jogadores, usuarios, presencas)
 
