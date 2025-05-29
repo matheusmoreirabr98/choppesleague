@@ -1090,11 +1090,11 @@ else:
                     novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
                     novo_gols_inter = st.text_input("Gols Inter (separar por vírgula)", value=row["Gols Inter"])
 
-                    salvar = st.form_submit_button("💾 Salvar Alterações")
-                    Cancelar = st.form_submit_button("❌ Cancelar Edição")
-
-                if st.session_state.mostrar_edicao_partida:
-                    st.session_state.mostrar_edicao_partida = False
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        salvar = st.form_submit_button("💾 Salvar Alterações")
+                    with col2:
+                        cancelar = st.form_submit_button("❌ Cancelar Edição")
 
                 if salvar:
                     partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
@@ -1116,6 +1116,9 @@ else:
                     st.success("✅ Partida editada com sucesso!")
                     st.session_state.mostrar_edicao_partida = False
                     st.rerun()
+
+                elif cancelar:
+                    st.session_state.mostrar_edicao_partida = False
         else:
             st.info("Nenhuma partida registrada ainda.")
 
