@@ -607,8 +607,8 @@ else:
                 "Nova palavra-chave (recuperação)", key="perfil_palavra"
             )
             nova_dica = st.text_input("Nova dica da palavra-chave", key="perfil_dica")
-
-        salvar = st.form_submit_button("💾 Salvar alterações", use_container_width=True)
+            
+            salvar = st.form_submit_button("💾 Salvar alterações", use_container_width=True)
 
         if st.session_state.get("atualizacao_sucesso"):
             st.success("✅ Informações atualizadas com sucesso!")
