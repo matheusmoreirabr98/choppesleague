@@ -16,12 +16,11 @@ import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 
-
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
 
-EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
+EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
 
 
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
@@ -152,24 +151,30 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
-    if isinstance(partidas, list):
-        partidas = pd.DataFrame(partidas)
-    if isinstance(jogadores, list):
-        jogadores = pd.DataFrame(jogadores)
-    if isinstance(presencas, list):
-        presencas = pd.DataFrame(presencas)
+    # Salvar partidas
+    sheet_partidas = sh.worksheet("Partidas")
+    sheet_partidas.clear()
+    sheet_partidas.update([partidas.columns.tolist()] + partidas.values.tolist())
 
-    # Converter dicionário de usuários para DataFrame
-    usuarios_df = (
-        pd.DataFrame.from_dict(usuarios, orient="index")
-        .reset_index()
-        .rename(columns={"index": "email"})
-    )
+    # Salvar jogadores
+    sheet_jogadores = sh.worksheet("Jogadores")
+    sheet_jogadores.clear()
+    sheet_jogadores.update([jogadores.columns.tolist()] + jogadores.values.tolist())
 
-    set_with_dataframe(sh.worksheet("Partidas"), partidas)
-    set_with_dataframe(sh.worksheet("Jogadores"), jogadores)
-    set_with_dataframe(sh.worksheet("Usuarios"), usuarios_df)
-    set_with_dataframe(sh.worksheet("Presenças"), presencas)
+    # Salvar usuários — aqui está a correção!
+    sheet_usuarios = sh.worksheet("Usuarios")
+    sheet_usuarios.clear()
+
+    usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
+    usuarios_df = usuarios_df.rename(columns={"index": "email"})
+
+    if not usuarios_df.empty:
+        sheet_usuarios.update([usuarios_df.columns.tolist()] + usuarios_df.values.tolist())
+
+    # Salvar presenças
+    sheet_presencas = sh.worksheet("Presenças")
+    sheet_presencas.clear()
+    sheet_presencas.update([presencas.columns.tolist()] + presencas.values.tolist())
 
 
 # -----------------------------------------
@@ -400,7 +405,7 @@ def tela_login():
                         "tipo": "admin" if email in EMAILS_ADMIN else "usuario",
                     }
 
-                    partidas, jogadores, usuarios, presencas = load_data()
+                    # partidas, jogadores, usuarios, presencas = load_data()
 
                     save_data(partidas, jogadores, usuarios, presencas)
 
