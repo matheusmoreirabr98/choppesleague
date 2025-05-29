@@ -1054,15 +1054,16 @@ else:
             if "mostrar_edicao_partida" not in st.session_state:
                 st.session_state.mostrar_edicao_partida = False
 
-            col1, col2 = st.columns([0.1, 0.1])
+            col1, col2 = st.columns([1, 1])  # Largura adequada para os botões
             with col1:
-                if st.button("✏️ Editar Partida"):
+                if st.button("✏️ Editar Partida", use_container_width=True):
                     st.session_state.mostrar_edicao_partida = True
+
             with col2:
-                if st.button("🗑️ Excluir Partida"):
+                if st.button("🗑️ Excluir Partida", use_container_width=True):
                     partidas = partidas.drop(partidas.index[index]).reset_index(drop=True)
 
-                    # renumera as partidas
+                    # Renumera as partidas
                     partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce")
                     partidas = partidas.sort_values(by=["Data_Ordenada", "Número da Partida"]).reset_index(drop=True)
                     partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
