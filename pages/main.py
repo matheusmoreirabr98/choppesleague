@@ -148,9 +148,33 @@ def load_data_gsheets():
 # Salvar dados nas planilhas
 # -----------------------------------------
 def save_data_gsheets(partidas, jogadores, usuarios, presencas):
-    set_with_dataframe(sh.worksheet("Partidas"), partidas)
-    set_with_dataframe(sh.worksheet("Jogadores"), jogadores)
-    set_with_dataframe(sh.worksheet("Usuarios"), usuarios)
+    gc = autenticar_gsheets()
+    sh = gc.open(NOME_PLANILHA)
+
+    # Salvar partidas
+    sheet_partidas = sh.worksheet("Partidas")
+    sheet_partidas.clear()
+    sheet_partidas.update([partidas.columns.tolist()] + partidas.values.tolist())
+
+    # Salvar jogadores
+    sheet_jogadores = sh.worksheet("Jogadores")
+    sheet_jogadores.clear()
+    sheet_jogadores.update([jogadores.columns.tolist()] + jogadores.values.tolist())
+
+    # Salvar usuários — aqui está a correção!
+    sheet_usuarios = sh.worksheet("Usuarios")
+    sheet_usuarios.clear()
+
+    usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
+    usuarios_df = usuarios_df.rename(columns={"index": "email"})
+
+    if not usuarios_df.empty:
+        sheet_usuarios.update([usuarios_df.columns.tolist()] + usuarios_df.values.tolist())
+
+    # Salvar presenças
+    sheet_presencas = sh.worksheet("Presenças")
+    sheet_presencas.clear()
+    sheet_presencas.update([presencas.columns.tolist()] + presencas.values.tolist())
 
     # ✅ Tratamento seguro para presenças
     sheet_presencas = sh.worksheet("Presencas")
