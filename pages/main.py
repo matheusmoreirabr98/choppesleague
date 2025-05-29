@@ -1125,16 +1125,27 @@ else:
         # Limpa dados incompletos
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
 
-        # Faz o índice começar de 1 e nomeia como "#"
+        # Estilo para reduzir a altura da célula
+        st.markdown(
+            """
+            <style>
+            div[data-testid="stDataFrame"] td {
+                padding-top: 2px !important;
+                padding-bottom: 2px !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Configura DataFrame com índice começando de 1
+        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
         partidas.index = partidas.index + 1
         partidas.index.name = "#"
 
-        # Exibe o DataFrame com ajuste automático de colunas e índice começando em 1
-        st.dataframe(
-            partidas,
-            use_container_width=True,  # ocupa largura total disponível
-            hide_index=False           # mostra índice personalizado
-        )
+        # Exibe com colunas ajustadas e célula mais compacta
+        st.dataframe(partidas, use_container_width=True, hide_index=False)
+
 
 
 
