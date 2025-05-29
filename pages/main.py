@@ -999,16 +999,16 @@ else:
                 margin-top: 20px;
                 flex-wrap: wrap;
             ">
-            <div style="text-align: left; min-width: 50px;">
+            <div style="text-align: right; min-width: 50px;">
                 <p style="font-size: 30px;">
                     {placar_borussia}
                 </p>
             </div>
-            <div style="text-align: center; min-width: 500px;">
+            <div style="text-align: center; min-width: 200px;">
                 <p style="font-size: 30px;">
                 </p>
             </div>
-            <div style="text-align: right; min-width: 50px;">
+            <div style="text-align: left; min-width: 50px;">
                 <p style="font-size: 30px;">
                     {placar_inter}
                 </p>
