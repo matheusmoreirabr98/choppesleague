@@ -747,7 +747,7 @@ else:
             df = pd.DataFrame(
                 columns=[
                     "Data",
-                    "Número da Partida",
+                    "Partida",
                     "Placar Borussia",
                     "Gols Borussia",
                     "Assistências Borussia",
@@ -1019,7 +1019,7 @@ else:
         if st.button("Registrar"):
             nova = {
                 "Data": data.strftime("%d/%m/%Y"),
-                "Número da Partida": numero_partida,
+                "Partida": numero_partida,
                 "Placar Borussia": placar_borussia,
                 "Gols Borussia": ", ".join(gols_borussia),
                 "Placar Inter": placar_inter,
@@ -1046,7 +1046,7 @@ else:
 
         if not partidas.empty:
             opcoes = [
-                f"#{row['Número da Partida']} – {row['Data']} – Borussia {row['Placar Borussia']} x {row['Placar Inter']} Inter"
+                f"#{row['Partida']} – {row['Data']} – Borussia {row['Placar Borussia']} x {row['Placar Inter']} Inter"
                 for _, row in partidas.iterrows()
             ]
             partida_escolhida = st.selectbox("Selecione a partida:", opcoes)
@@ -1067,8 +1067,8 @@ else:
 
                     # renumera as partidas
                     partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce")
-                    partidas = partidas.sort_values(by=["Data_Ordenada", "Número da Partida"]).reset_index(drop=True)
-                    partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
+                    partidas = partidas.sort_values(by=["Data_Ordenada", "Partida"]).reset_index(drop=True)
+                    partidas["Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
                     partidas.drop(columns=["Data_Ordenada"], inplace=True)
 
                     jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
@@ -1103,7 +1103,7 @@ else:
                     # renumera as partidas
                     partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True)
                     partidas = partidas.sort_values(by="Data_Ordenada").reset_index(drop=True)
-                    partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
+                    partidas["Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
                     partidas.drop(columns=["Data_Ordenada"], inplace=True)
 
                     jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
@@ -1123,7 +1123,7 @@ else:
         st.subheader("📋 Histórico de Partidas Registradas:")
 
         # Limpa dados incompletos
-        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+        partidas = partidas.dropna(subset=["Data", "Partida"]).reset_index(drop=True)
 
         # Estilo para reduzir a altura da célula
         st.markdown(
@@ -1139,7 +1139,7 @@ else:
         )
 
         # Configura DataFrame com índice começando de 1
-        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+        partidas = partidas.dropna(subset=["Data", "Partida"]).reset_index(drop=True)
         partidas.index = partidas.index + 1
         partidas.index.name = "#"
 
@@ -1706,7 +1706,7 @@ else:
         st.session_state.partidas = pd.DataFrame(
             columns=[
                 "Data",
-                "Número da Partida",
+                "Partida",
                 "Placar Borussia",
                 "Gols Borussia",
                 "Placar Inter",
