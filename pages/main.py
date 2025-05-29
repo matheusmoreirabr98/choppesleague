@@ -1060,9 +1060,6 @@ else:
 
             # 🧼 limpa o DataFrame antes de salvar
             partidas_limpo = partidas.fillna("").astype(str)
-
-            _, jogadores, usuarios, presencas = load_data()
-            partidas_limpo = partidas.fillna("").astype(str)
             jogadores_limpo = jogadores.fillna("").astype(str)
             presencas_limpo = presencas.fillna("").astype(str)
 
