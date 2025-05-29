@@ -389,7 +389,7 @@ def tela_login():
                     }
 
                     partidas, jogadores, _ ,_ = load_data()
-                    save_data(partidas, jogadores, usuarios, presencas)
+                    save_data(partidas, jogadores, usuarios)
 
                     st.success("Cadastro realizado! Agora faça login.")
 
