@@ -1044,6 +1044,46 @@ else:
         st.subheader("📋 Histórico de Partidas Registradas:")
         st.dataframe(partidas)
 
+        st.markdown("### ✏️ Editar Partida Registrada")
+
+        if not partidas.empty:
+            opcoes = [
+                f"#{row['Número da Partida']} – {row['Data']} – Borussia {row['Placar Borussia']} x {row['Placar Inter']} Inter"
+                for _, row in partidas.iterrows()
+            ]
+            partida_escolhida = st.selectbox("Selecione a partida que deseja editar:", opcoes)
+            index = opcoes.index(partida_escolhida)
+
+            row = partidas.iloc[index]
+
+            with st.form("form_edicao"):
+                nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
+                novo_numero = st.number_input("Número da Partida", value=int(row["Número da Partida"]), min_value=1)
+                novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
+                novo_gols_borussia = st.text_input("Gols Borussia (separar por vírgula)", value=row["Gols Borussia"])
+                novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
+                novo_gols_inter = st.text_input("Gols Inter (separar por vírgula)", value=row["Gols Inter"])
+
+                submit = st.form_submit_button("Salvar Alterações")
+
+            if submit:
+                partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y")
+                partidas.at[index, "Número da Partida"] = int(novo_numero)
+                partidas.at[index, "Placar Borussia"] = int(novo_placar_borussia)
+                partidas.at[index, "Gols Borussia"] = novo_gols_borussia
+                partidas.at[index, "Placar Inter"] = int(novo_placar_inter)
+                partidas.at[index, "Gols Inter"] = novo_gols_inter
+
+                # salva os dados atualizados
+                jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
+                save_data_gsheets(partidas, jogadores, usuarios, presencas)
+                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
+
+                st.success("✅ Partida editada com sucesso!")
+                st.rerun()
+        else:
+            st.info("Nenhuma partida registrada ainda.")
+
         return partidas
 
 
