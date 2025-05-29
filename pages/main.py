@@ -899,12 +899,72 @@ else:
             unsafe_allow_html=True,
         )
 
+
+
+    def cronometro_7_minutos():
+        st.subheader("⏱️ Cronômetro da Partida")
+
+        # inicialização dos estados
+        if "tempo_restante" not in st.session_state:
+            st.session_state.tempo_restante = 7 * 60  # 7 minutos
+        if "cronometro_rodando" not in st.session_state:
+            st.session_state.cronometro_rodando = False
+        if "ultimo_tick" not in st.session_state:
+            st.session_state.ultimo_tick = time.time()
+
+        # layout com os 3 botões
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("▶️ Iniciar"):
+                st.session_state.cronometro_rodando = True
+                st.session_state.ultimo_tick = time.time()
+        with col2:
+            if st.button("⏸️ Pausar"):
+                st.session_state.cronometro_rodando = False
+        with col3:
+            if st.button("🔁 Reiniciar"):
+                st.session_state.tempo_restante = 7 * 60
+                st.session_state.cronometro_rodando = False
+
+        # atualização do tempo
+        if st.session_state.cronometro_rodando:
+            agora = time.time()
+            decorrido = int(agora - st.session_state.ultimo_tick)
+            if decorrido >= 1:
+                st.session_state.tempo_restante = max(0, st.session_state.tempo_restante - decorrido)
+                st.session_state.ultimo_tick = agora
+
+        # exibição do tempo
+        minutos = st.session_state.tempo_restante // 60
+        segundos = st.session_state.tempo_restante % 60
+        st.markdown(
+            f"<h1 style='text-align:center;'>⏳ {minutos:02d}:{segundos:02d}</h1>",
+            unsafe_allow_html=True
+        )
+
+        if st.session_state.tempo_restante == 0:
+            st.success("⏰ Tempo esgotado!")
+            st.session_state.cronometro_rodando = False
+
+        # refresh automático a cada segundo, se rodando
+        if st.session_state.cronometro_rodando:
+            st.rerun()
+
+
+
+
+
+
+
+
     # Tela de registro das partidas
     def registrar_partidas(partidas):
         st.markdown("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>",
         unsafe_allow_html=True,
         )
         st.markdown("---")
+
+        cronometro_7_minutos()
 
         numero_partida = len(partidas) + 1
         data = st.date_input("📅 Data da partida")
