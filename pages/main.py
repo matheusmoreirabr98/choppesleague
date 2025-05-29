@@ -844,20 +844,20 @@ else:
                 flex-wrap: wrap;
             ">
             <div style="text-align: right; min-width: 70px;">
-                <p style="font-size: 30px;">
+                <p style="font-size: 10px;">
                     🏆 - {borussia_vitorias}<br>
                     ⚽ - {borussia_gols}
                 </p>
             </div>
 
             <div style="text-align: center; min-width: 05px;">
-                <p style="font-size: 30px;">
+                <p style="font-size: 10px;">
                     🤝 - {empates}
                 </p>
             </div>
 
             <div style="text-align: left; min-width: 70px;">
-                <p style="font-size: 30px;">
+                <p style="font-size: 10px;">
                     🏆 - {inter_vitorias}<br>
                     ⚽ - {inter_gols}
                 </p>
