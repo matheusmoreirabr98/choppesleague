@@ -173,22 +173,7 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
 
     # Salvar presenças
     sheet_presencas = sh.worksheet("Presenças")
-    sheet_presencas.clear()
     sheet_presencas.update([presencas.columns.tolist()] + presencas.values.tolist())
-
-    # ✅ Tratamento seguro para presenças
-    sheet_presencas = sh.worksheet("Presencas")
-
-    if not presencas.empty:
-        df_clean = presencas.copy()
-        df_clean = df_clean.fillna("").astype(str)
-
-        sheet_presencas.clear()
-        sheet_presencas.update(
-            [df_clean.columns.tolist()] + df_clean.values.tolist()
-        )
-    else:
-        print("⚠️ O DataFrame 'Presencas' está vazio – aba não foi atualizada.")
 
 
 # -----------------------------------------
