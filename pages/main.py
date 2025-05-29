@@ -440,7 +440,9 @@ else:
     # --- SIDEBAR --- (imagem e nome apenas)
     with st.sidebar:
         st.image("./imagens/logo.png", "<br>", width=200)
-        st.markdown(f"👟 Jogador: **{st.session_state.nome}**<br>")
+        st.markdown("<br>")
+        st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
+        st.markdown("<br>")
 
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
