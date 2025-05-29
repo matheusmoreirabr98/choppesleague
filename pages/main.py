@@ -918,21 +918,19 @@ else:
 
     # Tela de registro das partidas
     def registrar_partidas(partidas):
-        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>",
-        unsafe_allow_html=True,
-        )
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>", unsafe_allow_html=True)
         st.markdown("---")
 
         data = st.date_input("📅 Data da partida")
-
-        # converte a coluna de data corretamente
-        partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True).dt.date
 
         # carrega os dados logo no início
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
         partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
-        
+
+        # garante que a coluna de Data está no formato correto
+        partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True).dt.date
+
         # define número da nova partida com base na data
         partidas_do_dia = partidas[partidas["Data"] == data]
         numero_partida = len(partidas_do_dia) + 1
@@ -941,16 +939,11 @@ else:
         if "form_id" not in st.session_state:
             st.session_state["form_id"] = 0
 
-
-        # garante que a coluna esteja no formato correto
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
-
-        # filtra os jogadores que confirmaram presença na data escolhida
         jogadores_presentes_data = presencas[
             (presencas["DataPartida"] == data) & (presencas["Presença"] == "Sim")
         ]["Nome"].tolist()
 
-        # se ninguém confirmou presença, avisa e interrompe
         if not jogadores_presentes_data:
             st.warning("⚠️ Nenhum jogador confirmou presença para esta data.")
             return partidas
