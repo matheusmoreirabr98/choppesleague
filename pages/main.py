@@ -923,9 +923,15 @@ else:
         )
         st.markdown("---")
 
-        numero_partida = len(partidas) + 1
         data = st.date_input("📅 Data da partida")
         
+        # converte a coluna de data corretamente
+        partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True).dt.date
+
+        # define número da nova partida com base na data
+        partidas_do_dia = partidas[partidas["Data"] == data]
+        numero_partida = len(partidas_do_dia) + 1
+
         # carrega os dados logo no início
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
