@@ -976,7 +976,7 @@ else:
                 <div style="
                     display: flex;
                     justify-content: center;
-                    align-items: center;
+                    align-items: right;
                     gap: 50px;
                     flex-wrap: nowrap;
                 ">
@@ -994,7 +994,7 @@ else:
             <div style="
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: left;
                 gap: 50px;
                 margin-top: 20px;
                 flex-wrap: wrap;
