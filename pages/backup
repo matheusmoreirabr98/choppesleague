@@ -1073,6 +1073,7 @@ else:
             save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo)
 
             st.success("✅ Partida registrada com sucesso!")
+            time.sleep(3)
 
             # atualiza o estado com o novo DataFrame
             st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
