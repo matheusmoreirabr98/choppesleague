@@ -508,6 +508,7 @@ else:
         # Botão "Logout" ocupando toda a largura
         if not st.session_state.get("confirmar_logout", False):
             st.button("🚪 Logout", use_container_width=True, key="botao_logout", on_click=lambda: st.session_state.update(confirmar_logout=True))
+            st.write("")
         else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
@@ -713,7 +714,6 @@ else:
                             display: none !important;
                         }}
                     </style>
-                    <br>
                     <div style="text-align: center;">
                         <p style='font-weight: bold;'>🎵 Música Ambiente</p>
                         </audio>
