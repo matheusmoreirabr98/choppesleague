@@ -475,15 +475,12 @@ else:
     pagina_ativa = st.session_state.pagina_atual
 
     # exibimos o selectbox sempre — inclusive no perfil
-    pagina_escolhida = st.radio(
-        "📋 Menu",
+    pagina_escolhida = st.selectbox(
+        "",  # label obrigatória
         opcoes,
         index=opcoes.index(pagina_ativa) if pagina_ativa in opcoes else 0,
+        key="menu_topo",
     )
-
-    if pagina_escolhida != st.session_state.pagina_atual and pagina_escolhida in opcoes:
-        st.session_state.pagina_atual = pagina_escolhida
-        st.rerun()
 
     # só atualiza a página se a escolhida for diferente
     # e se ela for uma das opções válidas
