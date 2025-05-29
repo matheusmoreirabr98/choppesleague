@@ -952,7 +952,7 @@ else:
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
         st.markdown("---")
-        st.markdown("<h5 style='text-align: center; font-weight: bold;'>⚽ Resultado da Partida</h5>",
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida</h5>",
         unsafe_allow_html=True,
         )
         st.markdown(
@@ -988,7 +988,10 @@ else:
                     {placar_borussia}
                 </p>
             </div>
-
+            <div style="text-align: center; min-width: 80px;">
+                <p style="font-size: 30px;">
+                </p>
+            </div>
             <div style="text-align: center; min-width: 80px;">
                 <p style="font-size: 30px;">
                     {placar_inter}
