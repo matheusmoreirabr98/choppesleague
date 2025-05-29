@@ -918,135 +918,135 @@ else:
             ],
         )
 
-    col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2)
 
-    with col1:
-        lista_borussia = ["Ninguém marcou"] + jogadores_originais
-        gols_borussia = st.multiselect(
-            "Goleadores (Borussia)",
-            options=lista_borussia,
-            default=[],
-            max_selections=2,
-            key="gols_borussia",
-            help="Máximo 2 jogadores"
-        )
-        if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
-            st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
-            gols_borussia = ["Ninguém marcou"]
-            st.session_state["gols_borussia"] = ["Ninguém marcou"]
+        with col1:
+            lista_borussia = ["Ninguém marcou"] + jogadores_originais
+            gols_borussia = st.multiselect(
+                "Goleadores (Borussia)",
+                options=lista_borussia,
+                default=[],
+                max_selections=2,
+                key="gols_borussia",
+                help="Máximo 2 jogadores"
+            )
+            if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
+                st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
+                gols_borussia = ["Ninguém marcou"]
+                st.session_state["gols_borussia"] = ["Ninguém marcou"]
 
-        placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
+            placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
 
-    with col2:
-        jogadores_indisponiveis = set(gols_borussia)
-        lista_inter = ["Ninguém marcou"] + [
-            j for j in jogadores_originais if j not in jogadores_indisponiveis
-        ]
-        gols_inter = st.multiselect(
-            "Goleadores (Inter)",
-            options=lista_inter,
-            default=[],
-            max_selections=2,
-            key="gols_inter",
-            help="Máximo 2 jogadores"
-        )
-        if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
-            st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
-            gols_inter = ["Ninguém marcou"]
-            st.session_state["gols_inter"] = ["Ninguém marcou"]
+        with col2:
+            jogadores_indisponiveis = set(gols_borussia)
+            lista_inter = ["Ninguém marcou"] + [
+                j for j in jogadores_originais if j not in jogadores_indisponiveis
+            ]
+            gols_inter = st.multiselect(
+                "Goleadores (Inter)",
+                options=lista_inter,
+                default=[],
+                max_selections=2,
+                key="gols_inter",
+                help="Máximo 2 jogadores"
+            )
+            if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
+                st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
+                gols_inter = ["Ninguém marcou"]
+                st.session_state["gols_inter"] = ["Ninguém marcou"]
 
-        placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
+            placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
 
-        # ❌ Impedir resultado 2x2
-        if placar_borussia == 2 and placar_inter == 2:
-            st.error("Empate em 2x2 não é permitido. Ajuste os goleadores.")
+            # ❌ Impedir resultado 2x2
+            if placar_borussia == 2 and placar_inter == 2:
+                st.error("Empate em 2x2 não é permitido. Ajuste os goleadores.")
 
 
-        # Agora que os placares foram definidos, renderizamos os escudos e placares
-        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
+            # Agora que os placares foram definidos, renderizamos os escudos e placares
+            escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+            escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
-        st.markdown("---")
-        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida</h5>",
-        unsafe_allow_html=True,
-        )
-        st.markdown(
-            f"""
+            st.markdown("---")
+            st.markdown("<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida</h5>",
+            unsafe_allow_html=True,
+            )
+            st.markdown(
+                f"""
+                    <div style="
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 50px;
+                        flex-wrap: nowrap;
+                    ">
+                        {escudo_borussia}
+                    <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                    </div>
+                        {escudo_inter}
+                    </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            st.markdown(
+                f"""
                 <div style="
                     display: flex;
-                    justify-content: center;
+                    justify-content: space-between;
                     align-items: center;
                     gap: 50px;
-                    flex-wrap: nowrap;
+                    margin-top: 20px;
+                    flex-wrap: wrap;
                 ">
-                    {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
+                <div style="text-align: right; min-width: 80px;">
+                    <p style="font-size: 30px;">
+                        {placar_borussia}
+                    </p>
                 </div>
-                    {escudo_inter}
+                <div style="text-align: center; min-width: 80px;">
+                    <p style="font-size: 30px;">
+                    </p>
+                </div>
+                <div style="text-align: left; min-width: 80px;">
+                    <p style="font-size: 30px;">
+                        {placar_inter}
+                    </p>
                 </div>
             """,
-            unsafe_allow_html=True,
-        )
+                unsafe_allow_html=True,
+            )
 
-        st.markdown(
-            f"""
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 50px;
-                margin-top: 20px;
-                flex-wrap: wrap;
-            ">
-            <div style="text-align: right; min-width: 80px;">
-                <p style="font-size: 30px;">
-                    {placar_borussia}
-                </p>
-            </div>
-            <div style="text-align: center; min-width: 80px;">
-                <p style="font-size: 30px;">
-                </p>
-            </div>
-            <div style="text-align: left; min-width: 80px;">
-                <p style="font-size: 30px;">
-                    {placar_inter}
-                </p>
-            </div>
-        """,
-            unsafe_allow_html=True,
-        )
+            st.markdown("---")
+            
 
-        st.markdown("---")
-        
+            if st.button("Registrar"):
+                nova = {
+                    "Data": data.strftime("%d/%m/%Y"),
+                    "Número da Partida": numero_partida,
+                    "Placar Borussia": placar_borussia,
+                    "Gols Borussia": ", ".join(gols_borussia),
+                    "Placar Inter": placar_inter,
+                    "Gols Inter": ", ".join(gols_inter),
+                }
 
-        if st.button("Registrar"):
-            nova = {
-                "Data": data.strftime("%d/%m/%Y"),
-                "Número da Partida": numero_partida,
-                "Placar Borussia": placar_borussia,
-                "Gols Borussia": ", ".join(gols_borussia),
-                "Placar Inter": placar_inter,
-                "Gols Inter": ", ".join(gols_inter),
-            }
+                partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
 
-            partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
+                _, jogadores, usuarios, presencas = load_data()
+                save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
-            _, jogadores, usuarios, presencas = load_data()
-            save_data_gsheets(partidas, jogadores, usuarios, presencas)
+                st.success("✅ Partida registrada com sucesso!")
 
-            st.success("✅ Partida registrada com sucesso!")
+                for key in ["gols_borussia", "gols_inter"]:
+                    if key in st.session_state:
+                        del st.session_state[key]
 
-            for key in ["gols_borussia", "gols_inter"]:
-                if key in st.session_state:
-                    del st.session_state[key]
+                st.rerun()
 
-            st.rerun()
+            st.markdown("---")
+            st.subheader("📋 Histórico de Partidas Registradas:")
+            st.dataframe(partidas)
 
-        st.markdown("---")
-        st.subheader("📋 Histórico de Partidas Registradas:")
-        st.dataframe(partidas)
-
-        return partidas
+            return partidas
 
 
 
