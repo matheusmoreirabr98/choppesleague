@@ -926,13 +926,20 @@ else:
         numero_partida = len(partidas) + 1
         data = st.date_input("📅 Data da partida")
 
-        jogadores_originais = st.session_state.get(
-            "jogadores_presentes",
-            [
-                "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
-                "Lula", "Juninho", "Jesus", "Gabriel", "Arthur",
-            ],
-        )
+        # garante que a coluna esteja no formato correto
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
+
+        # filtra os jogadores que confirmaram presença na data escolhida
+        jogadores_presentes_data = presencas[
+            (presencas["DataPartida"] == data) & (presencas["Presença"] == "Sim")
+        ]["Nome"].tolist()
+
+        # se ninguém confirmou presença, avisa e interrompe
+        if not jogadores_presentes_data:
+            st.warning("⚠️ Nenhum jogador confirmou presença para esta data.")
+            return partidas
+
+        jogadores_originais = jogadores_presentes_data
 
         col1, col2 = st.columns(2)
 
