@@ -927,7 +927,10 @@ else:
         data = st.date_input("📅 Data da partida")
         
         # carrega os dados logo no início
-        _, jogadores, usuarios, presencas = load_data() 
+        if "dados_gsheets" not in st.session_state:
+            st.session_state["dados_gsheets"] = load_data()
+        partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
+
 
         # garante que a coluna esteja no formato correto
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
