@@ -279,6 +279,11 @@ def tela_login():
                 "<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>",
                 unsafe_allow_html=True,
             )
+
+            # 👉 INSIRA AQUI:
+            if st.button("🔙 Voltar para o login"):
+                st.session_state.modo_recuperacao = False
+                st.rerun()
             email = st.text_input("E-mail cadastrado", key="rec_email_final")
 
             if email in usuarios and usuarios[email].get("dica_palavra_chave"):
@@ -307,7 +312,7 @@ def tela_login():
                         st.error("As novas senhas não coincidem.")
                     else:
                         usuarios[email]["senha"] = nova_senha
-                        partidas, jogadores, _, _ = load_data()
+                        partidas, jogadores, _ = load_data()
                         save_data(partidas, jogadores, usuarios, presencas)
                         st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
