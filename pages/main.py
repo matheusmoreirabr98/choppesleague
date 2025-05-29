@@ -929,16 +929,8 @@ else:
         jogadores_originais = st.session_state.get(
             "jogadores_presentes",
             [
-                "Matheus Moreira",
-                "José Moreira",
-                "Lucas",
-                "Alex",
-                "Gustavo",
-                "Lula",
-                "Juninho",
-                "Jesus",
-                "Gabriel",
-                "Arthur",
+                "Matheus Moreira", "José Moreira", "Lucas", "Alex", "Gustavo",
+                "Lula", "Juninho", "Jesus", "Gabriel", "Arthur",
             ],
         )
 
@@ -946,7 +938,6 @@ else:
         data = st.date_input("Data da partida")
         st.markdown(f"**Número da Partida:** {numero_partida}")
 
-        # Inputs de gols antes de mostrar placares
         col1, col2 = st.columns(2)
 
         with col1:
@@ -954,14 +945,10 @@ else:
             gols_borussia = st.multiselect(
                 "Goleadores (Borussia)", lista_borussia, key="gols_borussia"
             )
-            placar_borussia = (
-                0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
-            )
+            placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
 
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
-                st.warning(
-                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
-                )
+                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
                 gols_borussia = ["Ninguém marcou"]
                 st.session_state["gols_borussia"] = ["Ninguém marcou"]
 
@@ -986,9 +973,7 @@ else:
             placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
 
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
-                st.warning(
-                    "Você não pode selecionar jogadores junto com 'Ninguém marcou'"
-                )
+                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
 
@@ -1019,7 +1004,7 @@ else:
                     <div style="text-align: center; min-width: 80px;">
                         <p style="font-size: 18px;">Partida #{numero_partida}<br>{data.strftime('%d/%m/%Y')}</p>
                     </div>
-                    
+
                     <div style="text-align: center; min-width: 80px;">
                         <p style="font-size: 30px;">🏆 - {placar_inter}</p>
                     </div>
@@ -1030,7 +1015,7 @@ else:
 
         if st.button("Registrar"):
             nova = {
-                "Data": data,
+                "Data": data.strftime("%d/%m/%Y"),
                 "Número da Partida": numero_partida,
                 "Placar Borussia": placar_borussia,
                 "Gols Borussia": ", ".join(gols_borussia),
@@ -1039,15 +1024,29 @@ else:
                 "Gols Inter": ", ".join(gols_inter),
                 "Assistências Inter": ", ".join(assist_inter),
             }
+
             partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
-            partidas.to_csv("partidas.csv", index=False)
+
+            # carrega os dados restantes antes de salvar
+            _, jogadores, usuarios, presencas = load_data()
+
+            save_data_gsheets(partidas, jogadores, usuarios, presencas)
+
             st.success("✅ Partida registrada com sucesso!")
+
+            # limpa os estados dos campos preenchidos
+            for key in ["gols_borussia", "assist_borussia", "gols_inter", "assist_inter"]:
+                if key in st.session_state:
+                    del st.session_state[key]
+
+            st.rerun()
 
         st.markdown("---")
         st.subheader("📋 Histórico de Partidas Registradas:")
         st.dataframe(partidas)
 
         return partidas
+
 
     # Estatisticas dos jogadores
     def tela_jogadores(jogadores):
