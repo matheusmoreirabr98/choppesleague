@@ -1086,12 +1086,8 @@ else:
                     jogadores = st.session_state["dados_gsheets"][1]
 
                     with st.form("form_edicao_partida"):
-                        nova_data = st.date_input(
-                            "📅 Data da partida", 
-                            value=pd.to_datetime(row["Data"], dayfirst=True)
-                        )
+                        nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
 
-                        # lista de jogadores válidos
                         jogadores_cadastrados = jogadores["Nome"].dropna().tolist()
                         lista_borussia = ["Ninguém marcou"] + jogadores_cadastrados
                         lista_inter = ["Ninguém marcou"] + jogadores_cadastrados
@@ -1103,6 +1099,7 @@ else:
                             max_selections=2,
                             help="Máximo 2 jogadores"
                         )
+
                         if "Ninguém marcou" in novo_gols_borussia and len(novo_gols_borussia) > 1:
                             st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
                             novo_gols_borussia = ["Ninguém marcou"]
@@ -1116,6 +1113,7 @@ else:
                             max_selections=2,
                             help="Máximo 2 jogadores"
                         )
+
                         if "Ninguém marcou" in novo_gols_inter and len(novo_gols_inter) > 1:
                             st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
                             novo_gols_inter = ["Ninguém marcou"]
