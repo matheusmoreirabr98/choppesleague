@@ -1166,7 +1166,7 @@ else:
         usuarios = st.session_state.get("usuarios", {})
         email = st.session_state.get("email", "")
 
-        posicao = usuarios.get(email, {}).get("posicao", "Linha")
+        posicao = usuarios.get(email, {}).get("posicao", "Linha", "Goleiro")
 
         agora = datetime.now()
         hoje = agora.weekday()  # segunda = 0 ... domingo = 6
@@ -1257,7 +1257,7 @@ else:
             else:
                 email = st.session_state.get("email")
                 nome = st.session_state.get("nome", "Jogador")
-                posicao = usuarios.get(email, {}).get("posicao", "Linha")
+                posicao = usuarios.get(email, {}).get("posicao", "Linha", "Goleiro")
                 fuso_utc_minus_3 = timezone(timedelta(hours=-3))
                 data_envio = datetime.now(fuso_utc_minus_3).strftime(
                     "%d/%m/%Y %H:%M:%S"
