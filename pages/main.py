@@ -908,30 +908,6 @@ else:
         data = st.date_input("📅 Data da partida")
         st.markdown(f"**Número da Partida:** {numero_partida}")
 
-
-        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
-
-        st.markdown(
-            f"""
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 50px;
-                    flex-wrap: nowrap;
-                ">
-                    {escudo_borussia}
-                    {placar_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-                </div>
-                    {escudo_inter}
-                    {placar_inter}
-                </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
         jogadores_originais = st.session_state.get(
             "jogadores_presentes",
             [
@@ -969,6 +945,45 @@ else:
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
 
+        # Agora que os placares foram definidos, renderizamos os escudos e placares
+        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
+        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
+
+        st.markdown("---")
+        st.markdown("### ⚽ Resultado da Partida")
+
+        st.markdown(
+            f"""
+            <div style="
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 80px;
+                flex-wrap: nowrap;
+                margin-top: 20px;
+            ">
+                <div style="text-align: center;">
+                    {escudo_borussia}
+                    <div style="font-size: 24px; font-weight: bold; margin-top: 8px;">
+                        🏆 {placar_borussia}
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 35px;">
+                    <div style="font-size: 18px; margin-bottom: 5px;">Partida #{numero_partida}</div>
+                    <div style="font-size: 16px;">{data.strftime('%d/%m/%Y')}</div>
+                </div>
+
+                <div style="text-align: center;">
+                    {escudo_inter}
+                    <div style="font-size: 24px; font-weight: bold; margin-top: 8px;">
+                        🏆 {placar_inter}
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         if st.button("Registrar"):
             nova = {
@@ -982,14 +997,11 @@ else:
 
             partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
 
-            # carrega os dados restantes antes de salvar
             _, jogadores, usuarios, presencas = load_data()
-
             save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
             st.success("✅ Partida registrada com sucesso!")
 
-            # limpa os campos
             for key in ["gols_borussia", "gols_inter"]:
                 if key in st.session_state:
                     del st.session_state[key]
@@ -1001,6 +1013,7 @@ else:
         st.dataframe(partidas)
 
         return partidas
+
 
 
 
