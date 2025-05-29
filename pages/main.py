@@ -994,7 +994,6 @@ else:
             escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
             escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
-        st.markdown("---")
         st.markdown(f"<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida: #{numero_partida}</h5><br>", unsafe_allow_html=True)
         st.markdown(
             f"""
@@ -1013,8 +1012,6 @@ else:
             <div style="text-align: left; min-width: 70px;"><p style="font-size: 30px;">{placar_inter}</p></div>
             """, unsafe_allow_html=True
         )
-
-        st.markdown("---")
 
         if st.button("Registrar"):
             nova = {
@@ -1041,8 +1038,8 @@ else:
             st.rerun()
 
         st.markdown("---")
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>✏️ Editar ou Excluir Partida Registrada</h5>", unsafe_allow_html=True)
 
-        st.markdown("### ✏️ Editar ou Excluir Partida Registrada")
 
         if not partidas.empty:
             opcoes = [
