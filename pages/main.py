@@ -1100,70 +1100,7 @@ else:
     # Tela de sorteio
     def tela_sorteio():
         st.title("🎲 Sorteio de Times")
-
-        st.markdown("Os jogadores confirmados serão divididos aleatoriamente entre Borussia e Inter.")
-
-        # carrega dados
-        if "dados_gsheets" not in st.session_state:
-            st.session_state["dados_gsheets"] = load_data()
-        _, _, usuarios, presencas = st.session_state["dados_gsheets"]
-
-        hoje = datetime.now().date()
-
-        # pega a data da próxima quinta
-        dias_para_quinta = (3 - hoje.weekday()) % 7
-        proxima_quinta = hoje + timedelta(days=dias_para_quinta)
-        data_partida = proxima_quinta.strftime("%d/%m/%Y")
-
-        # filtra jogadores confirmados
-        confirmados_df = presencas[
-            (presencas["Data da partida"] == data_partida) & (presencas["Presença"].str.lower() == "sim")
-        ]
-        nomes_confirmados = confirmados_df["Nome do Jogador"].dropna().unique().tolist()
-
-        if not nomes_confirmados:
-            st.warning("⚠️ Nenhum jogador confirmou presença para o próximo jogo.")
-            return
-
-        # embaralha e divide em dois times
-        random.shuffle(nomes_confirmados)
-        meio = len(nomes_confirmados) // 2
-        time_borussia = nomes_confirmados[:meio]
-        time_inter = nomes_confirmados[meio:]
-
-        # escudos
-        escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
-        escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
-
-        # exibição com escudos
-        st.markdown("---")
-        st.markdown(
-            f"""
-            <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
-                {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold;">⚔️</div>
-                {escudo_inter}
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        st.markdown("---")
-
-        # mostrar nomes dos jogadores
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.subheader("🟡 Borussia")
-            for jogador in time_borussia:
-                st.markdown(f"- {jogador}")
-
-        with col2:
-            st.subheader("🔵 Inter")
-            for jogador in time_inter:
-                st.markdown(f"- {jogador}")
-
-        st.markdown("---")
-        st.info("O sorteio é aleatório e feito com base apenas nos jogadores que confirmaram presença.")
+        st.markdown("⚠️ Em breve...")
 
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
