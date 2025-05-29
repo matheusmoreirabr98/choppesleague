@@ -922,9 +922,11 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
+                    {placar_borussia}
                 <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
                 </div>
                     {escudo_inter}
+                    {placar_inter}
                 </div>
             """,
             unsafe_allow_html=True,
@@ -967,40 +969,6 @@ else:
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
 
-            st.markdown(
-                f"""
-                <div style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 50px;
-                    margin-top: 20px;
-                    flex-wrap: wrap;
-                ">
-                    <div style="text-align: center; min-width: 80px;">
-                        <p style="font-size: 30px;">🏆 - {placar_borussia}</p>
-                    </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            st.markdown(
-                f"""
-                <div style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 50px;
-                    margin-top: 20px;
-                    flex-wrap: wrap;
-                ">
-                    <div style="text-align: center; min-width: 80px;">
-                        <p style="font-size: 30px;">🏆 - {placar_inter}</p>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
 
         if st.button("Registrar"):
             nova = {
