@@ -1083,9 +1083,9 @@ else:
                     nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
 
                     novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
-                    novo_gols_borussia = st.text_input("Gols Borussia (separar por vírgula)", value=row["Gols Borussia"])
+                    novo_gols_borussia = st.text_input("Goleadores Borussia", value=row["Gols Borussia"])
                     novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
-                    novo_gols_inter = st.text_input("Gols Inter (separar por vírgula)", value=row["Gols Inter"])
+                    novo_gols_inter = st.text_input("Goleadores Inter", value=row["Gols Inter"])
 
                     col1, col2 = st.columns(2)
                     with col1:
