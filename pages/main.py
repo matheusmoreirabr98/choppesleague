@@ -999,7 +999,7 @@ else:
                 margin-top: 20px;
                 flex-wrap: wrap;
             ">
-            <div style="text-align: right; min-width: 80px;">
+            <div style="text-align: right; min-width: 100px;">
                 <p style="font-size: 30px;">
                     {placar_borussia}
                 </p>
@@ -1008,7 +1008,7 @@ else:
                 <p style="font-size: 30px;">
                 </p>
             </div>
-            <div style="text-align: left; min-width: 80px;">
+            <div style="text-align: left; min-width: 10px;">
                 <p style="font-size: 30px;">
                     {placar_inter}
                 </p>
