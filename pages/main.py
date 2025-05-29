@@ -748,7 +748,7 @@ else:
                 columns=[
                     "Data",
                     "Número da Partida",
-                    "Placar Borussia",
+                    "Borussia",
                     "Gols Borussia",
                     "Assistências Borussia",
                     "Placar Inter",
@@ -1020,7 +1020,7 @@ else:
             nova = {
                 "Data": data.strftime("%d/%m/%Y"),
                 "Número da Partida": numero_partida,
-                "Placar Borussia": placar_borussia,
+                "Borussia": placar_borussia,
                 "Gols Borussia": ", ".join(gols_borussia),
                 "Placar Inter": placar_inter,
                 "Gols Inter": ", ".join(gols_inter),
@@ -1046,7 +1046,7 @@ else:
 
         if not partidas.empty:
             opcoes = [
-                f"#{row['Número da Partida']} – {row['Data']} – Borussia {row['Placar Borussia']} x {row['Placar Inter']} Inter"
+                f"#{row['Número da Partida']} – {row['Data']} – Borussia {row['Borussia']} x {row['Placar Inter']} Inter"
                 for _, row in partidas.iterrows()
             ]
             partida_escolhida = st.selectbox("Selecione a partida:", opcoes)
@@ -1082,7 +1082,7 @@ else:
                 with st.form("form_edicao_partida"):
                     nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
 
-                    novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
+                    novo_placar_borussia = st.number_input("Borussia", value=int(row["Borussia"]), min_value=0, max_value=2)
                     novo_gols_borussia = st.text_input("Gols Borussia (separar por vírgula)", value=row["Gols Borussia"])
                     novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
                     novo_gols_inter = st.text_input("Gols Inter (separar por vírgula)", value=row["Gols Inter"])
@@ -1095,7 +1095,7 @@ else:
 
                 if salvar:
                     partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
-                    partidas.at[index, "Placar Borussia"] = int(novo_placar_borussia)
+                    partidas.at[index, "Borussia"] = int(novo_placar_borussia)
                     partidas.at[index, "Gols Borussia"] = novo_gols_borussia
                     partidas.at[index, "Placar Inter"] = int(novo_placar_inter)
                     partidas.at[index, "Gols Inter"] = novo_gols_inter
@@ -1139,7 +1139,7 @@ else:
         )
 
         # Configura DataFrame com índice começando de 1
-        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+        partidas = partidas.dropna(subset=["Data", "Partida #"]).reset_index(drop=True)
         partidas.index = partidas.index + 1
         partidas.index.name = "#"
 
@@ -1707,7 +1707,7 @@ else:
             columns=[
                 "Data",
                 "Número da Partida",
-                "Placar Borussia",
+                "Borussia",
                 "Gols Borussia",
                 "Placar Inter",
                 "Gols Inter",
