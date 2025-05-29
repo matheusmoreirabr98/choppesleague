@@ -1083,7 +1083,7 @@ else:
                     st.rerun()
 
             if st.session_state.mostrar_edicao_partida:
-    jogadores = st.session_state["dados_gsheets"][1]
+                jogadores = st.session_state["dados_gsheets"][1]
 
     with st.form("form_edicao_partida"):
         nova_data = st.date_input(
