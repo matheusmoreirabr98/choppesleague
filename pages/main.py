@@ -474,7 +474,22 @@ else:
     # garante que sempre selecionamos uma opção válida da lista
     pagina_ativa = st.session_state.pagina_atual
 
-    # exibe o selectbox somente se não estiver no Meu Perfil
+
+    st.markdown(
+        """
+        <style>
+            div[data-baseweb="select"] input {
+                pointer-events: none;
+                caret-color: transparent !important;
+            }
+            div[data-baseweb="select"] input:focus {
+                outline: none !important;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
     # exibimos o selectbox sempre — inclusive no perfil
     pagina_escolhida = st.selectbox(
         "",  # label obrigatória
