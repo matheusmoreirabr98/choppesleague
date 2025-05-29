@@ -917,38 +917,37 @@ else:
 
 
     # Tela de registro das partidas
-    def registrar_partidas(partidas):
+    def registrar_partidas():
         st.markdown("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>", unsafe_allow_html=True)
         st.markdown("---")
 
-        # carrega os dados logo no início
+        # carrega os dados do session_state ou do GSheets
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
-
         partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
-
-        # garante que a coluna de Data está no formato correto
-        if not partidas.empty and "Data" in partidas.columns:
-            partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce").dt.date
-        else:
-            partidas["Data"] = pd.Series([], dtype="datetime64[ns]")  # inicializa vazio se necessário
-
-        # define número da nova partida com base na data
-        partidas_do_dia = partidas[partidas["Data"] == data]
-        numero_partida = len(partidas_do_dia) + 1
 
         # 🟢 inicializa form_id para controle dos multiselects
         if "form_id" not in st.session_state:
             st.session_state["form_id"] = 0
 
+        # garante que colunas estejam no formato correto
+        if not partidas.empty:
+            partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True).dt.date
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
-        jogadores_presentes_data = presencas[
-            (presencas["DataPartida"] == data) & (presencas["Presença"] == "Sim")
-        ]["Nome"].tolist()
+
+        # seleção de data da partida
+        data = st.date_input("📅 Data da partida")
+
+        # define número da nova partida com base nas partidas da mesma data
+        partidas_do_dia = partidas[partidas["Data"] == data]
+        numero_partida = len(partidas_do_dia) + 1
+
+        # filtra jogadores presentes
+        jogadores_presentes_data = presencas[(presencas["DataPartida"] == data) & (presencas["Presença"] == "Sim")]["Nome"].tolist()
 
         if not jogadores_presentes_data:
             st.warning("⚠️ Nenhum jogador confirmou presença para esta data.")
-            return partidas
+            return
 
         jogadores_originais = jogadores_presentes_data
 
@@ -973,9 +972,7 @@ else:
 
         with col2:
             jogadores_indisponiveis = set(gols_borussia)
-            lista_inter = ["Ninguém marcou"] + [
-                j for j in jogadores_originais if j not in jogadores_indisponiveis
-            ]
+            lista_inter = ["Ninguém marcou"] + [j for j in jogadores_originais if j not in jogadores_indisponiveis]
             gols_inter = st.multiselect(
                 "Goleadores (Inter)",
                 options=lista_inter,
@@ -991,68 +988,33 @@ else:
 
             placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
 
-            # ❌ Impedir resultado 2x2
             if placar_borussia == 2 and placar_inter == 2:
                 st.error("Empate em 2x2 não é permitido. Ajuste os goleadores.")
 
-
-            # Agora que os placares foram definidos, renderizamos os escudos e placares
             escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
             escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
         st.markdown("---")
-            
-        st.markdown(f"<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida: #{numero_partida}</h5><br>",
-        unsafe_allow_html=True,
-        )
+        st.markdown(f"<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida: #{numero_partida}</h5><br>", unsafe_allow_html=True)
         st.markdown(
             f"""
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: right;
-                    gap: 50px;
-                    flex-wrap: nowrap;
-                ">
+                <div style="display: flex; justify-content: center; align-items: right; gap: 50px; flex-wrap: nowrap;">
                     {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-                </div>
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
                     {escudo_inter}
                 </div>
-            """,
-            unsafe_allow_html=True,
+            """, unsafe_allow_html=True
         )
-
         st.markdown(
             f"""
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: left;
-                gap: 50px;
-                margin-top: 20px;
-                flex-wrap: wrap;
-            ">
-            <div style="text-align: right; min-width: 70px;">
-                <p style="font-size: 30px;">
-                    {placar_borussia}
-                </p>
-            </div>
-            <div style="text-align: center; min-width: 70px;">
-                <p style="font-size: 30px;">
-                </p>
-            </div>
-            <div style="text-align: left; min-width: 70px;">
-                <p style="font-size: 30px;">
-                    {placar_inter}
-                </p>
-            </div>
-        """,
-            unsafe_allow_html=True,
+            <div style="display: flex; justify-content: space-between; align-items: left; gap: 50px; margin-top: 20px; flex-wrap: wrap;">
+            <div style="text-align: right; min-width: 70px;"><p style="font-size: 30px;">{placar_borussia}</p></div>
+            <div style="text-align: center; min-width: 70px;"><p style="font-size: 30px;"></p></div>
+            <div style="text-align: left; min-width: 70px;"><p style="font-size: 30px;">{placar_inter}</p></div>
+            """, unsafe_allow_html=True
         )
 
         st.markdown("---")
-        
 
         if st.button("Registrar"):
             nova = {
@@ -1066,22 +1028,16 @@ else:
 
             partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
 
-            # 🧼 limpa o DataFrame antes de salvar
             partidas_limpo = partidas.fillna("").astype(str)
             jogadores_limpo = jogadores.fillna("").astype(str)
             presencas_limpo = presencas.fillna("").astype(str)
 
             save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo)
-
             st.success("✅ Partida registrada com sucesso!")
-            time.sleep(3)
+            time.sleep(2)
 
-            # atualiza o estado com o novo DataFrame
             st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
-
-            # limpa seleção dos goleadores
             st.session_state["form_id"] += 1
-
             st.rerun()
 
         st.markdown("---")
@@ -1089,6 +1045,7 @@ else:
         st.dataframe(partidas)
 
         return partidas
+
 
 
 
