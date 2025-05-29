@@ -440,9 +440,9 @@ else:
     # --- SIDEBAR --- (imagem e nome apenas)
     with st.sidebar:
         st.image("./imagens/logo.png", width=200)
+        st.markdown("")
         st.markdown(f"👟 Jogador: **{st.session_state.nome}**")
-
-        st.markdown("---")
+        st.markdown("")
 
     if st.session_state.tipo_usuario == "admin":
         opcoes = [
@@ -474,7 +474,6 @@ else:
     # garante que sempre selecionamos uma opção válida da lista
     pagina_ativa = st.session_state.pagina_atual
 
-    # exibe o selectbox somente se não estiver no Meu Perfil
     # exibimos o selectbox sempre — inclusive no perfil
     pagina_escolhida = st.selectbox(
         "",  # label obrigatória
@@ -500,19 +499,14 @@ else:
     confirmar_clicado = False
 
     with st.sidebar:
-        # Centraliza botão Meu Perfil
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            if st.button("👤 Meu Perfil"):
-                st.session_state.pagina_atual = "👤 Meu Perfil"
-
-        # Centraliza botão Logout ou confirma/cancela
+        # Botão "Meu Perfil" centralizado (opcional)
+        st.button("👤 Meu Perfil", use_container_width=True, on_click=lambda: st.session_state.update(pagina_atual="👤 Meu Perfil"))
+        st.write("")
+        
+        # Botão "Logout" ocupando toda a largura
         if not st.session_state.get("confirmar_logout", False):
-            col1, col2, col3 = st.columns([1, 2, 1])
-            with col2:
-                if st.button("🚪 Logout", key="botao_logout"):
-                    st.session_state.confirmar_logout = True
-                    st.rerun()
+            st.button("🚪 Logout", use_container_width=True, key="botao_logout", on_click=lambda: st.session_state.update(confirmar_logout=True))
+            st.write("")
         else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
@@ -718,7 +712,6 @@ else:
                             display: none !important;
                         }}
                     </style>
-
                     <div style="text-align: center;">
                         <p style='font-weight: bold;'>🎵 Música Ambiente</p>
                         </audio>
@@ -932,7 +925,7 @@ else:
 
         # garante que colunas estejam no formato correto
         if not partidas.empty:
-            partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True).dt.date
+            partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
 
         # seleção de data da partida
@@ -994,7 +987,6 @@ else:
             escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
             escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
-        st.markdown("---")
         st.markdown(f"<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida: #{numero_partida}</h5><br>", unsafe_allow_html=True)
         st.markdown(
             f"""
@@ -1013,8 +1005,6 @@ else:
             <div style="text-align: left; min-width: 70px;"><p style="font-size: 30px;">{placar_inter}</p></div>
             """, unsafe_allow_html=True
         )
-
-        st.markdown("---")
 
         if st.button("Registrar"):
             nova = {
@@ -1041,8 +1031,8 @@ else:
             st.rerun()
 
         st.markdown("---")
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>✏️ Editar ou Excluir Partida Registrada</h5>", unsafe_allow_html=True)
 
-        st.markdown("### ✏️ Editar ou Excluir Partida Registrada")
 
         if not partidas.empty:
             opcoes = [
@@ -1057,15 +1047,16 @@ else:
             if "mostrar_edicao_partida" not in st.session_state:
                 st.session_state.mostrar_edicao_partida = False
 
-            col1, col2 = st.columns(2)
+            col1, col2 = st.columns([1, 1])  # Largura adequada para os botões
             with col1:
-                if st.button("✏️ Editar Partida"):
+                if st.button("✏️ Editar Partida", use_container_width=True):
                     st.session_state.mostrar_edicao_partida = True
+
             with col2:
-                if st.button("🗑️ Excluir Partida"):
+                if st.button("🗑️ Excluir Partida", use_container_width=True):
                     partidas = partidas.drop(partidas.index[index]).reset_index(drop=True)
 
-                    # renumera as partidas
+                    # Renumera as partidas
                     partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce")
                     partidas = partidas.sort_values(by=["Data_Ordenada", "Número da Partida"]).reset_index(drop=True)
                     partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
@@ -1088,7 +1079,7 @@ else:
                     novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
                     novo_gols_inter = st.text_input("Goleadores Inter", value=row["Gols Inter"])
 
-                    col1, col2 = st.columns(2)
+                    col1, col2 = st.columns([1, 1])  # Largura adequada para os botões
                     with col1:
                         salvar = st.form_submit_button("💾 Salvar Alterações")
                     with col2:
@@ -1121,8 +1112,9 @@ else:
                     st.rerun()
         else:
             st.info("Nenhuma partida registrada ainda.")
+        st.markdown("---")
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>📋 Histórico de Partidas Registradas</h5>", unsafe_allow_html=True)
 
-        st.subheader("📋 Histórico de Partidas Registradas:")
 
         # Limpa dados incompletos
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
