@@ -926,7 +926,7 @@ else:
         # garante que colunas estejam no formato correto
         if not partidas.empty:
             partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True).dt.date
-        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
+            presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
 
         # seleção de data da partida
         data = st.date_input("📅 Data da partida")
