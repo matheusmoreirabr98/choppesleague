@@ -918,34 +918,49 @@ else:
             ],
         )
 
-        col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
-        with col1:
-            lista_borussia = ["Ninguém marcou"] + jogadores_originais * 2
-            gols_borussia = st.multiselect(
-                "Goleadores (Borussia)", lista_borussia, key="gols_borussia"
-            )
-            placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
+    with col1:
+        lista_borussia = ["Ninguém marcou"] + jogadores_originais
+        gols_borussia = st.multiselect(
+            "Goleadores (Borussia)",
+            options=lista_borussia,
+            default=[],
+            max_selections=2,
+            key="gols_borussia",
+            help="Máximo 2 jogadores"
+        )
+        if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
+            st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
+            gols_borussia = ["Ninguém marcou"]
+            st.session_state["gols_borussia"] = ["Ninguém marcou"]
 
-            if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
-                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
-                gols_borussia = ["Ninguém marcou"]
-                st.session_state["gols_borussia"] = ["Ninguém marcou"]
+        placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
 
-        with col2:
-            jogadores_indisponiveis = set(gols_borussia)
-            lista_inter = ["Ninguém marcou"] + [
-                j for j in jogadores_originais if j not in jogadores_indisponiveis
-            ] * 2
-            gols_inter = st.multiselect(
-                "Goleadores (Inter)", lista_inter, key="gols_inter"
-            )
-            placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
+    with col2:
+        jogadores_indisponiveis = set(gols_borussia)
+        lista_inter = ["Ninguém marcou"] + [
+            j for j in jogadores_originais if j not in jogadores_indisponiveis
+        ]
+        gols_inter = st.multiselect(
+            "Goleadores (Inter)",
+            options=lista_inter,
+            default=[],
+            max_selections=2,
+            key="gols_inter",
+            help="Máximo 2 jogadores"
+        )
+        if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
+            st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
+            gols_inter = ["Ninguém marcou"]
+            st.session_state["gols_inter"] = ["Ninguém marcou"]
 
-            if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
-                st.warning("Você não pode selecionar jogadores junto com 'Ninguém marcou'")
-                gols_inter = ["Ninguém marcou"]
-                st.session_state["gols_inter"] = ["Ninguém marcou"]
+        placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
+
+    # ❌ Impedir resultado 2x2
+    if placar_borussia == 2 and placar_inter == 2:
+        st.error("Empate em 2x2 não é permitido. Ajuste os goleadores.")
+
 
         # Agora que os placares foram definidos, renderizamos os escudos e placares
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
