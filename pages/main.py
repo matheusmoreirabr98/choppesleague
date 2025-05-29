@@ -1041,11 +1041,6 @@ else:
             st.rerun()
 
         st.markdown("---")
-        st.subheader("📋 Histórico de Partidas Registradas:")
-        st.dataframe(partidas.reset_index(drop=True))
-        
-        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
-
 
         st.markdown("### ✏️ Editar ou Excluir Partida Registrada")
 
@@ -1124,6 +1119,11 @@ else:
                     st.rerun()
         else:
             st.info("Nenhuma partida registrada ainda.")
+
+        st.subheader("📋 Histórico de Partidas Registradas:")
+        st.dataframe(partidas.reset_index(drop=True))
+        
+        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
 
 
 
