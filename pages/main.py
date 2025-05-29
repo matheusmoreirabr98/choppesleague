@@ -279,6 +279,11 @@ def tela_login():
                 "<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>",
                 unsafe_allow_html=True,
             )
+
+            if st.button("🔙 Voltar para o login"):
+                st.session_state.modo_recuperacao = False
+                st.rerun()
+
             email = st.text_input("E-mail cadastrado", key="rec_email_final")
 
             if email in usuarios and usuarios[email].get("dica_palavra_chave"):
