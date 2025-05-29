@@ -24,10 +24,6 @@ NOME_PLANILHA = "ChoppsLeague"
 EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "admin@teste.com"]
 
 
-
-
-
-
 st.set_page_config(page_title="Chopp's League", page_icon="🍻")
 
 
@@ -39,11 +35,14 @@ def autenticar_gsheets():
     cred_json_str = st.secrets["gsheets_cred"]
     cred_json = json.loads(cred_json_str)
 
-    scope = ['https://spreadsheets.google.com/feeds',
-             'https://www.googleapis.com/auth/drive']
+    scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive",
+    ]
 
     creds = gspread.service_account_from_dict(cred_json, scopes=scope)
     return creds
+
 
 # -----------------------------------------
 # Inicialização: cria planilhas se não existirem
@@ -54,28 +53,65 @@ def init_data_gsheets():
     existentes = [ws.title for ws in sh.worksheets()]
 
     if "Usuarios" not in existentes:
-        df_usuarios = pd.DataFrame(columns=[
-            "email", "nome", "posicao", "nascimento", "telefone", "senha",
-            "palavra_chave", "dica_palavra_chave", "tipo"
-        ])
+        df_usuarios = pd.DataFrame(
+            columns=[
+                "email",
+                "nome",
+                "posicao",
+                "nascimento",
+                "telefone",
+                "senha",
+                "palavra_chave",
+                "dica_palavra_chave",
+                "tipo",
+            ]
+        )
         sh.add_worksheet(title="Usuarios", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Usuarios"), df_usuarios)
 
     if "Partidas" not in existentes:
-        df_partidas = pd.DataFrame(columns=[
-            "Data da partida", "Nº Partida", "Placar Borrusia", "Gols Borrusia",
-            "Assistências Borrusia", "Placar Inter", "Gols Inter", "Assistências Inter"
-        ])
+        df_partidas = pd.DataFrame(
+            columns=[
+                "Data da partida",
+                "Nº Partida",
+                "Placar Borrusia",
+                "Gols Borrusia",
+                "Assistências Borrusia",
+                "Placar Inter",
+                "Gols Inter",
+                "Assistências Inter",
+            ]
+        )
         sh.add_worksheet(title="Partidas", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Partidas"), df_partidas)
 
     if "Jogadores" not in existentes:
-        df_jogadores = pd.DataFrame(columns=[
-            "Nome", "Time", "Gols", "Assistências", "Faltas",
-            "Cartões Amarelos", "Cartões Vermelhos"
-        ])
+        df_jogadores = pd.DataFrame(
+            columns=[
+                "Nome",
+                "Time",
+                "Gols",
+                "Assistências",
+                "Faltas",
+                "Cartões Amarelos",
+                "Cartões Vermelhos",
+            ]
+        )
         sh.add_worksheet(title="Jogadores", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Jogadores"), df_jogadores)
+
+    if "Presenças" not in existentes:
+        df_presencas = pd.DataFrame(
+            columns=[
+                "Data da partida",
+                "Nº Partida",
+                "Nome do Jogador",
+                "Presença"  # Sim ou Não
+            ]
+        )
+        sh.add_worksheet(title="Presenças", rows="100", cols="20")
+        set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
+
 
 # -----------------------------------------
 # Carregar dados das planilhas
@@ -85,7 +121,7 @@ def load_data_gsheets():
     sh = gc.open(NOME_PLANILHA)
 
     # Lista das abas obrigatórias
-    abas_necessarias = ["Partidas", "Jogadores", "Usuarios"]
+    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças"]
     abas_existentes = [w.title for w in sh.worksheets()]
 
     # Cria as abas que estiverem faltando
@@ -94,35 +130,47 @@ def load_data_gsheets():
             sh.add_worksheet(title=aba, rows=1000, cols=20)
 
     # Carrega os dados das abas
-    partidas = get_as_dataframe(sh.worksheet("Partidas")).dropna(how='all')
-    jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how='all')
-    usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how='all')
+    partidas = get_as_dataframe(sh.worksheet("Partidas")).dropna(how="all")
+    jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how="all")
+    usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how="all")
+    presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how="all")
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
-    if not usuarios_df.empty and 'email' in usuarios_df.columns:
+    if not usuarios_df.empty and "email" in usuarios_df.columns:
         for _, row in usuarios_df.iterrows():
-            if pd.notna(row['email']):
-                usuarios[row['email']] = row.drop(labels='email').to_dict()
+            if pd.notna(row["email"]):
+                usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios
+    return partidas, jogadores, usuarios, presencas
+
 
 # -----------------------------------------
 # Salvar dados nas planilhas
 # -----------------------------------------
-def save_data_gsheets(partidas, jogadores, usuarios):
+def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
-    if isinstance(partidas, list): partidas = pd.DataFrame(partidas)
-    if isinstance(jogadores, list): jogadores = pd.DataFrame(jogadores)
+    if isinstance(partidas, list):
+        partidas = pd.DataFrame(partidas)
+    if isinstance(jogadores, list):
+        jogadores = pd.DataFrame(jogadores)
+    if isinstance(presencas, list):
+        presencas = pd.DataFrame(presencas)
 
     # Converter dicionário de usuários para DataFrame
-    usuarios_df = pd.DataFrame.from_dict(usuarios, orient='index').reset_index().rename(columns={"index": "email"})
+    usuarios_df = (
+        pd.DataFrame.from_dict(usuarios, orient="index")
+        .reset_index()
+        .rename(columns={"index": "email"})
+    )
 
     set_with_dataframe(sh.worksheet("Partidas"), partidas)
     set_with_dataframe(sh.worksheet("Jogadores"), jogadores)
     set_with_dataframe(sh.worksheet("Usuarios"), usuarios_df)
+    set_with_dataframe(sh.worksheet("Presenças"), presencas)
+
 
 # -----------------------------------------
 # Abstrações para carregar/salvar
@@ -130,8 +178,10 @@ def save_data_gsheets(partidas, jogadores, usuarios):
 def load_data():
     return load_data_gsheets()
 
-def save_data(partidas, jogadores, usuarios):
-    save_data_gsheets(partidas, jogadores, usuarios)
+
+def save_data(partidas, jogadores, usuarios, presencas):
+    save_data_gsheets(partidas, jogadores, usuarios, presencas)
+
 
 # Sessões iniciais
 if "usuario_logado" not in st.session_state:
@@ -150,25 +200,36 @@ if "modo_recuperacao" not in st.session_state:
     st.session_state.modo_recuperacao = False
 if "mostrar_senha_login" not in st.session_state:
     st.session_state.mostrar_senha_login = False
-    
+if "presencas" not in st.session_state:
+    st.session_state.presencas = pd.DataFrame()
+
 # Funções auxiliares
 
+
 def email_valido(email):
-        return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+
 
 def formatar_telefone(numero):
-    numeros = re.sub(r'\D', '', numero)
+    numeros = re.sub(r"\D", "", numero)
     if len(numeros) == 11:
         return f"({numeros[:2]}) {numeros[2:7]}-{numeros[7:]}"
     return numero
 
     # --- TELA DE LOGIN / CADASTRO ---
+
+
 def tela_login():
 
-    st.markdown("<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>", unsafe_allow_html=True)
-    aba = st.radio("Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True)
+    st.markdown(
+        "<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>",
+        unsafe_allow_html=True,
+    )
+    aba = st.radio(
+        "Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True
+    )
 
-    _, _, usuarios = load_data()  # ← lê os usuários direto da planilha
+    partidas, jogadores, usuarios, presencas = load_data()  # ← lê os usuários direto da planilha
 
     # LOGIN
     if aba == "Login":
@@ -176,14 +237,18 @@ def tela_login():
             with st.form("form_login"):
                 email = st.text_input("E-mail", key="login_email")
                 senha = st.text_input("Senha", type="password", key="login_senha")
-                st.markdown("<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True)
+                st.markdown(
+                    "<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True
+                )
                 submit = st.form_submit_button("Entrar")
 
             if submit:
                 if email in usuarios and usuarios[email]["senha"] == senha:
                     st.session_state.usuario_logado = True
                     st.session_state.nome = usuarios[email]["nome"]
-                    st.session_state.tipo_usuario = usuarios[email].get("tipo", "usuario")
+                    st.session_state.tipo_usuario = usuarios[email].get(
+                        "tipo", "usuario"
+                    )
                     st.session_state.email = email
                     st.session_state.pagina_atual = "🏠 Tela Principal"
                     st.rerun()
@@ -196,16 +261,27 @@ def tela_login():
                 st.rerun()
 
         if st.session_state.modo_recuperacao:
-            st.markdown("<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>", unsafe_allow_html=True)
+            st.markdown(
+                "<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>",
+                unsafe_allow_html=True,
+            )
             email = st.text_input("E-mail cadastrado", key="rec_email_final")
 
             if email in usuarios and usuarios[email].get("dica_palavra_chave"):
                 st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
 
             with st.form("form_esqueci"):
-                palavra_chave_rec = st.text_input("Palavra-chave", key="palavra_chave_rec_final")
-                nova_senha = st.text_input("Nova senha", type="password", key="nova_senha_final")
-                confirmar_nova_senha = st.text_input("Confirme a nova senha", type="password", key="conf_nova_senha_final")
+                palavra_chave_rec = st.text_input(
+                    "Palavra-chave", key="palavra_chave_rec_final"
+                )
+                nova_senha = st.text_input(
+                    "Nova senha", type="password", key="nova_senha_final"
+                )
+                confirmar_nova_senha = st.text_input(
+                    "Confirme a nova senha",
+                    type="password",
+                    key="conf_nova_senha_final",
+                )
                 confirmar = st.form_submit_button("Atualizar senha")
 
                 if confirmar:
@@ -218,7 +294,7 @@ def tela_login():
                     else:
                         usuarios[email]["senha"] = nova_senha
                         partidas, jogadores, _ = load_data()
-                        save_data(partidas, jogadores, usuarios)
+                        save_data(partidas, jogadores, usuarios, presencas)
                         st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
                         st.rerun()
@@ -226,31 +302,79 @@ def tela_login():
     # CADASTRO
     elif aba == "Cadastro":
         with st.form("form_cadastro"):
-            nome = st.text_input("Nome completo", key="cad_nome", placeholder="Digite seu nome completo", autocomplete="name")
-            posicao = st.selectbox("Posição que joga", ["Linha", "Goleiro"], key="cad_pos")
-            raw_nascimento = st.text_input("Data de nascimento (DD/MM/AAAA)", key="cad_nasc", placeholder="ddmmaaaa", autocomplete="bday")
-            nascimento = re.sub(r'\D', '', raw_nascimento)
+            nome = st.text_input(
+                "Nome completo",
+                key="cad_nome",
+                placeholder="Digite seu nome completo",
+                autocomplete="name",
+            )
+            posicao = st.selectbox(
+                "Posição que joga", ["Linha", "Goleiro"], key="cad_pos"
+            )
+            raw_nascimento = st.text_input(
+                "Data de nascimento (DD/MM/AAAA)",
+                key="cad_nasc",
+                placeholder="ddmmaaaa",
+                autocomplete="bday",
+            )
+            nascimento = re.sub(r"\D", "", raw_nascimento)
             if len(nascimento) >= 5:
-                nascimento = nascimento[:2] + '/' + nascimento[2:4] + ('/' + nascimento[4:8] if len(nascimento) > 4 else '')
-            telefone = st.text_input("WhatsApp - Ex: 3199475512", key="cad_tel", placeholder="(DDD) número", autocomplete="tel")
-            email = st.text_input("E-mail", key="cad_email", autocomplete="email")
+                nascimento = (
+                    nascimento[:2]
+                    + "/"
+                    + nascimento[2:4]
+                    + ("/" + nascimento[4:8] if len(nascimento) > 4 else "")
+                )
+            telefone = st.text_input(
+                "WhatsApp - Ex: 3199475512",
+                key="cad_tel",
+                placeholder="(DDD) número",
+                autocomplete="tel",
+            )
+            email = st.text_input(
+                "E-mail", key="cad_email", autocomplete="email"
+            ).lower()
             senha = st.text_input("Senha", type="password", key="cad_senha")
-            confirmar_senha = st.text_input("Confirme a senha", type="password", key="cad_conf_senha")
-            palavra_chave = st.text_input("Palavra-chave (para recuperar a senha)", key="cad_palavra", help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.")
-            dica_palavra_chave = st.text_input("Dica da palavra-chave", key="cad_dica", help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.")
+            confirmar_senha = st.text_input(
+                "Confirme a senha", type="password", key="cad_conf_senha"
+            )
+            palavra_chave = st.text_input(
+                "Palavra-chave (para recuperar a senha)",
+                key="cad_palavra",
+                help="Use algo que você consiga lembrar. Será necessária para redefinir sua senha no futuro.",
+            )
+            dica_palavra_chave = st.text_input(
+                "Dica da palavra-chave",
+                key="cad_dica",
+                help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.",
+            )
             submit = st.form_submit_button("Cadastrar")
 
             erros = []
 
             if submit:
-                if not nome or not posicao or not nascimento or not telefone or not email or not senha or not confirmar_senha or not palavra_chave or not dica_palavra_chave:
+                if (
+                    not nome
+                    or not posicao
+                    or not nascimento
+                    or not telefone
+                    or not email
+                    or not senha
+                    or not confirmar_senha
+                    or not palavra_chave
+                    or not dica_palavra_chave
+                ):
                     erros.append("⚠ Todos os campos devem ser preenchidos.")
-                if not re.match(r'^\d{2}/\d{2}/\d{4}$', nascimento):
-                    erros.append("📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA.")
+                if not re.match(r"^\d{2}/\d{2}/\d{4}$", nascimento):
+                    erros.append(
+                        "📅 O campo 'Data de nascimento' deve estar no formato DD/MM/AAAA."
+                    )
                 if not telefone.isdigit():
                     erros.append("📞 O campo 'WhatsApp' deve conter apenas números.")
                 if not email_valido(email):
-                    erros.append("✉ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com).")
+                    erros.append(
+                        "✉ O campo 'E-mail' deve conter um endereço válido (ex: nome@exemplo.com)."
+                    )
                 if senha != confirmar_senha:
                     erros.append("🔐 As senhas não coincidem.")
 
@@ -262,7 +386,7 @@ def tela_login():
             if submit:
                 if email in usuarios:
                     st.warning("Este e-mail já está cadastrado.")
-                elif len(re.sub(r'\D', '', telefone)) != 11:
+                elif len(re.sub(r"\D", "", telefone)) != 11:
                     st.warning("Telefone deve conter 11 dígitos.")
                 else:
                     usuarios[email] = {
@@ -273,11 +397,12 @@ def tela_login():
                         "senha": senha,
                         "palavra_chave": palavra_chave,
                         "dica_palavra_chave": dica_palavra_chave,
-                        "tipo": "admin" if email in EMAILS_ADMIN else "usuario"
+                        "tipo": "admin" if email in EMAILS_ADMIN else "usuario",
                     }
 
-                    partidas, jogadores, _ = load_data()
-                    save_data(partidas, jogadores, usuarios)
+                    partidas, jogadores, usuarios, presencas = load_data()
+
+                    save_data(partidas, jogadores, usuarios, presencas)
 
                     st.success("Cadastro realizado! Agora faça login.")
 
