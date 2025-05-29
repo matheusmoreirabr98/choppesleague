@@ -910,7 +910,6 @@ else:
 
         numero_partida = len(partidas) + 1
         data = st.date_input("📅 Data da partida")
-        st.markdown(f"**Número da Partida:** {numero_partida}")
 
         jogadores_originais = st.session_state.get(
             "jogadores_presentes",
