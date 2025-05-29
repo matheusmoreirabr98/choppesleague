@@ -307,7 +307,7 @@ def tela_login():
                         st.error("As novas senhas não coincidem.")
                     else:
                         usuarios[email]["senha"] = nova_senha
-                        partidas, jogadores, _ = load_data()
+                        partidas, jogadores, _, _ = load_data()
                         save_data(partidas, jogadores, usuarios, presencas)
                         st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
