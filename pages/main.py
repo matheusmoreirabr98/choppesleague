@@ -507,7 +507,8 @@ else:
 
         # Botão "Logout" ocupando toda a largura
         if not st.session_state.get("confirmar_logout", False):
-            st.button("🚪 Logout", use_container_width=True, key="botao_logout", on_click=lambda: st.session_state.update(confirmar_logout=True)"<br>")
+            st.button("🚪 Logout", use_container_width=True, key="botao_logout", on_click=lambda: st.session_state.update(confirmar_logout=True))
+            st.markdown("")
         else:
             st.warning("Tem certeza que deseja sair?")
             col1, col2 = st.columns(2)
