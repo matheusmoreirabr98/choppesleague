@@ -1118,6 +1118,7 @@ else:
                     st.rerun()
         else:
             st.info("Nenhuma partida registrada ainda.")
+        st.markdown("---")
 
         st.subheader("📋 Histórico de Partidas Registradas:")
 
