@@ -925,6 +925,9 @@ else:
 
         numero_partida = len(partidas) + 1
         data = st.date_input("📅 Data da partida")
+        
+        # carrega os dados logo no início
+        _, jogadores, usuarios, presencas = load_data() 
 
         # garante que a coluna esteja no formato correto
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
