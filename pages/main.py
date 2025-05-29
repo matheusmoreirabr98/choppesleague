@@ -500,10 +500,9 @@ else:
 
     with st.sidebar:
         # Botão "Meu Perfil" centralizado (opcional)
-        col1, col2, col3 = st.columns([1, 4, 1])
-        with col2:
-            st.button("👤 Meu Perfil", use_container_width=True, on_click=lambda: st.session_state.update(pagina_atual="👤 Meu Perfil"))
-
+        st.button("👤 Meu Perfil", use_container_width=True, on_click=lambda: st.session_state.update(pagina_atual="👤 Meu Perfil"))
+        st.write("")
+        
         # Botão "Logout" ocupando toda a largura
         if not st.session_state.get("confirmar_logout", False):
             st.button("🚪 Logout", use_container_width=True, key="botao_logout", on_click=lambda: st.session_state.update(confirmar_logout=True))
