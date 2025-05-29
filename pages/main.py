@@ -1076,6 +1076,7 @@ else:
                     st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
                     st.success("🗑️ Partida excluída com sucesso!")
+                    time.sleep(2)
                     st.rerun()
 
             if st.session_state.mostrar_edicao_partida:
@@ -1111,6 +1112,7 @@ else:
                     st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
                     st.success("✅ Partida editada com sucesso!")
+                    time.sleep(2)
                     st.session_state.mostrar_edicao_partida = False
                     st.rerun()
 
