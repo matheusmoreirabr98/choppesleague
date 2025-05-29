@@ -217,7 +217,7 @@ def tela_login():
         "Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True
     )
 
-    usuarios, presencas = load_data()  # ← lê os usuários direto da planilha
+    _, _, usuarios, _ = load_data()  # ← lê os usuários direto da planilha
 
     # LOGIN
     if aba == "Login":
@@ -282,7 +282,7 @@ def tela_login():
                     else:
                         usuarios[email]["senha"] = nova_senha
                         partidas, jogadores, _ = load_data()
-                        save_data(partidas, jogadores, usuarios, presencas)
+                        save_data(partidas, jogadores, usuarios)
                         st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
                         st.rerun()
