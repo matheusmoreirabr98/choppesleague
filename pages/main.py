@@ -843,7 +843,7 @@ else:
                 margin-top: 20px;
                 flex-wrap: wrap;
             ">
-            <div style="text-align: right; min-width: 70px;">
+            <div style="text-align: right; min-width: 80px;">
                 <p style="font-size: 10px;">
                     🏆 - {borussia_vitorias}<br>
                     ⚽ - {borussia_gols}
@@ -856,7 +856,7 @@ else:
                 </p>
             </div>
 
-            <div style="text-align: left; min-width: 70px;">
+            <div style="text-align: left; min-width: 780px;">
                 <p style="font-size: 10px;">
                     🏆 - {inter_vitorias}<br>
                     ⚽ - {inter_gols}
