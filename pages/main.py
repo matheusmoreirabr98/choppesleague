@@ -1004,7 +1004,7 @@ else:
                     {placar_borussia}
                 </p>
             </div>
-            <div style="text-align: center; min-width: 100px;">
+            <div style="text-align: center; min-width: 70px;">
                 <p style="font-size: 30px;">
                 </p>
             </div>
