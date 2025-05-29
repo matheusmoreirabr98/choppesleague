@@ -16,9 +16,6 @@ import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 
-def sanitize_df(df):
-    return df.fillna("").astype(str)
-
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
@@ -154,11 +151,6 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
-    # Sanitize
-    partidas = sanitize_df(partidas)
-    jogadores = sanitize_df(jogadores)
-    presencas = sanitize_df(presencas)
-
     # Salvar partidas
     sheet_partidas = sh.worksheet("Partidas")
     sheet_partidas.clear()
@@ -169,7 +161,7 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     sheet_jogadores.clear()
     sheet_jogadores.update([jogadores.columns.tolist()] + jogadores.values.tolist())
 
-    # Salvar usuários
+    # Salvar usuários — aqui está a correção!
     sheet_usuarios = sh.worksheet("Usuarios")
     sheet_usuarios.clear()
 
@@ -177,12 +169,10 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     usuarios_df = usuarios_df.rename(columns={"index": "email"})
 
     if not usuarios_df.empty:
-        usuarios_df = sanitize_df(usuarios_df)  # também sanitiza aqui
         sheet_usuarios.update([usuarios_df.columns.tolist()] + usuarios_df.values.tolist())
 
     # Salvar presenças
     sheet_presencas = sh.worksheet("Presenças")
-    sheet_presencas.clear()
     sheet_presencas.update([presencas.columns.tolist()] + presencas.values.tolist())
 
 
@@ -1043,15 +1033,8 @@ else:
 
             partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
 
-            # 🧼 limpa o DataFrame antes de salvar
-            partidas_limpo = partidas.fillna("").astype(str)
-
             _, jogadores, usuarios, presencas = load_data()
-            partidas_limpo = partidas.fillna("").astype(str)
-            jogadores_limpo = jogadores.fillna("").astype(str)
-            presencas_limpo = presencas.fillna("").astype(str)
-
-            save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo)
+            save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
             st.success("✅ Partida registrada com sucesso!")
 
