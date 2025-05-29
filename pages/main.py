@@ -1326,6 +1326,23 @@ else:
             (presencas["Presença"].str.lower() == "sim")
         ]["Nome"].tolist()
 
+        # DEBUG: mostra os dados brutos da planilha
+        st.write("📋 Dados completos da presença:", presencas)
+
+        # DEBUG: mostra só os registros da data selecionada
+        st.write("📆 Presenças na data selecionada:", presencas[presencas["DataPartida"] == data_partida])
+
+        # DEBUG: mostra os jogadores que passaram no filtro
+        st.write("✅ Jogadores filtrados como 'presentes':", presentes)
+
+
+        # Aplica o filtro
+        presentes = presencas[
+            (presencas["DataPartida"] == data_partida) &
+            (presencas["Presença"] == "sim")
+        ]["Nome"].tolist()
+
+
         if len(presentes) < 10:
             st.warning("⚠️ É necessário pelo menos 10 jogadores confirmados para realizar o sorteio.")
             return
