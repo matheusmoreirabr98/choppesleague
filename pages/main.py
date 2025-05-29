@@ -217,7 +217,7 @@ def tela_login():
         "Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True
     )
 
-    _, _, usuarios = load_data()  # ← lê os usuários direto da planilha
+    _, _, usuarios, _ = load_data()  # ← lê os usuários direto da planilha
 
     # LOGIN
     if aba == "Login":
