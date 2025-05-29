@@ -1119,8 +1119,8 @@ else:
         else:
             st.info("Nenhuma partida registrada ainda.")
         st.markdown("---")
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>📋 Histórico de Partidas Registradas</h5>", unsafe_allow_html=True)
 
-        st.subheader("📋 Histórico de Partidas Registradas:")
 
         # Limpa dados incompletos
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
