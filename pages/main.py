@@ -1091,7 +1091,7 @@ else:
                     salvar = st.form_submit_button("💾 Salvar Alterações")
 
                 if salvar:
-                    partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y")
+                    partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
                     partidas.at[index, "Placar Borussia"] = int(novo_placar_borussia)
                     partidas.at[index, "Gols Borussia"] = novo_gols_borussia
                     partidas.at[index, "Placar Inter"] = int(novo_placar_inter)
