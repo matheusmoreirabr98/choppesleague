@@ -1139,7 +1139,7 @@ else:
         )
 
         # Configura DataFrame com índice começando de 1
-        partidas = partidas.dropna(subset=["Data", "Partida #"]).reset_index(drop=True)
+        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
         partidas.index = partidas.index + 1
         partidas.index.name = "#"
 
