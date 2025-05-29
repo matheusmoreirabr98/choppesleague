@@ -908,7 +908,6 @@ else:
         data = st.date_input("📅 Data da partida")
         st.markdown(f"**Número da Partida:** {numero_partida}")
 
-        st.markdown("### 🛡️ Confronto")
 
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
@@ -983,9 +982,8 @@ else:
                     </div>
 
                     <div style="text-align: center; min-width: 80px;">
-                        <p style="font-size: 18px;">Partida #{numero_partida}<br>{data.strftime('%d/%m/%Y')}</p>
+                        <p style="font-size: 18px;">br<p>
                     </div>
-
                     <div style="text-align: center; min-width: 80px;">
                         <p style="font-size: 30px;">🏆 - {placar_inter}</p>
                     </div>
