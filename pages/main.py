@@ -931,6 +931,10 @@ else:
             st.session_state["dados_gsheets"] = load_data()
         partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
 
+        # 🟢 inicializa form_id para controle dos multiselects
+        if "form_id" not in st.session_state:
+            st.session_state["form_id"] = 0
+
 
         # garante que a coluna esteja no formato correto
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True).dt.date
@@ -956,7 +960,7 @@ else:
                 options=lista_borussia,
                 default=[],
                 max_selections=2,
-                key="gols_borussia",
+                key=f"gols_borussia_{st.session_state['form_id']}",
                 help="Máximo 2 jogadores"
             )
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
@@ -976,7 +980,7 @@ else:
                 options=lista_inter,
                 default=[],
                 max_selections=2,
-                key="gols_inter",
+                key=f"gols_inter_{st.session_state['form_id']}",
                 help="Máximo 2 jogadores"
             )
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
@@ -1074,9 +1078,7 @@ else:
             st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
             # limpa seleção dos goleadores
-            for key in ["gols_borussia", "gols_inter"]:
-                if key in st.session_state:
-                    del st.session_state[key]
+            st.session_state["form_id"] += 1
 
             st.rerun()
 
