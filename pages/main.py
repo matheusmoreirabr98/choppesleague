@@ -474,29 +474,16 @@ else:
     # garante que sempre selecionamos uma opção válida da lista
     pagina_ativa = st.session_state.pagina_atual
 
-
-    st.markdown(
-        """
-        <style>
-            div[data-baseweb="select"] input {
-                pointer-events: none;
-                caret-color: transparent !important;
-            }
-            div[data-baseweb="select"] input:focus {
-                outline: none !important;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
     # exibimos o selectbox sempre — inclusive no perfil
-    pagina_escolhida = st.selectbox(
-        "",  # label obrigatória
+    pagina_escolhida = st.radio(
+        "📋 Menu",
         opcoes,
         index=opcoes.index(pagina_ativa) if pagina_ativa in opcoes else 0,
-        key="menu_topo",
     )
+
+    if pagina_escolhida != st.session_state.pagina_atual and pagina_escolhida in opcoes:
+        st.session_state.pagina_atual = pagina_escolhida
+        st.rerun()
 
     # só atualiza a página se a escolhida for diferente
     # e se ela for uma das opções válidas
