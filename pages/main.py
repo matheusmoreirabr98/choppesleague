@@ -1078,25 +1078,20 @@ else:
                     st.success("🗑️ Partida excluída com sucesso!")
                     st.rerun()
 
-        if st.session_state.mostrar_edicao_partida:
-            with st.form("form_edicao_partida"):
-                nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
+            if st.session_state.mostrar_edicao_partida:
+                with st.form("form_edicao_partida"):
+                    nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
 
-                # Suponha que você tenha essas listas prontas com base em quem confirmou presença na data
-                confirmados_borussia = get_confirmados("Borussia", nova_data)  # Ex: ["Ana", "João", "Carlos"]
-                confirmados_inter = get_confirmados("Inter", nova_data)        # Ex: ["Luana", "Bruno"]
+                    novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
+                    novo_gols_borussia = st.text_input("Goleadores Borussia", value=row["Gols Borussia"])
+                    novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
+                    novo_gols_inter = st.text_input("Goleadores Inter", value=row["Gols Inter"])
 
-                novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
-                novo_gols_borussia = st.multiselect("Goleadores Borussia", options=confirmados_borussia, default=row["Gols Borussia"].split(", "))
-
-                novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
-                novo_gols_inter = st.multiselect("Goleadores Inter", options=confirmados_inter, default=row["Gols Inter"].split(", "))
-
-                col1, col2 = st.columns(2)
-                with col1:
-                    salvar = st.form_submit_button("💾 Salvar Alterações")
-                with col2:
-                    cancelar = st.form_submit_button("❌ Cancelar Edição")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        salvar = st.form_submit_button("💾 Salvar Alterações")
+                    with col2:
+                        cancelar = st.form_submit_button("❌ Cancelar Edição")
 
                 if salvar:
                     partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
