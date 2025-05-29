@@ -1119,6 +1119,7 @@ else:
 
                 elif cancelar:
                     st.session_state.mostrar_edicao_partida = False
+                    st.rerun()
         else:
             st.info("Nenhuma partida registrada ainda.")
 
