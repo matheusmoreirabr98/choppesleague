@@ -1156,45 +1156,6 @@ else:
         st.title("Estatísticas dos Jogadores")
         st.markdown("⚠️ Em breve...")
 
-    # Tela de sorteio
-
-    def tela_sorteio():
-        st.title("🎲 Sorteio de Times")
-        st.markdown("Selecione a data da partida para sortear os times.")
-
-        # Carrega os dados
-        if "dados_gsheets" not in st.session_state:
-            st.session_state["dados_gsheets"] = load_data()
-        _, jogadores, _, presencas = st.session_state["dados_gsheets"]
-
-        # Data da partida
-        data_partida = st.date_input("📅 Data da Partida")
-
-        # Filtra jogadores presentes
-        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True, errors='coerce').dt.date
-        presentes = presencas[(presencas["DataPartida"] == data_partida) & (presencas["Presença"] == "Sim")]["Nome"].tolist()
-
-        if len(presentes) < 5:
-            st.warning("⚠️ É necessário pelo menos 5 jogadores confirmados para realizar o sorteio.")
-            return
-
-        # Sorteio controlado via estado
-        if "times_sorteados" not in st.session_state or st.button("🔄 Refazer Sorteio"):
-            random.shuffle(presentes)  # Embaralha os nomes
-            times = [presentes[i:i + 5] for i in range(0, len(presentes), 5)]
-            st.session_state.times_sorteados = times
-        else:
-            times = st.session_state.times_sorteados
-
-        st.success(f"✅ {len(presentes)} jogadores confirmados. Gerando {len(times)} times de até 5 jogadores:")
-
-        # Exibe os times
-        for i, time in enumerate(times, 1):
-            st.markdown(f"### 🟦 Time {i}")
-            for jogador in time:
-                st.markdown(f"- {jogador}")
-            st.markdown("---")
-
 
     # Tela de confirmação de presença/ausência
     def tela_presenca_login():
@@ -1335,6 +1296,51 @@ else:
 
                 st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
+
+
+
+
+    # Tela de sorteio
+
+    def tela_sorteio():
+        st.title("🎲 Sorteio de Times")
+        st.markdown("Selecione a data da partida para sortear os times.")
+
+        # Carrega os dados
+        if "dados_gsheets" not in st.session_state:
+            st.session_state["dados_gsheets"] = load_data()
+        _, jogadores, _, presencas = st.session_state["dados_gsheets"]
+
+        # Data da partida
+        data_partida = st.date_input("📅 Data da Partida")
+
+        # Filtra jogadores presentes
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True, errors='coerce').dt.date
+        presentes = presencas[(presencas["DataPartida"] == data_partida) & (presencas["Presença"] == "Sim")]["Nome"].tolist()
+
+        if len(presentes) < 5:
+            st.warning("⚠️ É necessário pelo menos 5 jogadores confirmados para realizar o sorteio.")
+            return
+
+        # Sorteio controlado via estado
+        if "times_sorteados" not in st.session_state or st.button("🔄 Refazer Sorteio"):
+            random.shuffle(presentes)  # Embaralha os nomes
+            times = [presentes[i:i + 5] for i in range(0, len(presentes), 5)]
+            st.session_state.times_sorteados = times
+        else:
+            times = st.session_state.times_sorteados
+
+        st.success(f"✅ {len(presentes)} jogadores confirmados. Gerando {len(times)} times de até 5 jogadores:")
+
+        # Exibe os times
+        for i, time in enumerate(times, 1):
+            st.markdown(f"### 🟦 Time {i}")
+            for jogador in time:
+                st.markdown(f"- {jogador}")
+            st.markdown("---")
+
+
+            
 
     # Tela da avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
