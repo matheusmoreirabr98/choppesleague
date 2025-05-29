@@ -901,7 +901,7 @@ else:
 
     # Tela de registro das partidas
     def registrar_partidas(partidas):
-        st.title("Registrar Estatísticas da Partida")
+        st.title("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>") 
         st.markdown("---")
 
         numero_partida = len(partidas) + 1
@@ -982,13 +982,13 @@ else:
             ">
             <div style="text-align: center; min-width: 80px;">
                 <p style="font-size: 30px;">
-                    🏆 - {placar_borussia}
+                    {placar_borussia}
                 </p>
             </div>
 
             <div style="text-align: center; min-width: 80px;">
                 <p style="font-size: 30px;">
-                    🏆 - {placar_inter}
+                    {placar_inter}
                 </p>
             </div>
         """,
