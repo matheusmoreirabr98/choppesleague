@@ -157,14 +157,16 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     partidas_limpo = clean_df_for_update(partidas)
     sheet_partidas.update([partidas_limpo.columns.tolist()] + partidas_limpo.values.tolist())
 
-    # Salvar jogadores
-    sheet_jogadores = sh.worksheet("Jogadores")
-    sheet_jogadores.clear()
-    sheet_jogadores.update([jogadores.columns.tolist()] + jogadores.values.tolist())
+    jogadores_limpo = clean_df_for_update(jogadores)
+    sheet_jogadores.update([jogadores_limpo.columns.tolist()] + jogadores_limpo.values.tolist())
 
-    # Salvar usuários — aqui está a correção!
-    sheet_usuarios = sh.worksheet("Usuarios")
-    sheet_usuarios.clear()
+    usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
+    usuarios_df = usuarios_df.rename(columns={"index": "email"})
+    usuarios_limpo = clean_df_for_update(usuarios_df)
+    sheet_usuarios.update([usuarios_limpo.columns.tolist()] + usuarios_limpo.values.tolist())
+
+    presencas_limpo = clean_df_for_update(presencas)
+    sheet_presencas.update([presencas_limpo.columns.tolist()] + presencas_limpo.values.tolist())
 
     usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
     usuarios_df = usuarios_df.rename(columns={"index": "email"})
