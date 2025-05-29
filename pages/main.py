@@ -967,86 +967,87 @@ else:
             escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
             st.markdown("---")
-            st.markdown("<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida</h5>",
-            unsafe_allow_html=True,
-            )
-            st.markdown(
-                f"""
-                    <div style="
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        gap: 50px;
-                        flex-wrap: nowrap;
-                    ">
-                        {escudo_borussia}
-                    <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-                    </div>
-                        {escudo_inter}
-                    </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-            st.markdown(
-                f"""
+            
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>Resultado da Partida</h5>",
+        unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"""
                 <div style="
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: center;
                     align-items: center;
                     gap: 50px;
-                    margin-top: 20px;
-                    flex-wrap: wrap;
+                    flex-wrap: nowrap;
                 ">
-                <div style="text-align: right; min-width: 80px;">
-                    <p style="font-size: 30px;">
-                        {placar_borussia}
-                    </p>
+                    {escudo_borussia}
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
                 </div>
-                <div style="text-align: center; min-width: 80px;">
-                    <p style="font-size: 30px;">
-                    </p>
-                </div>
-                <div style="text-align: left; min-width: 80px;">
-                    <p style="font-size: 30px;">
-                        {placar_inter}
-                    </p>
+                    {escudo_inter}
                 </div>
             """,
-                unsafe_allow_html=True,
-            )
+            unsafe_allow_html=True,
+        )
 
-            st.markdown("---")
-            
+        st.markdown(
+            f"""
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 50px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            ">
+            <div style="text-align: right; min-width: 80px;">
+                <p style="font-size: 30px;">
+                    {placar_borussia}
+                </p>
+            </div>
+            <div style="text-align: center; min-width: 80px;">
+                <p style="font-size: 30px;">
+                </p>
+            </div>
+            <div style="text-align: left; min-width: 80px;">
+                <p style="font-size: 30px;">
+                    {placar_inter}
+                </p>
+            </div>
+        """,
+            unsafe_allow_html=True,
+        )
 
-            if st.button("Registrar"):
-                nova = {
-                    "Data": data.strftime("%d/%m/%Y"),
-                    "Número da Partida": numero_partida,
-                    "Placar Borussia": placar_borussia,
-                    "Gols Borussia": ", ".join(gols_borussia),
-                    "Placar Inter": placar_inter,
-                    "Gols Inter": ", ".join(gols_inter),
-                }
+        st.markdown("---")
+        
 
-                partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
+        if st.button("Registrar"):
+            nova = {
+                "Data": data.strftime("%d/%m/%Y"),
+                "Número da Partida": numero_partida,
+                "Placar Borussia": placar_borussia,
+                "Gols Borussia": ", ".join(gols_borussia),
+                "Placar Inter": placar_inter,
+                "Gols Inter": ", ".join(gols_inter),
+            }
 
-                _, jogadores, usuarios, presencas = load_data()
-                save_data_gsheets(partidas, jogadores, usuarios, presencas)
+            partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
 
-                st.success("✅ Partida registrada com sucesso!")
+            _, jogadores, usuarios, presencas = load_data()
+            save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
-                for key in ["gols_borussia", "gols_inter"]:
-                    if key in st.session_state:
-                        del st.session_state[key]
+            st.success("✅ Partida registrada com sucesso!")
 
-                st.rerun()
+            for key in ["gols_borussia", "gols_inter"]:
+                if key in st.session_state:
+                    del st.session_state[key]
 
-            st.markdown("---")
-            st.subheader("📋 Histórico de Partidas Registradas:")
-            st.dataframe(partidas)
+            st.rerun()
 
-            return partidas
+        st.markdown("---")
+        st.subheader("📋 Histórico de Partidas Registradas:")
+        st.dataframe(partidas)
+
+        return partidas
 
 
 
