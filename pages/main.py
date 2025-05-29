@@ -1040,16 +1040,11 @@ else:
             st.session_state["form_id"] += 1
             st.rerun()
 
-            st.markdown("---")
-            st.subheader("📋 Histórico de Partidas Registradas:")
-
-            # Garante que não existe nenhuma coluna de índice escondida
-            partidas_limpa = partidas.reset_index(drop=True)
-            if "Unnamed: 0" in partidas_limpa.columns:
-                partidas_limpa = partidas_limpa.drop(columns=["Unnamed: 0"])
-
-            # Exibe a tabela limpa sem índice
-            st.table(partidas_limpa)
+        st.markdown("---")
+        st.subheader("📋 Histórico de Partidas Registradas:")
+        st.dataframe(partidas.reset_index(drop=True))
+        
+        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
 
 
         st.markdown("### ✏️ Editar ou Excluir Partida Registrada")
