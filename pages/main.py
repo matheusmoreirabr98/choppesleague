@@ -167,8 +167,8 @@ def load_data():
     return load_data_gsheets()
 
 
-def save_data(partidas, jogadores, usuarios):
-    save_data_gsheets(partidas, jogadores, usuarios)
+def save_data(partidas, jogadores, usuarios, presencas):
+    save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
 
 # Sessões iniciais
@@ -389,7 +389,7 @@ def tela_login():
                     }
 
                     partidas, jogadores, _ ,_ = load_data()
-                    save_data(partidas, jogadores, usuarios)
+                    save_data(partidas, jogadores, usuarios, presencas)
 
                     st.success("Cadastro realizado! Agora faça login.")
 
