@@ -882,36 +882,8 @@ else:
 
         st.markdown("---")
 
-        # Mostrar presença e ausência de todos os jogadores (lista simples)
-        presencas = st.session_state.get("presencas_confirmadas", {})
-        todos_nomes = [dados["nome"] for dados in st.session_state.usuarios.values()]
 
-        linhas_html = ""
-        confirmados = 0
 
-        for nome in sorted(todos_nomes):
-            status = "❓"
-            for email, dados in presencas.items():
-                if dados["nome"] == nome:
-                    if dados.get("presenca") == "sim":
-                        status = "✅"
-                        confirmados += 1
-                    elif dados.get("presenca") == "nao":
-                        status = "❌"
-                    break
-            linhas_html += f"<li>{status} {nome}</li>"
-
-        st.markdown(
-            f"""
-            <div style="text-align: center; margin-top: 2rem;">
-                <h6 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h6>
-                <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
-                    {linhas_html}
-                </ul>
-            </div>
-        """,
-            unsafe_allow_html=True,
-        )
 
 
     # Tela de registro das partidas
@@ -1296,7 +1268,37 @@ else:
 
                 st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
+        
+        # Mostrar presença e ausência de todos os jogadores (lista simples)
+        presencas = st.session_state.get("presencas_confirmadas", {})
+        todos_nomes = [dados["nome"] for dados in st.session_state.usuarios.values()]
 
+        linhas_html = ""
+        confirmados = 0
+
+        for nome in sorted(todos_nomes):
+            status = "❓"
+            for email, dados in presencas.items():
+                if dados["nome"] == nome:
+                    if dados.get("presenca") == "sim":
+                        status = "✅"
+                        confirmados += 1
+                    elif dados.get("presenca") == "nao":
+                        status = "❌"
+                    break
+            linhas_html += f"<li>{status} {nome}</li>"
+
+        st.markdown(
+            f"""
+            <div style="text-align: center; margin-top: 2rem;">
+                <h6 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h6>
+                <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
+                    {linhas_html}
+                </ul>
+            </div>
+        """,
+            unsafe_allow_html=True,
+        )
 
 
 
