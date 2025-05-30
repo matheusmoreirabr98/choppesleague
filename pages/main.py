@@ -1205,6 +1205,7 @@ else:
 
                     nova_linha = {
                         "Nome": nome,
+                        "Email": email,  # ← ADICIONAR
                         "Posição": posicao,
                         "Presença": "Sim" if presenca == "✅ Sim" else "Não",
                         "DataPartida": data_partida,
@@ -1225,14 +1226,11 @@ else:
 
                     # 🔄 Recarrega presenças e atualiza a lista geral
                     df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
-                    presencas_dict = {}
-
-                    for _, row in df_atualizado.iterrows():
-                        presencas_dict[row["Nome"]] = {
-                            "nome": row["Nome"],
-                            "presenca": "sim" if row["Presença"] == "Sim" else "nao",
-                            "motivo": row.get("Motivo", ""),
-                        }
+                    presencas_dict[row["Email"]] = {
+                        "nome": row["Nome"],
+                        "presenca": "sim" if row["Presença"] == "Sim" else "nao",
+                        "motivo": row.get("Motivo", ""),
+                    }
 
                     st.session_state["presencas_confirmadas"] = presencas_dict
 
