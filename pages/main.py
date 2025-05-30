@@ -12,7 +12,6 @@ import base64
 from datetime import datetime, timedelta, timezone
 import streamlit.components.v1 as components
 import gspread
-import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 import random
