@@ -1284,43 +1284,43 @@ else:
                 st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
         
-        # Mostrar lista completa de presença após qualquer ação
-        presencas = st.session_state.get("presencas_confirmadas", {})
-        todos_usuarios = st.session_state.get("usuarios", {})
+            # Mostrar lista completa de presença após qualquer ação
+            presencas = st.session_state.get("presencas_confirmadas", {})
+            todos_usuarios = st.session_state.get("usuarios", {})
 
-        linhas_html = ""
-        confirmados = 0
+            linhas_html = ""
+            confirmados = 0
 
-        for email, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
-            nome = dados_usuario["nome"]
-            status = "❓"
-            motivo = ""
-            if email in presencas:
-                presenca_info = presencas[email]
-                if presenca_info.get("presenca") == "sim":
-                    status = "✅"
-                    confirmados += 1
-                elif presenca_info.get("presenca") == "nao":
-                    status = "❌"
-                    motivo = presenca_info.get("motivo", "")
-            
-            # monta linha com ou sem motivo
-            if status == "❌" and motivo:
-                linhas_html += f"<li>{status} {nome} — <em>{motivo}</em></li>"
-            else:
-                linhas_html += f"<li>{status} {nome}</li>"
+            for email, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
+                nome = dados_usuario["nome"]
+                status = "❓"
+                motivo = ""
+                if email in presencas:
+                    presenca_info = presencas[email]
+                    if presenca_info.get("presenca") == "sim":
+                        status = "✅"
+                        confirmados += 1
+                    elif presenca_info.get("presenca") == "nao":
+                        status = "❌"
+                        motivo = presenca_info.get("motivo", "")
+                
+                # monta linha com ou sem motivo
+                if status == "❌" and motivo:
+                    linhas_html += f"<li>{status} {nome} — <em>{motivo}</em></li>"
+                else:
+                    linhas_html += f"<li>{status} {nome}</li>"
 
-        st.markdown(
-            f"""
-            <div style="text-align: center; margin-top: 2rem;">
-                <h6 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h6>
-                <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
-                    {linhas_html}
-                </ul>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+            st.markdown(
+                f"""
+                <div style="text-align: center; margin-top: 2rem;">
+                    <h6 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h6>
+                    <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
+                        {linhas_html}
+                    </ul>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
 
 
