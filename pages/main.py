@@ -1691,6 +1691,7 @@ else:
             """
         - Os jogadores devem confirmar presença **até as 22h de quarta-feira**.
         - Quem não confirmar no prazo **não poderá jogar**.
+        - A partida só será confirmada se houver, no mínimo, 15 jogadores confirmados.
         """
         )
 
@@ -1760,7 +1761,15 @@ else:
         """
         )
 
-        subtitulo("🔐 9. Responsabilidade")
+        subtitulo("🔊 9. Arbitragem")
+        st.markdown(
+            """
+        - Um jogador que estiver de fora durante a rodada será o responsável por apitar a partida.
+        - Todos devem respeitar as decisões de arbitragem feitas por jogadores designados.
+        """
+        )
+
+        subtitulo("🔐 10. Responsabilidade")
         st.markdown(
             """
         - Comprometimento com **pagamentos, presença e respeito** é essencial para manter a organização.
@@ -1768,7 +1777,7 @@ else:
         """
         )
 
-        subtitulo("⭐ 10. Avaliação Pós-Jogo: Péreba e Craque")
+        subtitulo("⭐ 11. Avaliação Pós-Jogo: Péreba e Craque")
         st.markdown(
             """
         - Após cada partida, será feita uma votação divertida para eleger:
