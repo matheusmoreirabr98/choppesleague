@@ -793,6 +793,23 @@ else:
 
     partidas, jogadores = load_data_safe()
 
+    # Tela Principal
+    def imagem_base64(path, legenda):
+        if os.path.exists(path):
+            img = Image.open(path)
+            img = img.resize((200, 200))
+            buffer = BytesIO()
+            img.save(buffer, format="PNG")
+            img_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return f"""
+                <div style="text-align: center; min-width: 20px;">
+                    <img src="data:image/png;base64,{img_base64}" width="80">
+                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
+                </div>
+            """
+        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
+
+    # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
         st.markdown(
             "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Chopp's League! 🍻</h5>",
@@ -800,32 +817,33 @@ else:
         )
         st.markdown("---")
 
-        # garante que os campos estejam corretos
-        partidas = partidas.dropna(subset=["Placar Borussia", "Placar Inter", "Gols Borussia", "Gols Inter"])
+        # Remove registros incompletos
+        partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
 
-        # conversões
-        partidas["Placar Borussia"] = pd.to_numeric(partidas["Placar Borussia"], errors="coerce").fillna(0).astype(int)
-        partidas["Placar Inter"] = pd.to_numeric(partidas["Placar Inter"], errors="coerce").fillna(0).astype(int)
-
-        # vitórias e empates
-        borussia_vitorias = (partidas["Placar Borussia"] > partidas["Placar Inter"]).sum()
-        inter_vitorias = (partidas["Placar Inter"] > partidas["Placar Borussia"]).sum()
-        empates = (partidas["Placar Borussia"] == partidas["Placar Inter"]).sum()
-
-        # gols (contando número de nomes nos campos de goleadores)
+        # Função para contar nomes (desconsidera vazio e 'Ninguém marcou')
         def contar_gols(celula):
-            if pd.isna(celula) or celula.strip() == "" or celula.strip().lower() == "ninguém marcou":
+            if pd.isna(celula) or celula.strip().lower() == "ninguém marcou":
                 return 0
             return len([nome.strip() for nome in celula.split(",") if nome.strip()])
 
-        gols_borussia = partidas["Gols Borussia"].apply(contar_gols).sum()
-        gols_inter = partidas["Gols Inter"].apply(contar_gols).sum()
+        # Contagem de gols por partida
+        partidas["Gols_B"] = partidas["Gols Borussia"].apply(contar_gols)
+        partidas["Gols_I"] = partidas["Gols Inter"].apply(contar_gols)
 
-        # imagens
+        # Totais
+        gols_borussia = partidas["Gols_B"].sum()
+        gols_inter = partidas["Gols_I"].sum()
+
+        # Vitórias e empates com base nos gols marcados
+        borussia_vitorias = (partidas["Gols_B"] > partidas["Gols_I"]).sum()
+        inter_vitorias = (partidas["Gols_I"] > partidas["Gols_B"]).sum()
+        empates = (partidas["Gols_B"] == partidas["Gols_I"]).sum()
+
+        # Imagens dos escudos
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
-        # layout com escudos e placar
+        # Layout dos escudos
         st.markdown(
             f"""
                 <div style="
@@ -836,15 +854,14 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-                </div>
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
                     {escudo_inter}
                 </div>
             """,
             unsafe_allow_html=True,
         )
 
-        # placar resumido
+        # Estatísticas abaixo
         st.markdown(
             f"""
             <div style="
@@ -878,6 +895,8 @@ else:
             """,
             unsafe_allow_html=True,
         )
+
+
 
 
 
