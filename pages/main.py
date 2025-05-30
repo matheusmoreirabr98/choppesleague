@@ -1223,8 +1223,22 @@ else:
                     if presenca == "❌ Não":
                         st.session_state["motivo"] = justificativa
 
+                    # 🔄 Recarrega presenças e atualiza a lista geral
+                    df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
+                    presencas_dict = {}
+
+                    for _, row in df_atualizado.iterrows():
+                        presencas_dict[row["Nome"]] = {
+                            "nome": row["Nome"],
+                            "presenca": "sim" if row["Presença"] == "Sim" else "nao",
+                            "motivo": row.get("Motivo", ""),
+                        }
+
+                    st.session_state["presencas_confirmadas"] = presencas_dict
+
                     st.success("✅ Presença registrada com sucesso!")
                     st.rerun()
+
 
        # ✅ Lista de presença sempre visível após as opções
         presencas = st.session_state.get("presencas_confirmadas", {})
