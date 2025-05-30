@@ -1219,22 +1219,9 @@ else:
                     df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
                     set_with_dataframe(aba_presencas, df_presencas)
 
-                    # Atualiza estado da confirmação individual
                     st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
                     if presenca == "❌ Não":
                         st.session_state["motivo"] = justificativa
-
-                    # ✅ Atualiza lista geral de presenças para refletir a nova confirmação
-                    df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
-                    presencas_dict = {}
-                    for _, row in df_atualizado.iterrows():
-                        presencas_dict[row["Email"]] = {
-                            "nome": row["Nome"],
-                            "presenca": "sim" if row["Presença"] == "Sim" else "nao",
-                            "motivo": row.get("Motivo", ""),
-                        }
-
-                    st.session_state["presencas_confirmadas"] = presencas_dict
 
                     st.success("✅ Presença registrada com sucesso!")
                     st.rerun()
