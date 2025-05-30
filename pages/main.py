@@ -1226,6 +1226,22 @@ else:
 
                     # 🔄 Recarrega presenças e atualiza a lista geral
                     df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
+                    if "Email" in df_atualizado.columns and "Nome" in df_atualizado.columns and "Presença" in df_atualizado.columns:
+                        presencas_dict = {}
+
+                        for _, row in df_atualizado.iterrows():
+                            presencas_dict[row["Email"]] = {
+                                "nome": row["Nome"],
+                                "presenca": "sim" if row["Presença"] == "Sim" else "nao",
+                                "motivo": row.get("Motivo", ""),
+                            }
+
+                        st.session_state["presencas_confirmadas"] = presencas_dict
+                    else:
+                        st.warning("⚠️ Não foi possível atualizar a lista de presenças. Verifique se a planilha tem as colunas: Nome, Email e Presença.")
+
+
+
                     presencas_dict[row["Email"]] = {
                         "nome": row["Nome"],
                         "presenca": "sim" if row["Presença"] == "Sim" else "nao",
