@@ -1241,7 +1241,6 @@ else:
                         st.warning("⚠️ Não foi possível atualizar a lista de presenças. Verifique se a planilha tem as colunas: Nome, Email e Presença.")
 
 
-
                     presencas_dict[row["Email"]] = {
                         "nome": row["Nome"],
                         "presenca": "sim" if row["Presença"] == "Sim" else "nao",
