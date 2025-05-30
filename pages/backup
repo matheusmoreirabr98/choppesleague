@@ -12,7 +12,6 @@ import base64
 from datetime import datetime, timedelta, timezone
 import streamlit.components.v1 as components
 import gspread
-import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 import random
@@ -817,17 +816,33 @@ else:
         )
         st.markdown("---")
 
-        borussia_gols = 18
-        borussia_vitorias = 17
-        inter_gols = 21
-        inter_vitorias = 19
-        empates = 12
+        # Remove registros incompletos
+        partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
 
-        # Caminhos das imagens na pasta 'imagens'
+        # Função para contar nomes (desconsidera vazio e 'Ninguém marcou')
+        def contar_gols(celula):
+            if pd.isna(celula) or celula.strip().lower() == "ninguém marcou":
+                return 0
+            return len([nome.strip() for nome in celula.split(",") if nome.strip()])
+
+        # Contagem de gols por partida
+        partidas["Gols_B"] = partidas["Gols Borussia"].apply(contar_gols)
+        partidas["Gols_I"] = partidas["Gols Inter"].apply(contar_gols)
+
+        # Totais
+        gols_borussia = partidas["Gols_B"].sum()
+        gols_inter = partidas["Gols_I"].sum()
+
+        # Vitórias e empates com base nos gols marcados
+        borussia_vitorias = (partidas["Gols_B"] > partidas["Gols_I"]).sum()
+        inter_vitorias = (partidas["Gols_I"] > partidas["Gols_B"]).sum()
+        empates = (partidas["Gols_B"] == partidas["Gols_I"]).sum()
+
+        # Imagens dos escudos
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
-        # Container com as imagens e o "X"
+        # Layout dos escudos
         st.markdown(
             f"""
                 <div style="
@@ -838,14 +853,14 @@ else:
                     flex-wrap: nowrap;
                 ">
                     {escudo_borussia}
-                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️
-                </div>
+                <div style="font-size: 60px; font-weight: bold; line-height: 1;">⚔️</div>
                     {escudo_inter}
                 </div>
             """,
             unsafe_allow_html=True,
         )
 
+        # Estatísticas abaixo
         st.markdown(
             f"""
             <div style="
@@ -858,8 +873,8 @@ else:
             ">
             <div style="text-align: right; min-width: 100px;">
                 <p style="font-size: 25px;">
-                    🏆 - {borussia_vitorias}<br>
-                    ⚽ - {borussia_gols}
+                    {borussia_vitorias} - 🏆<br>
+                    {gols_borussia} - ⚽
                 </p>
             </div>
 
@@ -873,45 +888,17 @@ else:
             <div style="text-align: left; min-width: 100px;">
                 <p style="font-size: 25px;">
                     {inter_vitorias} - 🏆<br>
-                    {inter_gols} - ⚽
+                    {gols_inter} - ⚽
                 </p>
             </div>
-        """,
+            """,
             unsafe_allow_html=True,
         )
 
-        st.markdown("---")
 
-        # Mostrar presença e ausência de todos os jogadores (lista simples)
-        presencas = st.session_state.get("presencas_confirmadas", {})
-        todos_nomes = [dados["nome"] for dados in st.session_state.usuarios.values()]
 
-        linhas_html = ""
-        confirmados = 0
 
-        for nome in sorted(todos_nomes):
-            status = "❓"
-            for email, dados in presencas.items():
-                if dados["nome"] == nome:
-                    if dados.get("presenca") == "sim":
-                        status = "✅"
-                        confirmados += 1
-                    elif dados.get("presenca") == "nao":
-                        status = "❌"
-                    break
-            linhas_html += f"<li>{status} {nome}</li>"
 
-        st.markdown(
-            f"""
-            <div style="text-align: center; margin-top: 2rem;">
-                <h6 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h6>
-                <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
-                    {linhas_html}
-                </ul>
-            </div>
-        """,
-            unsafe_allow_html=True,
-        )
 
 
     # Tela de registro das partidas
@@ -1296,7 +1283,37 @@ else:
 
                 st.success("✅ Presença registrada com sucesso!")
                 st.rerun()
+        
+        # Mostrar presença e ausência de todos os jogadores (lista simples)
+        presencas = st.session_state.get("presencas_confirmadas", {})
+        todos_nomes = [dados["nome"] for dados in st.session_state.usuarios.values()]
 
+        linhas_html = ""
+        confirmados = 0
+
+        for nome in sorted(todos_nomes):
+            status = "❓"
+            for email, dados in presencas.items():
+                if dados["nome"] == nome:
+                    if dados.get("presenca") == "sim":
+                        status = "✅"
+                        confirmados += 1
+                    elif dados.get("presenca") == "nao":
+                        status = "❌"
+                    break
+            linhas_html += f"<li>{status} {nome}</li>"
+
+        st.markdown(
+            f"""
+            <div style="text-align: center; margin-top: 2rem;">
+                <h6 style="text-align: center;">📋 Presença da Semana — Confirmados: {confirmados}</h6>
+                <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
+                    {linhas_html}
+                </ul>
+            </div>
+        """,
+            unsafe_allow_html=True,
+        )
 
 
 
