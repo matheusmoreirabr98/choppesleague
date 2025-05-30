@@ -1765,7 +1765,7 @@ else:
         st.markdown(
             """
         - Um jogador que estiver de fora durante a rodada será o responsável por apitar a partida.
-        - Todos devem respeitar as decisões de arbitragem feitas por jogadores designados.
+            - **Todos devem respeitar as decisões de arbitragem feitas por jogadores designados.**
         """
         )
 
