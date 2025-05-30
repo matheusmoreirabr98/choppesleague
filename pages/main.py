@@ -793,23 +793,6 @@ else:
 
     partidas, jogadores = load_data_safe()
 
-    # Tela Principal
-    def imagem_base64(path, legenda):
-        if os.path.exists(path):
-            img = Image.open(path)
-            img = img.resize((200, 200))
-            buffer = BytesIO()
-            img.save(buffer, format="PNG")
-            img_base64 = base64.b64encode(buffer.getvalue()).decode()
-            return f"""
-                <div style="text-align: center; min-width: 20px;">
-                    <img src="data:image/png;base64,{img_base64}" width="80">
-                    <p style="margin-top: 0.5rem; font-weight: bold;">{legenda}</p>
-                </div>
-            """
-        return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
-
-    # ✅ Tela principal com os escudos lado a lado e "X" no meio
     def tela_principal(partidas, jogadores):
         st.markdown(
             "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Chopp's League! 🍻</h5>",
@@ -817,17 +800,32 @@ else:
         )
         st.markdown("---")
 
-        borussia_gols = 18
-        borussia_vitorias = 17
-        inter_gols = 21
-        inter_vitorias = 19
-        empates = 12
+        # garante que os campos estejam corretos
+        partidas = partidas.dropna(subset=["Placar Borussia", "Placar Inter", "Gols Borussia", "Gols Inter"])
 
-        # Caminhos das imagens na pasta 'imagens'
+        # conversões
+        partidas["Placar Borussia"] = pd.to_numeric(partidas["Placar Borussia"], errors="coerce").fillna(0).astype(int)
+        partidas["Placar Inter"] = pd.to_numeric(partidas["Placar Inter"], errors="coerce").fillna(0).astype(int)
+
+        # vitórias e empates
+        borussia_vitorias = (partidas["Placar Borussia"] > partidas["Placar Inter"]).sum()
+        inter_vitorias = (partidas["Placar Inter"] > partidas["Placar Borussia"]).sum()
+        empates = (partidas["Placar Borussia"] == partidas["Placar Inter"]).sum()
+
+        # gols (contando número de nomes nos campos de goleadores)
+        def contar_gols(celula):
+            if pd.isna(celula) or celula.strip() == "" or celula.strip().lower() == "ninguém marcou":
+                return 0
+            return len([nome.strip() for nome in celula.split(",") if nome.strip()])
+
+        gols_borussia = partidas["Gols Borussia"].apply(contar_gols).sum()
+        gols_inter = partidas["Gols Inter"].apply(contar_gols).sum()
+
+        # imagens
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
         escudo_inter = imagem_base64("imagens/escudo_inter.png", "Inter")
 
-        # Container com as imagens e o "X"
+        # layout com escudos e placar
         st.markdown(
             f"""
                 <div style="
@@ -846,6 +844,7 @@ else:
             unsafe_allow_html=True,
         )
 
+        # placar resumido
         st.markdown(
             f"""
             <div style="
@@ -858,8 +857,8 @@ else:
             ">
             <div style="text-align: right; min-width: 100px;">
                 <p style="font-size: 25px;">
-                    🏆 - {borussia_vitorias}<br>
-                    ⚽ - {borussia_gols}
+                    {borussia_vitorias} - 🏆<br>
+                    {gols_borussia} - ⚽
                 </p>
             </div>
 
@@ -873,13 +872,12 @@ else:
             <div style="text-align: left; min-width: 100px;">
                 <p style="font-size: 25px;">
                     {inter_vitorias} - 🏆<br>
-                    {inter_gols} - ⚽
+                    {gols_inter} - ⚽
                 </p>
             </div>
-        """,
+            """,
             unsafe_allow_html=True,
         )
-
 
 
 
