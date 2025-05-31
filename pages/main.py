@@ -1496,11 +1496,14 @@ else:
         dias_para_quinta = (3 - hoje) % 7
         data_rodada = (agora + timedelta(days=dias_para_quinta)).date()
 
-        # Determina o prazo final da votação (quarta-feira 22h)
-        prazo_limite = data_rodada + timedelta(days=6, hours=22)
-        if agora > prazo_limite:
-            st.warning("⚠️ O prazo para votar já passou. A votação encerra toda quarta-feira às 22h.")
-            return
+        # Data da quinta-feira da rodada (próxima ou atual)
+        dias_para_quinta = (3 - hoje) % 7
+        proxima_quinta = agora + timedelta(days=dias_para_quinta)
+        data_rodada = proxima_quinta.date()
+
+        # quarta-feira anterior à próxima quinta
+        prazo_limite = proxima_quinta - timedelta(days=1)
+        prazo_limite = prazo_limite.replace(hour=22, minute=0, second=0, microsecond=0)
 
         # Filtra jogadores que confirmaram presença para a rodada
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
