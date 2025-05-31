@@ -1473,58 +1473,74 @@ else:
 
 
 
-    # Tela da avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
 
+        # Cria arquivo de votos se não existir
         if not os.path.exists(FILE_VOTOS):
-            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro"])
+            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
             df_votos.to_csv(FILE_VOTOS, index=False)
 
         df_votos = pd.read_csv(FILE_VOTOS)
 
-        if "Goleiro" not in df_votos.columns:
-            df_votos["Goleiro"] = ""
+        # Garante a coluna DataRodada
+        if "DataRodada" not in df_votos.columns:
+            df_votos["DataRodada"] = ""
 
-        jogadores_presentes = st.session_state.get("jogadores_presentes", [])
         usuarios = st.session_state.get("usuarios", {})
+        presencas = st.session_state.get("dados_gsheets", [])[3]
 
-        # Separar jogadores por posição
+        # Determina a data da quinta-feira da semana atual (rodada)
+        agora = datetime.now()
+        hoje = agora.weekday()
+        dias_para_quinta = (3 - hoje) % 7
+        data_rodada = (agora + timedelta(days=dias_para_quinta)).date()
+
+        # Determina o prazo final da votação (quarta-feira 22h)
+        prazo_limite = data_rodada + timedelta(days=6, hours=22)
+        if agora > prazo_limite:
+            st.warning("⚠️ O prazo para votar já passou. A votação encerra toda quarta-feira às 22h.")
+            return
+
+        # Filtra jogadores que confirmaram presença para a rodada
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+        confirmados = presencas[
+            (presencas["DataPartida"] == data_rodada) &
+            (presencas["Presença"].str.lower() == "sim")
+        ]
+        jogadores_presentes = confirmados["Nome"].tolist()
+        st.session_state["jogadores_presentes"] = jogadores_presentes
+
+        # Separa goleiros e jogadores de linha
         goleiros = []
         linha = []
         for j in jogadores_presentes:
-            for email, info in usuarios.items():
+            for _, info in usuarios.items():
                 if info["nome"] == j:
-                    if info.get("posicao", "Linha") == "Goleiro":
+                    if info.get("posicao", "Linha").strip().lower() == "goleiro":
                         goleiros.append(j)
                     else:
                         linha.append(j)
+                    break
 
-        st.markdown(
-            "<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            "Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤"
-        )
+        st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
+        st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
 
         votante = st.session_state.get("nome", "usuário")
         linha = [j for j in linha if j != votante]
         goleiros = [g for g in goleiros if g != votante]
-        ja_votou = votante in df_votos["Votante"].values
+
+        ja_votou = not df_votos[
+            (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
+        ].empty
 
         if not ja_votou:
             with st.form("votacao_form"):
-                craque = st.selectbox(
-                    "⭐ Craque da rodada", linha, placeholder="Selecione"
-                )
+                craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione")
                 pereba_opcoes = [j for j in linha if j != craque]
-                pereba = st.selectbox(
-                    "🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione"
-                )
-                goleiro = st.selectbox(
-                    "🧤 Melhor goleiro", goleiros, placeholder="Selecione"
-                )
+                pereba = st.selectbox("🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione")
+                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione")
+
                 submit = st.form_submit_button("Votar")
 
                 if submit:
@@ -1533,22 +1549,21 @@ else:
                     elif goleiro == "":
                         st.error("Escolha um goleiro.")
                     else:
-                        novo_voto = pd.DataFrame(
-                            [
-                                {
-                                    "Votante": votante,
-                                    "Craque": craque,
-                                    "Pereba": pereba,
-                                    "Goleiro": goleiro,
-                                }
-                            ]
-                        )
+                        novo_voto = pd.DataFrame([{
+                            "Votante": votante,
+                            "Craque": craque,
+                            "Pereba": pereba,
+                            "Goleiro": goleiro,
+                            "DataRodada": str(data_rodada)
+                        }])
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
                         df_votos.to_csv(FILE_VOTOS, index=False)
                         st.success("✅ Voto registrado com sucesso!")
                         ja_votou = True
 
-        if ja_votou and not df_votos.empty:
+        # Exibir resultados da rodada atual
+        if ja_votou:
+            df_votos_rodada = df_votos[df_votos["DataRodada"] == str(data_rodada)]
 
             def gerar_html_podio(serie, titulo, icone):
                 df = serie.value_counts().reset_index()
@@ -1566,8 +1581,7 @@ else:
                     nomes = "<br>".join(jogadores_empate)
                     podium_html += (
                         "<div style='text-align: center;'>"
-                        f"<div style='"
-                        f"background-color: {podium_colors[i]};"
+                        f"<div style='background-color: {podium_colors[i]};"
                         f"padding: 10px 15px;"
                         f"border-radius: 8px;"
                         f"font-weight: bold;"
@@ -1582,24 +1596,10 @@ else:
                 podium_html += "</div>"
                 return podium_html
 
-            st.markdown(
-                gerar_html_podio(
-                    df_votos["Craque"], "Craque da Chopp's League (Top 3)", "🏆"
-                ),
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                gerar_html_podio(
-                    df_votos["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"
-                ),
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                gerar_html_podio(
-                    df_votos["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"
-                ),
-                unsafe_allow_html=True,
-            )
+            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craque da Chopp's League (Top 3)", "🏆"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
+
 
     # Midias
     def tela_galeria_momentos():
