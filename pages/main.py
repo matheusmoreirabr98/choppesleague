@@ -1628,7 +1628,7 @@ else:
                 with st.expander("⚠️ Apagar votos da rodada atual"):
                     st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
                     st.markdown("<br>", unsafe_allow_html=True)  # 👈 quebra de linha aqui
-                    if st.button("<br>", "🗑️ Apagar votos desta rodada", unsafe_allow_html=True):
+                    if st.button("🗑️ Apagar votos desta rodada"):
                         df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
                         df_votos.to_csv(FILE_VOTOS, index=False)
                         st.success("✅ Votos da rodada apagados com sucesso. Recarregue a página para atualizar.")
