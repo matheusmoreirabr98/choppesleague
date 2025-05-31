@@ -1627,6 +1627,7 @@ else:
             if email_usuario.lower() == email_autorizado:
                 with st.expander("⚠️ Apagar votos da rodada atual"):
                     st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
+                    st.markdown("<br>", unsafe_allow_html=True)  # 👈 quebra de linha aqui
                     if st.button("🗑️ Apagar votos desta rodada"):
                         df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
                         df_votos.to_csv(FILE_VOTOS, index=False)
@@ -1724,7 +1725,7 @@ else:
                     st.success("Comentário publicado!")
 
         # --- Exibe comentários existentes (mais recentes primeiro) ---
-        st.markdown("### 🗂 Comentários recentes")
+        st.markdown("### 🖊️ Comentários recentes")
 
         if df_forum.empty:
             st.info("Ainda não há comentários. Seja o primeiro a escrever! 🤙")
