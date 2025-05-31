@@ -1552,6 +1552,7 @@ else:
                     placeholder="Selecione",
                     key="select_pereba"
                 )
+                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione")
 
                 submit = st.form_submit_button("Votar")
 
