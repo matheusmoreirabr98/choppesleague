@@ -1546,11 +1546,13 @@ else:
 
                 if craque:
                     pereba_opcoes = [j for j in linha if j != craque]
+                    pereba_opcoes = [j for j in linha if j != craque]
                     pereba = st.selectbox(
                         "🥴 Pereba da rodada",
                         pereba_opcoes,
+                        index=0 if len(pereba_opcoes) > 0 else -1,
                         placeholder="Selecione",
-                        key=f"select_pereba_{craque}"
+                        key="select_pereba"
                     )
                 else:
                     st.info("Selecione o craque antes de escolher o pereba.")
