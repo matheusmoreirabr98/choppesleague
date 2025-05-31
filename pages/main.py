@@ -1579,7 +1579,7 @@ else:
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
                         df_votos.to_csv(FILE_VOTOS, index=False)
                         st.success("✅ Voto registrado com sucesso!")
-                        st.experimental_rerun()
+                        st.rerun()
             
 
         # Exibir resultados da rodada atual
