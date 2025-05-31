@@ -870,21 +870,15 @@ else:
 
         # Estatísticas abaixo
         st.markdown(
-        f"""
-        <div style="text-align: center; margin-top: 2rem;">
-            <p style="font-size: 20px; font-weight: bold;">
-                📊 Total de Partidas: {total_partidas}
-            </p>
-        </div>
-
-        <div style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 50px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        ">
+            f"""
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 50px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            ">
             <div style="text-align: right; min-width: 100px;">
                 <p style="font-size: 25px;">
                     {borussia_vitorias} - 🏆<br>
@@ -905,10 +899,9 @@ else:
                     {gols_inter} - ⚽
                 </p>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+            """,
+            unsafe_allow_html=True,
+        )
 
 
 
