@@ -1654,10 +1654,10 @@ else:
                         df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
                         df_votos.to_csv(FILE_VOTOS, index=False)
                         st.success("✅ Votos da rodada apagados com sucesso. Recarregue a página para atualizar.")
-            # Mostra botão para recarregar
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🔄 Recarregar página"):
-                st.rerun()
+        # Mostra botão para recarregar
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("🔄 Recarregar página"):
+            st.rerun()
 
     # Midias
     def tela_galeria_momentos():
