@@ -1547,7 +1547,12 @@ else:
                 pereba = None
                 if craque:
                     pereba_opcoes = [j for j in linha if j != craque]
-                    pereba = st.selectbox("🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione")
+                    pereba = st.selectbox(
+                        "🥴 Pereba da rodada",
+                        pereba_opcoes,
+                        placeholder="Selecione",
+                        key=f"select_pereba_{craque}"
+                    )
                 else:
                     st.info("Selecione o craque antes de votar no pereba.")
                 goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione")
