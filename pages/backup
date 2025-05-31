@@ -1206,6 +1206,14 @@ else:
             usuarios = st.session_state.get("usuarios", {})
             email = st.session_state.get("email", "")
 
+            # 🔍 Só agora usamos o email, que foi definido
+            presenca_jogador = presencas_dict.get(email)
+            if presenca_jogador:
+                st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
+                if presenca_jogador["presenca"] == "nao":
+                    st.session_state["motivo"] = presenca_jogador.get("motivo", "")
+
+
         posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
         agora = datetime.now()
@@ -1231,6 +1239,7 @@ else:
 
         if resposta_enviada:
             status = st.session_state["presenca_confirmada"]
+            
             if status == "sim":
                 st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
             else:
@@ -1442,7 +1451,7 @@ else:
 
         # Exibir os times
         for i, time in enumerate(times, 1):
-            st.markdown(f"### 🟦 Time {i}")
+            st.markdown(f"### 👥 Time {i}")
             for jogador in time:
                 st.markdown(f"- {jogador}")
             st.markdown("---")
