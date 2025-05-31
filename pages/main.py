@@ -1127,6 +1127,14 @@ else:
         st.markdown("<h5 style='text-align: center; font-weight: bold;'>📋 Histórico de Partidas Registradas</h5>", unsafe_allow_html=True)
 
 
+        if "Gols Borussia" in partidas.columns and "Gols Inter" in partidas.columns:
+            partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
+
+            # Resto do seu código segue aqui
+        else:
+            st.warning("⚠️ Ainda não há partidas registradas com gols.")
+            return
+
         # Limpa dados incompletos
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
 
