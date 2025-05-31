@@ -1186,6 +1186,8 @@ else:
         aba_presencas = sh.worksheet("Presenças")
         df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
 
+        st.session_state["presencas_confirmadas"] = presencas_dict
+
         presencas_dict = {}
         if "Email" in df_atualizado.columns and "Nome" in df_atualizado.columns and "Presença" in df_atualizado.columns:
             for _, row in df_atualizado.iterrows():
