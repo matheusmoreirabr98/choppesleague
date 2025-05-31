@@ -1406,137 +1406,192 @@ else:
             return
 
         if st.button("🎯 Sortear Times") or "times_sorteados" not in st.session_state:
-            # Divide entre goleiros e linha pela base de usuários
+            # Divide entre goleiros e linha, sem considerar ordem de confirmação
             goleiros = []
             linha = []
 
             for nome in nomes_confirmados:
                 for email, dados in usuarios.items():
                     if dados["nome"] == nome:
-                        if dados["posicao"].lower() == "goleiro":
+                        if "goleiro" in dados.get("posicao", "").strip().lower():
                             goleiros.append(nome)
                         else:
                             linha.append(nome)
                         break
 
-            # Embaralha os jogadores de linha para aleatoriedade
+            # Embaralha tudo
+            random.shuffle(goleiros)
             random.shuffle(linha)
 
-            times = []
+            times = [[] for _ in range(2)]  # Time 1 e Time 2
             jogadores_restantes = linha.copy()
             goleiros_disponiveis = goleiros.copy()
 
-            while jogadores_restantes or goleiros_disponiveis:
-                time = []
+            # Distribui goleiros para os dois primeiros times
+            if goleiros_disponiveis:
+                if len(goleiros_disponiveis) >= 1:
+                    times[0].append(goleiros_disponiveis.pop(0))
+                if len(goleiros_disponiveis) >= 1:
+                    times[1].append(goleiros_disponiveis.pop(0))
 
-                # Tenta alocar 1 goleiro se houver
+            # Preencher os dois primeiros times com jogadores de linha
+            for i in range(2):
+                max_jogadores = 6 if any("goleiro" in usuario.lower() for usuario in times[i]) else 5
+                while len(times[i]) < max_jogadores and jogadores_restantes:
+                    times[i].append(jogadores_restantes.pop(0))
+
+            # Criar mais times, se necessário
+            while jogadores_restantes or goleiros_disponiveis:
+                novo_time = []
+
                 if goleiros_disponiveis:
-                    goleiro = goleiros_disponiveis.pop(0)
-                    time.append(goleiro)
+                    novo_time.append(goleiros_disponiveis.pop(0))
                     max_jogadores = 6
                 else:
                     max_jogadores = 5
 
-                # Adiciona até o limite de jogadores de linha
-                while len(time) < max_jogadores and jogadores_restantes:
-                    time.append(jogadores_restantes.pop(0))
+                while len(novo_time) < max_jogadores and jogadores_restantes:
+                    novo_time.append(jogadores_restantes.pop(0))
 
-                times.append(time)
+                times.append(novo_time)
 
             st.session_state.times_sorteados = times
-        else:
-            times = st.session_state.times_sorteados
 
-        st.success(f"✅ {len(nomes_confirmados)} jogadores confirmados. Gerando {len(times)} time(s):")
+            # Exibir os times
+            cores = ["🟡", "🔵", "🟢", "🟣", "🟠", "🔴"]
 
-        # Exibir os times
-        for i, time in enumerate(times, 1):
-            st.markdown(f"### 👥 Time {i}")
-            for jogador in time:
-                st.markdown(f"- {jogador}")
-            st.markdown("---")
+            for i, time in enumerate(times, 1):
+                cor = cores[(i - 1) % len(cores)]
+                st.markdown(f"### {cor} Time {i}")
+                for jogador in time:
+                    st.markdown(f"- {jogador}")
+                st.markdown("---")
+
 
 
         
 
 
 
-    # Tela da avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
 
+        # Cria arquivo de votos se não existir
         if not os.path.exists(FILE_VOTOS):
-            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro"])
+            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
             df_votos.to_csv(FILE_VOTOS, index=False)
 
         df_votos = pd.read_csv(FILE_VOTOS)
 
-        if "Goleiro" not in df_votos.columns:
-            df_votos["Goleiro"] = ""
+        # Garante a coluna DataRodada
+        if "DataRodada" not in df_votos.columns:
+            df_votos["DataRodada"] = ""
 
-        jogadores_presentes = st.session_state.get("jogadores_presentes", [])
         usuarios = st.session_state.get("usuarios", {})
+        presencas = st.session_state.get("dados_gsheets", [])[3]
 
-        # Separar jogadores por posição
+        # Determina a data da quinta-feira da semana atual (rodada)
+        agora = datetime.now()
+        hoje = agora.weekday()
+        dias_para_quinta = (3 - hoje) % 7
+        data_rodada = (agora + timedelta(days=dias_para_quinta)).date()
+
+        # Data da quinta-feira da rodada (próxima ou atual)
+        dias_para_quinta = (3 - hoje) % 7
+        proxima_quinta = agora + timedelta(days=dias_para_quinta)
+        data_rodada = proxima_quinta.date()
+
+        # quarta-feira anterior à próxima quinta
+        prazo_limite = proxima_quinta - timedelta(days=1)
+        prazo_limite = prazo_limite.replace(hour=22, minute=0, second=0, microsecond=0)
+
+        # Filtra jogadores que confirmaram presença para a rodada
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+        confirmados = presencas[
+            (presencas["DataPartida"] == data_rodada) &
+            (presencas["Presença"].str.lower() == "sim")
+        ]
+        jogadores_presentes = confirmados["Nome"].tolist()
+        st.session_state["jogadores_presentes"] = jogadores_presentes
+
+        # Separa goleiros e jogadores de linha
         goleiros = []
         linha = []
         for j in jogadores_presentes:
-            for email, info in usuarios.items():
+            for _, info in usuarios.items():
                 if info["nome"] == j:
-                    if info.get("posicao", "Linha") == "Goleiro":
+                    if info.get("posicao", "Linha").strip().lower() == "goleiro":
                         goleiros.append(j)
                     else:
                         linha.append(j)
+                    break
 
-        st.markdown(
-            "<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            "Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤"
-        )
+        st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
+        st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
 
         votante = st.session_state.get("nome", "usuário")
         linha = [j for j in linha if j != votante]
         goleiros = [g for g in goleiros if g != votante]
-        ja_votou = votante in df_votos["Votante"].values
 
+        ja_votou = not df_votos[
+            (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
+        ].empty
+            
         if not ja_votou:
-            with st.form("votacao_form"):
-                craque = st.selectbox(
-                    "⭐ Craque da rodada", linha, placeholder="Selecione"
-                )
-                pereba_opcoes = [j for j in linha if j != craque]
+            if votante not in jogadores_presentes:
+                st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
+                return
+
+        with st.form("votacao_form"):
+            # opções com placeholder
+            craque_opcoes = ["-- Selecione --"] + linha
+            craque = st.selectbox("⭐ Craque da rodada", options=craque_opcoes, index=0, key="select_craque")
+
+            pereba = None
+            if craque != "-- Selecione --":
+                pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
                 pereba = st.selectbox(
-                    "🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione"
+                    "🥴 Pereba da rodada",
+                    options=pereba_opcoes,
+                    index=0,
+                    key="select_pereba"
                 )
-                goleiro = st.selectbox(
-                    "🧤 Melhor goleiro", goleiros, placeholder="Selecione"
-                )
-                submit = st.form_submit_button("Votar")
+            else:
+                st.info("👆 Selecione o craque antes de votar no pereba.")
 
-                if submit:
-                    if craque == pereba:
-                        st.error("O craque e o pereba devem ser jogadores diferentes.")
-                    elif goleiro == "":
-                        st.error("Escolha um goleiro.")
-                    else:
-                        novo_voto = pd.DataFrame(
-                            [
-                                {
-                                    "Votante": votante,
-                                    "Craque": craque,
-                                    "Pereba": pereba,
-                                    "Goleiro": goleiro,
-                                }
-                            ]
-                        )
-                        df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
-                        df_votos.to_csv(FILE_VOTOS, index=False)
-                        st.success("✅ Voto registrado com sucesso!")
-                        ja_votou = True
+            goleiro_opcoes = ["-- Selecione --"] + goleiros
+            goleiro = st.selectbox("🧤 Melhor goleiro", options=goleiro_opcoes, index=0, key="select_goleiro")
 
-        if ja_votou and not df_votos.empty:
+            submit = st.form_submit_button("Votar")
+
+            if submit:
+                if (
+                    craque == "-- Selecione --"
+                    or pereba == "-- Selecione --"
+                    or goleiro == "-- Selecione --"
+                ):
+                    st.error("⚠️ Preencha todas as categorias antes de votar.")
+                elif craque == pereba:
+                    st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
+                else:
+                    novo_voto = pd.DataFrame([{
+                        "Votante": votante,
+                        "Craque": craque,
+                        "Pereba": pereba,
+                        "Goleiro": goleiro,
+                        "DataRodada": str(data_rodada)
+                    }])
+                    df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
+                    df_votos.to_csv(FILE_VOTOS, index=False)
+                    st.success("✅ Voto registrado com sucesso!")
+                    st.rerun()
+
+
+        
+
+        # Exibir resultados da rodada atual
+        if ja_votou:
+            df_votos_rodada = df_votos[df_votos["DataRodada"] == str(data_rodada)]
 
             def gerar_html_podio(serie, titulo, icone):
                 df = serie.value_counts().reset_index()
@@ -1554,8 +1609,7 @@ else:
                     nomes = "<br>".join(jogadores_empate)
                     podium_html += (
                         "<div style='text-align: center;'>"
-                        f"<div style='"
-                        f"background-color: {podium_colors[i]};"
+                        f"<div style='background-color: {podium_colors[i]};"
                         f"padding: 10px 15px;"
                         f"border-radius: 8px;"
                         f"font-weight: bold;"
@@ -1570,24 +1624,26 @@ else:
                 podium_html += "</div>"
                 return podium_html
 
-            st.markdown(
-                gerar_html_podio(
-                    df_votos["Craque"], "Craque da Chopp's League (Top 3)", "🏆"
-                ),
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                gerar_html_podio(
-                    df_votos["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"
-                ),
-                unsafe_allow_html=True,
-            )
-            st.markdown(
-                gerar_html_podio(
-                    df_votos["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"
-                ),
-                unsafe_allow_html=True,
-            )
+            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craque da Chopp's League (Top 3)", "🏆"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # Opção de apagar votos da rodada - acesso restrito
+            email_autorizado = "matheusmoreirabr@hotmail.com"
+            email_usuario = st.session_state.get("email", "")
+
+            if email_usuario.lower() == email_autorizado:
+                with st.expander("⚠️ Apagar votos da rodada atual"):
+                    st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
+                    if st.button("🗑️ Apagar votos desta rodada"):
+                        df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
+                        df_votos.to_csv(FILE_VOTOS, index=False)
+                        st.success("✅ Votos da rodada apagados com sucesso. Recarregue a página para atualizar.")
+                        # Mostra botão para recarregar
+                        st.markdown("<br>", unsafe_allow_html=True)
+                        if st.button("🔄 Recarregar página"):
+                            st.rerun()
 
     # Midias
     def tela_galeria_momentos():
@@ -1681,7 +1737,7 @@ else:
                     st.success("Comentário publicado!")
 
         # --- Exibe comentários existentes (mais recentes primeiro) ---
-        st.markdown("### 🗂 Comentários recentes")
+        st.markdown("### 🖊️ Comentários recentes")
 
         if df_forum.empty:
             st.info("Ainda não há comentários. Seja o primeiro a escrever! 🤙")

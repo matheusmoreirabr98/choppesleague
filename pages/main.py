@@ -1542,6 +1542,7 @@ else:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
 
+
         with st.form("votacao_form"):
             # opções com placeholder
             craque_opcoes = ["-- Selecione --"] + linha
