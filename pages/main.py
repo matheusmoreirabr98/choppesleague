@@ -838,10 +838,13 @@ else:
         gols_borussia = partidas["Gols_B"].sum()
         gols_inter = partidas["Gols_I"].sum()
 
-        # Vitórias e empates com base nos gols marcados
+        # Vitórias e empates
         borussia_vitorias = (partidas["Gols_B"] > partidas["Gols_I"]).sum()
         inter_vitorias = (partidas["Gols_I"] > partidas["Gols_B"]).sum()
         empates = (partidas["Gols_B"] == partidas["Gols_I"]).sum()
+
+        # ✅ Total de partidas
+        total_partidas = len(partidas)
 
         # Imagens dos escudos
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
@@ -867,15 +870,21 @@ else:
 
         # Estatísticas abaixo
         st.markdown(
-            f"""
-            <div style="
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 50px;
-                margin-top: 20px;
-                flex-wrap: wrap;
-            ">
+        f"""
+        <div style="text-align: center; margin-top: 2rem;">
+            <p style="font-size: 20px; font-weight: bold;">
+                📊 Total de Partidas: {total_partidas}
+            </p>
+        </div>
+
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 50px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        ">
             <div style="text-align: right; min-width: 100px;">
                 <p style="font-size: 25px;">
                     {borussia_vitorias} - 🏆<br>
@@ -896,9 +905,10 @@ else:
                     {gols_inter} - ⚽
                 </p>
             </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 
