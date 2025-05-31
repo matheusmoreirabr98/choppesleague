@@ -1180,6 +1180,10 @@ else:
     # Estatisticas dos jogadores
     def tela_presenca_login():
 
+        # 🧠 Garante que a lista de usuários esteja atualizada
+        _, _, usuarios_atualizados, _ = load_data()
+        st.session_state["usuarios"] = usuarios_atualizados
+
         # 🔄 Garante que os dados estejam atualizados diretamente da planilha
         gc = autenticar_gsheets()
         sh = gc.open(NOME_PLANILHA)
@@ -1397,15 +1401,14 @@ else:
             goleiros = []
             linha = []
 
-        for nome in nomes_confirmados:
-            for email, dados in usuarios.items():
-                if dados["nome"] == nome:
-                    posicao = dados.get("posicao", "").strip().lower()
-                    if "goleiro" in posicao:
-                        goleiros.append(nome)
-                    else:
-                        linha.append(nome)
-                    break
+            for nome in nomes_confirmados:
+                for email, dados in usuarios.items():
+                    if dados["nome"] == nome:
+                        if dados["posicao"].lower() == "goleiro":
+                            goleiros.append(nome)
+                        else:
+                            linha.append(nome)
+                        break
 
             # Embaralha os jogadores de linha para aleatoriedade
             random.shuffle(linha)
