@@ -1542,26 +1542,31 @@ else:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
 
-            with st.form("votacao_form"):
-                # Craque
-                craque = st.selectbox(
-                    "⭐ Craque da rodada",
-                    options=linha,
-                    index=None,
-                    placeholder="Selecione",
-                    key="select_craque"
-                )
+        with st.form("votacao_form"):
+            # Craque
+            craque = st.selectbox(
+                "⭐ Craque da rodada",
+                options=linha,
+                index=None,
+                placeholder="Selecione",
+                key="select_craque"
+            )
 
             # Pereba
             pereba = None
             if craque:
+                # Cria nova lista de opções excluindo o craque
                 pereba_opcoes = [j for j in linha if j != craque]
+                # Apaga a seleção anterior (caso craque tenha mudado)
+                if "select_pereba" in st.session_state:
+                    del st.session_state["select_pereba"]
+
                 pereba = st.selectbox(
                     "🥴 Pereba da rodada",
                     options=pereba_opcoes,
                     index=None,
                     placeholder="Selecione",
-                    key=f"select_pereba_{craque}"
+                    key="select_pereba"
                 )
             else:
                 st.info("👆 Selecione o craque antes de votar no pereba.")
@@ -1594,6 +1599,7 @@ else:
                     df_votos.to_csv(FILE_VOTOS, index=False)
                     st.success("✅ Voto registrado com sucesso!")
                     st.rerun()
+
 
         
 
