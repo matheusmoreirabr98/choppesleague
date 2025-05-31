@@ -1462,7 +1462,7 @@ else:
 
             for i, time in enumerate(times, 1):
                 cor = cores[(i - 1) % len(cores)]
-                st.markdown(f"### 🛡️ {cor} Time {i}")
+                st.markdown(f"### {cor} Time {i}")
                 for jogador in time:
                     st.markdown(f"- {jogador}")
                 st.markdown("---")
