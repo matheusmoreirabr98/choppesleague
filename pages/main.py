@@ -1541,23 +1541,25 @@ else:
             if votante not in jogadores_presentes:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
-            with st.form("votacao_form"):
-                craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione")
+            
+            
+            if not ja_votou:
+                if votante not in jogadores_presentes:
+                    st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
+                    return
 
+            with st.form("votacao_form"):
+                craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione", key="select_craque")
+
+                # Lista de opções para pereba (craque excluído)
                 if craque:
                     pereba_opcoes = [j for j in linha if j != craque]
-                    pereba_opcoes = [j for j in linha if j != craque]
-                    pereba = st.selectbox(
-                        "🥴 Pereba da rodada",
-                        pereba_opcoes,
-                        index=0 if len(pereba_opcoes) > 0 else -1,
-                        placeholder="Selecione",
-                        key="select_pereba"
-                    )
                 else:
-                    st.info("Selecione o craque antes de escolher o pereba.")
-                    pereba = None
-                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione")
+                    pereba_opcoes = linha  # Mostra todos enquanto craque não for selecionado
+
+                pereba = st.selectbox("🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione", key="select_pereba")
+
+                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione", key="select_goleiro")
 
                 submit = st.form_submit_button("Votar")
 
@@ -1566,8 +1568,6 @@ else:
                         st.error("Preencha todas as categorias antes de votar.")
                     elif craque == pereba:
                         st.error("O craque e o pereba devem ser jogadores diferentes.")
-                    elif goleiro == "":
-                        st.error("Escolha um goleiro.")
                     else:
                         novo_voto = pd.DataFrame([{
                             "Votante": votante,
@@ -1579,7 +1579,8 @@ else:
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
                         df_votos.to_csv(FILE_VOTOS, index=False)
                         st.success("✅ Voto registrado com sucesso!")
-                        ja_votou = True
+                        st.experimental_rerun()
+            
 
         # Exibir resultados da rodada atual
         if ja_votou:
