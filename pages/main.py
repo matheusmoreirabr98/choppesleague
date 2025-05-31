@@ -1557,7 +1557,9 @@ else:
                 )
             else:
                 st.info("👆 Selecione o craque antes de votar no pereba.")
-                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione", key="select_goleiro")
+
+            # fora do if/else, sempre exibe o select de goleiro
+            goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione", key="select_goleiro")
 
             submit = st.form_submit_button("Votar")
 
