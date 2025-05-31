@@ -1557,17 +1557,24 @@ else:
                 else:
                     pereba_opcoes = linha  # Mostra todos enquanto craque não for selecionado
 
-                pereba = st.selectbox("🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione", key="select_pereba")
+                # chave única baseada no craque selecionado, força atualização
+                key_pereba = f"select_pereba_{craque}" if craque else "select_pereba_default"
 
+                pereba = st.selectbox(
+                    "🥴 Pereba da rodada",
+                    pereba_opcoes,
+                    placeholder="Selecione",
+                    key=key_pereba
+                )
                 goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione", key="select_goleiro")
 
                 submit = st.form_submit_button("Votar")
 
                 if submit:
                     if not craque or not pereba or not goleiro:
-                        st.error("Preencha todas as categorias antes de votar.")
+                        st.error("⚠️ Preencha todas as categorias antes de votar.")
                     elif craque == pereba:
-                        st.error("O craque e o pereba devem ser jogadores diferentes.")
+                        st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
                     else:
                         novo_voto = pd.DataFrame([{
                             "Votante": votante,
@@ -1636,7 +1643,7 @@ else:
                         # Mostra botão para recarregar
                         st.markdown("<br>", unsafe_allow_html=True)
                         if st.button("🔄 Recarregar página"):
-                            st.experimental_rerun()
+                            st.rerun()
 
     # Midias
     def tela_galeria_momentos():
