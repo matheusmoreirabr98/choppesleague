@@ -871,6 +871,17 @@ else:
         # Estatísticas abaixo
         st.markdown(
             f"""
+            <div style="text-align: center; margin-top: 2rem;">
+                <p style="font-size: 20px; font-weight: bold;">
+                    📊 Total de Partidas: {total_partidas}
+                </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+        )
+            
+        st.markdown(
+            f"""
             <div style="
                 display: flex;
                 justify-content: space-between;
