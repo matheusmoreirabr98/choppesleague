@@ -827,30 +827,26 @@ else:
         )
         st.markdown("---")
 
-        # Remove registros incompletos
-        partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
+        # Remove partidas sem placares
+        partidas = partidas.dropna(subset=[COL_GOLS_B, COL_GOLS_I], how='all')
 
-        # Função para contar nomes (desconsidera vazio e 'Ninguém marcou')
+        # Função para contar nomes válidos de goleadores
         def contar_gols(celula):
-            if pd.isna(celula) or celula.strip().lower() == "ninguém marcou":
+            if pd.isna(celula) or celula.strip().lower() in ["", "ninguém marcou"]:
                 return 0
             return len([nome.strip() for nome in celula.split(",") if nome.strip()])
 
-        # Contagem de gols por partida
-        partidas["Gols_B"] = partidas["Gols Borussia"].apply(contar_gols)
-        partidas["Gols_I"] = partidas["Gols Inter"].apply(contar_gols)
+        # Aplica contagem de gols
+        partidas["Gols_B"] = partidas[COL_GOLS_B].apply(contar_gols)
+        partidas["Gols_I"] = partidas[COL_GOLS_I].apply(contar_gols)
 
-        # Totais
+        # Contagem
+        total_partidas = len(partidas)
         gols_borussia = partidas["Gols_B"].sum()
         gols_inter = partidas["Gols_I"].sum()
-
-        # Vitórias e empates
         borussia_vitorias = (partidas["Gols_B"] > partidas["Gols_I"]).sum()
         inter_vitorias = (partidas["Gols_I"] > partidas["Gols_B"]).sum()
         empates = (partidas["Gols_B"] == partidas["Gols_I"]).sum()
-
-        # ✅ Total de partidas
-        total_partidas = len(partidas)
 
         # Imagens dos escudos
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
