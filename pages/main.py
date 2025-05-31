@@ -1201,6 +1201,12 @@ else:
                 
             st.session_state["presencas_confirmadas"] = presencas_dict
 
+            presenca_jogador = presencas_dict.get(email)
+            if presenca_jogador:
+                st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
+                if presenca_jogador["presenca"] == "nao":
+                    st.session_state["motivo"] = presenca_jogador.get("motivo", "")
+
             st.markdown("<br>", unsafe_allow_html=True)
             nome = st.session_state.get("nome", "usuário")
             usuarios = st.session_state.get("usuarios", {})
@@ -1231,6 +1237,7 @@ else:
 
         if resposta_enviada:
             status = st.session_state["presenca_confirmada"]
+            
             if status == "sim":
                 st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
             else:
