@@ -1352,63 +1352,79 @@ else:
         st.title("🎲 Sorteio de Times")
         st.markdown("Selecione a data da partida para sortear os times.")
 
-        # Carrega os dados
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
-        _, jogadores, _, presencas = st.session_state["dados_gsheets"]
+        _, _, usuarios, presencas = st.session_state["dados_gsheets"]
 
-        # Data da partida
+        # Escolha da data
         data_partida = st.date_input("📅 Data da Partida")
-
-        # Converte para datetime e extrai apenas a data (sem hora)
-        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors='coerce').dt.date
-
-        # Garante que o input do usuário também é uma data
         data_partida = pd.to_datetime(data_partida).date()
 
-        # Filtra corretamente
-        presentes = presencas[
+        # Converte coluna para datetime e filtra os confirmados
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+        confirmados = presencas[
             (presencas["DataPartida"] == data_partida) &
             (presencas["Presença"].str.lower() == "sim")
-        ]["Nome"].tolist()
+        ]
 
-        # DEBUG: mostra os dados brutos da planilha
-        st.write("📋 Dados completos da presença:", presencas)
+        # Lista ordenada pela ordem na planilha
+        nomes_confirmados = confirmados["Nome"].tolist()
 
-        # DEBUG: mostra só os registros da data selecionada
-        st.write("📆 Presenças na data selecionada:", presencas[presencas["DataPartida"] == data_partida])
-
-        # DEBUG: mostra os jogadores que passaram no filtro
-        st.write("✅ Jogadores filtrados como 'presentes':", presentes)
-
-
-        # Aplica o filtro
-        presentes = presencas[
-            (presencas["DataPartida"] == data_partida) &
-            (presencas["Presença"] == "sim")
-        ]["Nome"].tolist()
-
-
-        if len(presentes) < 10:
+        if len(nomes_confirmados) < 10:
             st.warning("⚠️ É necessário pelo menos 10 jogadores confirmados para realizar o sorteio.")
             return
 
-        # Sorteio controlado via estado
-        if "times_sorteados" not in st.session_state or st.button("🔄 Refazer Sorteio"):
-            random.shuffle(presentes)  # Embaralha os nomes
-            times = [presentes[i:i + 5] for i in range(0, len(presentes), 5)]
+        if st.button("🎯 Sortear Times") or "times_sorteados" not in st.session_state:
+            # Divide entre goleiros e linha pela base de usuários
+            goleiros = []
+            linha = []
+
+            for nome in nomes_confirmados:
+                for email, dados in usuarios.items():
+                    if dados["nome"] == nome:
+                        if dados["posicao"].lower() == "goleiro":
+                            goleiros.append(nome)
+                        else:
+                            linha.append(nome)
+                        break
+
+            # Embaralha os jogadores de linha para aleatoriedade
+            random.shuffle(linha)
+
+            times = []
+            jogadores_restantes = linha.copy()
+            goleiros_disponiveis = goleiros.copy()
+
+            while jogadores_restantes or goleiros_disponiveis:
+                time = []
+
+                # Tenta alocar 1 goleiro se houver
+                if goleiros_disponiveis:
+                    goleiro = goleiros_disponiveis.pop(0)
+                    time.append(goleiro)
+                    max_jogadores = 6
+                else:
+                    max_jogadores = 5
+
+                # Adiciona até o limite de jogadores de linha
+                while len(time) < max_jogadores and jogadores_restantes:
+                    time.append(jogadores_restantes.pop(0))
+
+                times.append(time)
+
             st.session_state.times_sorteados = times
         else:
             times = st.session_state.times_sorteados
 
-        st.success(f"✅ {len(presentes)} jogadores confirmados. Gerando {len(times)} times de até 5 jogadores:")
+        st.success(f"✅ {len(nomes_confirmados)} jogadores confirmados. Gerando {len(times)} time(s):")
 
-        # Exibe os times
+        # Exibir os times
         for i, time in enumerate(times, 1):
             st.markdown(f"### 🟦 Time {i}")
             for jogador in time:
                 st.markdown(f"- {jogador}")
             st.markdown("---")
+
 
         
 

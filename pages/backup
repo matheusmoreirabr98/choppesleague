@@ -27,6 +27,14 @@ def sanitize_df(df):
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
 
+# Nomes de colunas padronizados
+COL_DATA = "Data"
+COL_NUM_PARTIDA = "Número da Partida"
+COL_PLACAR_B = "Placar Borussia"
+COL_GOLS_B = "Gols Borussia"
+COL_PLACAR_I = "Placar Inter"
+COL_GOLS_I = "Gols Inter"
+
 EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
 
 
@@ -75,19 +83,17 @@ def init_data_gsheets():
         sh.add_worksheet(title="Usuarios", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Usuarios"), df_usuarios)
 
-    if "Partidas" not in existentes:
-        df_partidas = pd.DataFrame(
-            columns=[
-                "Data da partida",
-                "Nº Partida",
-                "Placar Borrusia",
-                "Gols Borrusia",
-                "Assistências Borrusia",
-                "Placar Inter",
-                "Gols Inter",
-                "Assistências Inter",
-            ]
-        )
+        if "Partidas" not in existentes:
+            df_partidas = pd.DataFrame(
+                columns=[
+                    "Data",
+                    "Número da Partida",
+                    "Placar Borussia",
+                    "Gols Borussia",
+                    "Placar Inter",
+                    "Gols Inter"
+                ]
+            )
         sh.add_worksheet(title="Partidas", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Partidas"), df_partidas)
 
@@ -813,38 +819,44 @@ else:
             """
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
-    # ✅ Tela principal com os escudos lado a lado e "X" no meio
-    def tela_principal(partidas, jogadores):
+ 
+
+       # ✅ Tela principal com os escudos lado a lado e "X" no meio
+    def tela_principal(partidas=None, jogadores=None):
+        if "dados_gsheets" not in st.session_state:
+            st.session_state["dados_gsheets"] = load_data()
+
+        partidas, jogadores, _, _ = st.session_state["dados_gsheets"]
         st.markdown(
             "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Chopp's League! 🍻</h5>",
             unsafe_allow_html=True,
         )
         st.markdown("---")
 
-        # Remove registros incompletos
-        partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
+        # Remove partidas sem placares
+        partidas = partidas.dropna(subset=[COL_GOLS_B, COL_GOLS_I], how='all')
 
-        # Função para contar nomes (desconsidera vazio e 'Ninguém marcou')
+        # Função para contar nomes válidos de goleadores
         def contar_gols(celula):
-            if pd.isna(celula) or celula.strip().lower() == "ninguém marcou":
+            if pd.isna(celula) or celula.strip().lower() in ["", "ninguém marcou"]:
                 return 0
             return len([nome.strip() for nome in celula.split(",") if nome.strip()])
 
-        # Contagem de gols por partida
-        partidas["Gols_B"] = partidas["Gols Borussia"].apply(contar_gols)
-        partidas["Gols_I"] = partidas["Gols Inter"].apply(contar_gols)
+        # Aplica contagem de gols
+        partidas["Gols_B"] = partidas[COL_GOLS_B].apply(contar_gols)
+        partidas["Gols_I"] = partidas[COL_GOLS_I].apply(contar_gols)
 
-        # Totais
+
+        partidas_validas = partidas.dropna(subset=["Número da Partida"])
+        total_partidas = len(partidas_validas)
+        
+        # Contagem
+        total_partidas = len(partidas)
         gols_borussia = partidas["Gols_B"].sum()
         gols_inter = partidas["Gols_I"].sum()
-
-        # Vitórias e empates
         borussia_vitorias = (partidas["Gols_B"] > partidas["Gols_I"]).sum()
         inter_vitorias = (partidas["Gols_I"] > partidas["Gols_B"]).sum()
         empates = (partidas["Gols_B"] == partidas["Gols_I"]).sum()
-
-        # ✅ Total de partidas
-        total_partidas = len(partidas)
 
         # Imagens dos escudos
         escudo_borussia = imagem_base64("imagens/escudo_borussia.png", "Borussia")
@@ -1126,6 +1138,14 @@ else:
         st.markdown("---")
         st.markdown("<h5 style='text-align: center; font-weight: bold;'>📋 Histórico de Partidas Registradas</h5>", unsafe_allow_html=True)
 
+
+        if "Gols Borussia" in partidas.columns and "Gols Inter" in partidas.columns:
+            partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
+
+            # Resto do seu código segue aqui
+        else:
+            st.warning("⚠️ Ainda não há partidas registradas com gols.")
+            return
 
         # Limpa dados incompletos
         partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
