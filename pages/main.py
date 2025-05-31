@@ -1397,15 +1397,15 @@ else:
             goleiros = []
             linha = []
 
-            for nome in nomes_confirmados:
-                for email, dados in usuarios.items():
-                    if dados["nome"] == nome:
-                        posicao = dados.get("posicao", "").strip().lower()
-                        if "goleiro" in posicao:
-                            goleiros.append(nome)
-                        else:
-                            linha.append(nome)
-                        break
+        for nome in nomes_confirmados:
+            for email, dados in usuarios.items():
+                if dados["nome"] == nome:
+                    posicao = dados.get("posicao", "").strip().lower()
+                    if "goleiro" in posicao:
+                        goleiros.append(nome)
+                    else:
+                        linha.append(nome)
+                    break
 
             # Embaralha os jogadores de linha para aleatoriedade
             random.shuffle(linha)
