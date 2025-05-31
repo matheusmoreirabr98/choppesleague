@@ -27,6 +27,14 @@ def sanitize_df(df):
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
 
+# Nomes de colunas padronizados
+COL_DATA = "Data"
+COL_NUM_PARTIDA = "Número da Partida"
+COL_PLACAR_B = "Placar Borussia"
+COL_GOLS_B = "Gols Borussia"
+COL_PLACAR_I = "Placar Inter"
+COL_GOLS_I = "Gols Inter"
+
 EMAILS_ADMIN = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
 
 
@@ -75,19 +83,17 @@ def init_data_gsheets():
         sh.add_worksheet(title="Usuarios", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Usuarios"), df_usuarios)
 
-    if "Partidas" not in existentes:
-        df_partidas = pd.DataFrame(
-            columns=[
-                "Data da partida",
-                "Nº Partida",
-                "Placar Borrusia",
-                "Gols Borrusia",
-                "Assistências Borrusia",
-                "Placar Inter",
-                "Gols Inter",
-                "Assistências Inter",
-            ]
-        )
+        if "Partidas" not in existentes:
+            df_partidas = pd.DataFrame(
+                columns=[
+                    "Data",
+                    "Número da Partida",
+                    "Placar Borussia",
+                    "Gols Borussia",
+                    "Placar Inter",
+                    "Gols Inter"
+                ]
+            )
         sh.add_worksheet(title="Partidas", rows="100", cols="20")
         set_with_dataframe(sh.worksheet("Partidas"), df_partidas)
 
