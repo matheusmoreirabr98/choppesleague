@@ -840,6 +840,10 @@ else:
         partidas["Gols_B"] = partidas[COL_GOLS_B].apply(contar_gols)
         partidas["Gols_I"] = partidas[COL_GOLS_I].apply(contar_gols)
 
+
+        partidas_validas = partidas.dropna(subset=["Número da Partida"])
+        total_partidas = len(partidas_validas)
+        
         # Contagem
         total_partidas = len(partidas)
         gols_borussia = partidas["Gols_B"].sum()
