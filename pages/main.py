@@ -1619,7 +1619,8 @@ else:
             st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craque da Chopp's League (Top 3)", "🏆"), unsafe_allow_html=True)
             st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"), unsafe_allow_html=True)
             st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
- 
+            st.markdown("<br>", unsafe_allow_html=True)
+
             # Opção de apagar votos da rodada - acesso restrito
             email_autorizado = "matheusmoreirabr@hotmail.com"
             email_usuario = st.session_state.get("email", "")
@@ -1627,7 +1628,6 @@ else:
             if email_usuario.lower() == email_autorizado:
                 with st.expander("⚠️ Apagar votos da rodada atual"):
                     st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
-                    st.markdown("<br>", unsafe_allow_html=True)  # 👈 quebra de linha aqui
                     if st.button("🗑️ Apagar votos desta rodada"):
                         df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
                         df_votos.to_csv(FILE_VOTOS, index=False)
