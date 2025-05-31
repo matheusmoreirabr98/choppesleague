@@ -1543,28 +1543,37 @@ else:
                 return
 
         with st.form("votacao_form"):
-            craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione", key="select_craque")
-            # Inicializa pereba como None
-            pereba = None
+            # Adiciona opção inicial
+            craque_opcoes = ["-- Selecione --"] + linha
+            craque = st.selectbox("⭐ Craque da rodada", craque_opcoes, key="select_craque")
 
-            if craque:
-                pereba_opcoes = [j for j in linha if j != craque]
+            pereba = None
+            pereba_opcoes = []
+
+            if craque != "-- Selecione --":
+                pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
                 pereba = st.selectbox(
                     "🥴 Pereba da rodada",
                     options=pereba_opcoes,
-                    placeholder="Selecione",
                     key=f"select_pereba_{craque}"
                 )
             else:
                 st.info("👆 Selecione o craque antes de votar no pereba.")
 
-            # fora do if/else, sempre exibe o select de goleiro
-            goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione", key="select_goleiro")
+            goleiro_opcoes = ["-- Selecione --"] + goleiros
+            goleiro = st.selectbox("🧤 Melhor goleiro", goleiro_opcoes, key="select_goleiro")
 
             submit = st.form_submit_button("Votar")
 
             if submit:
-                if not craque or not pereba or not goleiro:
+                if (
+                    craque == "-- Selecione --"
+                    or pereba == "-- Selecione --"
+                    or goleiro == "-- Selecione --"
+                    or not craque
+                    or not pereba
+                    or not goleiro
+                ):
                     st.error("⚠️ Preencha todas as categorias antes de votar.")
                 elif craque == pereba:
                     st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
