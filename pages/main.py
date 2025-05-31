@@ -1406,12 +1406,9 @@ else:
             return
 
         if st.button("🎯 Sortear Times") or "times_sorteados" not in st.session_state:
-            # Divide entre goleiros e linha, respeitando ordem de confirmação
+            # Divide entre goleiros e linha, sem considerar ordem de confirmação
             goleiros = []
             linha = []
-
-            # Ordena os confirmados pela ordem na planilha
-            nomes_confirmados = confirmados.sort_values(by="Data").reset_index(drop=True)["Nome"].tolist()
 
             for nome in nomes_confirmados:
                 for email, dados in usuarios.items():
@@ -1422,42 +1419,50 @@ else:
                             linha.append(nome)
                         break
 
-            # Times iniciais
+            # Embaralha tudo
+            random.shuffle(goleiros)
+            random.shuffle(linha)
+
             times = [[] for _ in range(2)]  # Time 1 e Time 2
             jogadores_restantes = linha.copy()
+            goleiros_disponiveis = goleiros.copy()
 
-            # Goleiros em Time 1 e 2 (se houver)
-            if goleiros:
-                if len(goleiros) >= 1:
-                    times[0].append(goleiros.pop(0))
-                if len(goleiros) >= 1:
-                    times[1].append(goleiros.pop(0))
+            # Distribui goleiros para os dois primeiros times
+            if goleiros_disponiveis:
+                if len(goleiros_disponiveis) >= 1:
+                    times[0].append(goleiros_disponiveis.pop(0))
+                if len(goleiros_disponiveis) >= 1:
+                    times[1].append(goleiros_disponiveis.pop(0))
 
-            # Preencher os dois primeiros times com jogadores da linha
+            # Preencher os dois primeiros times com jogadores de linha
             for i in range(2):
-                while len(times[i]) < 6 and jogadores_restantes:
+                max_jogadores = 6 if any("goleiro" in usuario.lower() for usuario in times[i]) else 5
+                while len(times[i]) < max_jogadores and jogadores_restantes:
                     times[i].append(jogadores_restantes.pop(0))
 
-            # Cria times extras, se sobrar jogadores
-            while jogadores_restantes or goleiros:
+            # Criar mais times, se necessário
+            while jogadores_restantes or goleiros_disponiveis:
                 novo_time = []
 
-                if goleiros:
-                    novo_time.append(goleiros.pop(0))
+                if goleiros_disponiveis:
+                    novo_time.append(goleiros_disponiveis.pop(0))
+                    max_jogadores = 6
+                else:
+                    max_jogadores = 5
 
-                while len(novo_time) < 6 and jogadores_restantes:
+                while len(novo_time) < max_jogadores and jogadores_restantes:
                     novo_time.append(jogadores_restantes.pop(0))
 
                 times.append(novo_time)
 
             st.session_state.times_sorteados = times
-            
+
             # Exibir os times
             cores = ["🟡", "🔵", "🟢", "🟣", "🟠", "🔴"]
 
             for i, time in enumerate(times, 1):
                 cor = cores[(i - 1) % len(cores)]
-                st.markdown(f"### {cor} Time {i}")
+                st.markdown(f"### 🛡️ {cor} Time {i}")
                 for jogador in time:
                     st.markdown(f"- {jogador}")
                 st.markdown("---")
