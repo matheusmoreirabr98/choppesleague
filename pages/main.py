@@ -819,8 +819,14 @@ else:
             """
         return f"<div style='text-align: center;'>Imagem não encontrada: {path}</div>"
 
-    # ✅ Tela principal com os escudos lado a lado e "X" no meio
-    def tela_principal(partidas, jogadores):
+ 
+
+       # ✅ Tela principal com os escudos lado a lado e "X" no meio
+    def tela_principal(partidas=None, jogadores=None):
+        if "dados_gsheets" not in st.session_state:
+            st.session_state["dados_gsheets"] = load_data()
+
+        partidas, jogadores, _, _ = st.session_state["dados_gsheets"]
         st.markdown(
             "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Chopp's League! 🍻</h5>",
             unsafe_allow_html=True,
