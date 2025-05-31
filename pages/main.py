@@ -1550,22 +1550,19 @@ else:
 
             with st.form("votacao_form"):
                 craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione", key="select_craque")
+            # Inicializa pereba como None
+            pereba = None
 
-                # Lista de opções para pereba (craque excluído)
-                if craque:
-                    pereba_opcoes = [j for j in linha if j != craque]
-                else:
-                    pereba_opcoes = linha  # Mostra todos enquanto craque não for selecionado
-
-                # chave única baseada no craque selecionado, força atualização
-                key_pereba = f"select_pereba_{craque}" if craque else "select_pereba_default"
-
+            if craque:
+                pereba_opcoes = [j for j in linha if j != craque]
                 pereba = st.selectbox(
                     "🥴 Pereba da rodada",
-                    pereba_opcoes,
+                    options=pereba_opcoes,
                     placeholder="Selecione",
-                    key=key_pereba
+                    key=f"select_pereba_{craque}"
                 )
+            else:
+                st.info("👆 Selecione o craque antes de votar no pereba.")
                 goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione", key="select_goleiro")
 
                 submit = st.form_submit_button("Votar")
