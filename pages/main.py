@@ -1371,12 +1371,7 @@ else:
                 st.markdown(f"- {jogador}")
             st.markdown("---")
 
-            
-    if st.button("🔄 Atualizar dados da planilha"):
-        st.session_state["dados_gsheets"] = load_data()
-        st.success("✅ Dados atualizados com sucesso!")
-        st.rerun()
-
+        
 
 
 
