@@ -1330,7 +1330,7 @@ else:
                 if presenca_info.get("presenca") == "sim":
                     status = "✅"
                     confirmados += 1
-                    if posicao.lower() == "gol":
+                    if posicao.lower() == "Goleiro":
                         goleiros_confirmados += 1
                     else:
                         linha_confirmados += 1
