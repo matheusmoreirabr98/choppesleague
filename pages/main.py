@@ -1552,48 +1552,48 @@ else:
                     key="select_craque"
                 )
 
-                # Pereba
-                pereba = None
-                if craque:
-                    pereba_opcoes = [j for j in linha if j != craque]
-                    pereba = st.selectbox(
-                        "🥴 Pereba da rodada",
-                        options=pereba_opcoes,
-                        index=None,
-                        placeholder="Selecione",
-                        key=f"select_pereba_{craque}"
-                    )
-                else:
-                    st.info("👆 Selecione o craque antes de votar no pereba.")
-
-                # Goleiro
-                goleiro = st.selectbox(
-                    "🧤 Melhor goleiro",
-                    options=goleiros,
+            # Pereba
+            pereba = None
+            if craque:
+                pereba_opcoes = [j for j in linha if j != craque]
+                pereba = st.selectbox(
+                    "🥴 Pereba da rodada",
+                    options=pereba_opcoes,
                     index=None,
                     placeholder="Selecione",
-                    key="select_goleiro"
+                    key=f"select_pereba_{craque}"
                 )
+            else:
+                st.info("👆 Selecione o craque antes de votar no pereba.")
 
-                submit = st.form_submit_button("Votar")
+            # Goleiro
+            goleiro = st.selectbox(
+                "🧤 Melhor goleiro",
+                options=goleiros,
+                index=None,
+                placeholder="Selecione",
+                key="select_goleiro"
+            )
 
-                if submit:
-                    if not craque or not pereba or not goleiro:
-                        st.error("⚠️ Preencha todas as categorias antes de votar.")
-                    elif craque == pereba:
-                        st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
-                    else:
-                        novo_voto = pd.DataFrame([{
-                            "Votante": votante,
-                            "Craque": craque,
-                            "Pereba": pereba,
-                            "Goleiro": goleiro,
-                            "DataRodada": str(data_rodada)
-                        }])
-                        df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
-                        df_votos.to_csv(FILE_VOTOS, index=False)
-                        st.success("✅ Voto registrado com sucesso!")
-                        st.rerun()
+            submit = st.form_submit_button("Votar")
+
+            if submit:
+                if not craque or not pereba or not goleiro:
+                    st.error("⚠️ Preencha todas as categorias antes de votar.")
+                elif craque == pereba:
+                    st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
+                else:
+                    novo_voto = pd.DataFrame([{
+                        "Votante": votante,
+                        "Craque": craque,
+                        "Pereba": pereba,
+                        "Goleiro": goleiro,
+                        "DataRodada": str(data_rodada)
+                    }])
+                    df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
+                    df_votos.to_csv(FILE_VOTOS, index=False)
+                    st.success("✅ Voto registrado com sucesso!")
+                    st.rerun()
 
         
 
