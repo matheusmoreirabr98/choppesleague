@@ -1194,6 +1194,10 @@ else:
                     "presenca": "sim" if row["Presença"].strip().lower() == "sim" else "nao",
                     "motivo": row.get("Motivo", ""),
         }
+            st.markdown("<br>", unsafe_allow_html=True)
+            nome = st.session_state.get("nome", "usuário")
+            usuarios = st.session_state.get("usuarios", {})
+            email = st.session_state.get("email", "")
 
         posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
