@@ -1201,16 +1201,18 @@ else:
                 
             st.session_state["presencas_confirmadas"] = presencas_dict
 
+            st.markdown("<br>", unsafe_allow_html=True)
+            nome = st.session_state.get("nome", "usuário")
+            usuarios = st.session_state.get("usuarios", {})
+            email = st.session_state.get("email", "")
+
+            # 🔍 Só agora usamos o email, que foi definido
             presenca_jogador = presencas_dict.get(email)
             if presenca_jogador:
                 st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
                 if presenca_jogador["presenca"] == "nao":
                     st.session_state["motivo"] = presenca_jogador.get("motivo", "")
 
-            st.markdown("<br>", unsafe_allow_html=True)
-            nome = st.session_state.get("nome", "usuário")
-            usuarios = st.session_state.get("usuarios", {})
-            email = st.session_state.get("email", "")
 
         posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
