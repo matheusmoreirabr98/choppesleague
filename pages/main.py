@@ -1544,18 +1544,14 @@ else:
             with st.form("votacao_form"):
                 craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione")
 
-                pereba = None
-                if craque:
-                    pereba_opcoes = [j for j in linha if j != craque]
-                    pereba = st.selectbox(
-                        "🥴 Pereba da rodada",
-                        pereba_opcoes,
-                        placeholder="Selecione",
-                        key=f"select_pereba_{craque}"
-                    )
-                else:
-                    st.info("Selecione o craque antes de votar no pereba.")
-                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione")
+                pereba_opcoes = [j for j in linha if j != craque]
+                pereba = st.selectbox(
+                    "🥴 Pereba da rodada",
+                    pereba_opcoes,
+                    index=0 if len(pereba_opcoes) > 0 else -1,
+                    placeholder="Selecione",
+                    key="select_pereba"
+                )
 
                 submit = st.form_submit_button("Votar")
 
