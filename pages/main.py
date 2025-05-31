@@ -1582,44 +1582,44 @@ else:
                         ja_votou = True
 
         # Exibir resultados da rodada atual
-        if ja_votou:
-            df_votos_rodada = df_votos[df_votos["DataRodada"] == str(data_rodada)]
+        if not ja_votou:
+            if votante not in jogadores_presentes:
+                st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
+                return
 
-            def gerar_html_podio(serie, titulo, icone):
-                df = serie.value_counts().reset_index()
-                df.columns = ["Jogador", "Votos"]
-                podium_colors = ["#FFD700", "#C0C0C0", "#CD7F32"]
-                podium_labels = ["🥇", "🥈", "🥉"]
+            with st.form("votacao_form"):
+                craque = st.selectbox("⭐ Craque da rodada", linha, placeholder="Selecione", key="select_craque")
 
-                podium_html = f"<h3 style='margin-bottom: 20px;'>{icone} {titulo}</h3>"
-                podium_html += "<div style='display: flex; justify-content: center; align-items: end; gap: 40px;'>"
+                # Lista de opções para pereba (craque excluído)
+                if craque:
+                    pereba_opcoes = [j for j in linha if j != craque]
+                else:
+                    pereba_opcoes = linha  # Mostra todos enquanto craque não for selecionado
 
-                top_votos = df["Votos"].unique()[:3]
+                pereba = st.selectbox("🥴 Pereba da rodada", pereba_opcoes, placeholder="Selecione", key="select_pereba")
 
-                for i, votos in enumerate(top_votos):
-                    jogadores_empate = df[df["Votos"] == votos]["Jogador"].tolist()
-                    nomes = "<br>".join(jogadores_empate)
-                    podium_html += (
-                        "<div style='text-align: center;'>"
-                        f"<div style='background-color: {podium_colors[i]};"
-                        f"padding: 10px 15px;"
-                        f"border-radius: 8px;"
-                        f"font-weight: bold;"
-                        f"font-size: 18px;"
-                        f"min-width: 100px;"
-                        f"box-shadow: 2px 2px 5px #aaa;"
-                        f"text-align: center;'>"
-                        f"{podium_labels[i]}<br>{nomes}<br>{votos} voto(s)"
-                        "</div></div>"
-                    )
+                goleiro = st.selectbox("🧤 Melhor goleiro", goleiros, placeholder="Selecione", key="select_goleiro")
 
-                podium_html += "</div>"
-                return podium_html
+                submit = st.form_submit_button("Votar")
 
-            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craque da Chopp's League (Top 3)", "🏆"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
+                if submit:
+                    if not craque or not pereba or not goleiro:
+                        st.error("Preencha todas as categorias antes de votar.")
+                    elif craque == pereba:
+                        st.error("O craque e o pereba devem ser jogadores diferentes.")
+                    else:
+                        novo_voto = pd.DataFrame([{
+                            "Votante": votante,
+                            "Craque": craque,
+                            "Pereba": pereba,
+                            "Goleiro": goleiro,
+                            "DataRodada": str(data_rodada)
+                        }])
+                        df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
+                        df_votos.to_csv(FILE_VOTOS, index=False)
+                        st.success("✅ Voto registrado com sucesso!")
+                        st.experimental_rerun()
+
 
             # Opção de apagar votos da rodada - acesso restrito
             email_autorizado = "matheusmoreirabr@hotmail.com"
