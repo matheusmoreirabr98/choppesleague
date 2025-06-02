@@ -1211,21 +1211,11 @@ else:
                     "presenca": "sim" if row["Presença"].strip().lower() == "sim" else "nao",
                     "motivo": row.get("Motivo", ""),
                 }
-
             st.session_state["presencas_confirmadas"] = presencas_dict
 
         nome = st.session_state.get("nome", "usuário")
         usuarios = st.session_state.get("usuarios", {})
         email = st.session_state.get("email", "")
-
-        # só carrega se ainda não estiver no session_state e não estiver mudando de ideia
-        if "presenca_confirmada" not in st.session_state and not st.session_state.get("mudando_ideia", False):
-            presenca_jogador = presencas_dict.get(email)
-            if presenca_jogador:
-                st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
-                if presenca_jogador["presenca"] == "nao":
-                    st.session_state["motivo"] = presenca_jogador.get("motivo", "")
-
         posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
         agora = datetime.now()
@@ -1245,12 +1235,20 @@ else:
         prazo_limite = proxima_quarta.replace(hour=22, minute=0, second=0, microsecond=0)
         passou_do_prazo = agora > prazo_limite
 
-        # só agora verifica se a resposta já foi enviada
-        resposta_enviada = "presenca_confirmada" in st.session_state
-
         if passou_do_prazo:
             st.warning("⚠️ O prazo para confirmar presença ou ausência é toda **quarta-feira até às 22h**.")
 
+        # carregar confirmação anterior, se não estiver mudando de ideia
+        if "presenca_confirmada" not in st.session_state and not st.session_state.get("mudando_ideia", False):
+            presenca_jogador = presencas_dict.get(email)
+            if presenca_jogador:
+                st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
+                if presenca_jogador["presenca"] == "nao":
+                    st.session_state["motivo"] = presenca_jogador.get("motivo", "")
+
+        resposta_enviada = "presenca_confirmada" in st.session_state
+
+        # SE A RESPOSTA JÁ FOI ENVIADA
         if resposta_enviada:
             status = st.session_state["presenca_confirmada"]
             if status == "sim":
@@ -1259,13 +1257,63 @@ else:
                 motivo = st.session_state.get("motivo", "não informado")
                 st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
 
-            # 🔁 Botão para mudar de ideia
+            # botão para mudar de ideia
             if st.button("🔁 Mudar de ideia"):
                 st.session_state.pop("presenca_confirmada", None)
                 st.session_state.pop("motivo", None)
                 st.session_state["mudando_ideia"] = True
                 st.rerun()
 
+            # LISTA DE PRESENÇA (apenas após resposta)
+            presencas = st.session_state.get("presencas_confirmadas", {})
+            todos_usuarios = st.session_state.get("usuarios", {})
+
+            linhas_html = ""
+            confirmados = 0
+            linha_confirmados = 0
+            goleiros_confirmados = 0
+
+            for email, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
+                nome = dados_usuario["nome"]
+                posicao = dados_usuario.get("posicao", "Linha")
+                status = "❓"
+                motivo = ""
+
+                if email in presencas:
+                    presenca_info = presencas[email]
+                    if presenca_info.get("presenca") == "sim":
+                        status = "✅"
+                        confirmados += 1
+                        if posicao and "goleiro" in posicao.strip().lower():
+                            goleiros_confirmados += 1
+                        else:
+                            linha_confirmados += 1
+                    elif presenca_info.get("presenca") == "nao":
+                        status = "❌"
+                        motivo = presenca_info.get("motivo", "")
+
+                if status == "❌" and motivo:
+                    linhas_html += f"<li>{status} {nome} ({posicao}) — <em>{motivo}</em></li>"
+                else:
+                    linhas_html += f"<li>{status} {nome} ({posicao})</li>"
+
+            st.markdown(
+                f"""
+                <div style="text-align: center; margin-top: 2rem;">
+                    <h6 style="text-align: center;">
+                        📋 Presença da Semana — Confirmados: {confirmados}  
+                        <br>👟 Jogadores de Linha: {linha_confirmados}  
+                        <br>🧤 Goleiros: {goleiros_confirmados}
+                    </h6>
+                    <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
+                        {linhas_html}
+                    </ul>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        # SE AINDA NÃO CONFIRMOU PRESENÇA
         else:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
             motivo = ""
@@ -1308,7 +1356,6 @@ else:
                     if presenca == "❌ Não":
                         st.session_state["motivo"] = justificativa
 
-                    # atualiza dicionário
                     df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
                     presencas_dict = {}
                     for _, row in df_atualizado.iterrows():
@@ -1322,55 +1369,6 @@ else:
                     st.success("✅ Presença registrada com sucesso!")
                     st.rerun()
 
-            # ✅ Lista de presença sempre visível após as opções
-            presencas = st.session_state.get("presencas_confirmadas", {})
-            todos_usuarios = st.session_state.get("usuarios", {})
-
-            linhas_html = ""
-            confirmados = 0
-            linha_confirmados = 0
-            goleiros_confirmados = 0
-
-            for email, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
-                nome = dados_usuario["nome"]
-                posicao = dados_usuario.get("posicao", "Linha")
-                status = "❓"
-                motivo = ""
-
-                if email in presencas:
-                    presenca_info = presencas[email]
-                    if presenca_info.get("presenca") == "sim":
-                        status = "✅"
-                        confirmados += 1
-                        if posicao and "goleiro" in posicao.strip().lower():
-                            goleiros_confirmados += 1
-                        else:
-                            linha_confirmados += 1
-                    elif presenca_info.get("presenca") == "nao":
-                        status = "❌"
-                        motivo = presenca_info.get("motivo", "")
-
-                # monta linha com posição
-                if status == "❌" and motivo:
-                    linhas_html += f"<li>{status} {nome} ({posicao}) — <em>{motivo}</em></li>"
-                else:
-                    linhas_html += f"<li>{status} {nome} ({posicao})</li>"
-
-            st.markdown(
-                f"""
-                <div style="text-align: center; margin-top: 2rem;">
-                    <h6 style="text-align: center;">
-                        📋 Presença da Semana — Confirmados: {confirmados}  
-                        <br>👟 Jogadores de Linha: {linha_confirmados}  
-                        <br>🧤 Goleiros: {goleiros_confirmados}
-                    </h6>
-                    <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
-                        {linhas_html}
-                    </ul>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
 
 
 
