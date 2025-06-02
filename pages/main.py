@@ -1220,13 +1220,13 @@ else:
             usuarios = st.session_state.get("usuarios", {})
             email = st.session_state.get("email", "")
 
-            # Só carrega presença da planilha se ainda não tiver confirmado no estado
-            if "presenca_confirmada" not in st.session_state:
-                presenca_jogador = presencas_dict.get(email)
-                if presenca_jogador:
-                    st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
-                    if presenca_jogador["presenca"] == "nao":
-                        st.session_state["motivo"] = presenca_jogador.get("motivo", "")
+        # Só carrega presença da planilha se ainda não tiver confirmado no estado
+        if "presenca_confirmada" not in st.session_state:
+            presenca_jogador = presencas_dict.get(email)
+            if presenca_jogador:
+                st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
+                if presenca_jogador["presenca"] == "nao":
+                    st.session_state["motivo"] = presenca_jogador.get("motivo", "")
 
         posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
