@@ -1555,9 +1555,6 @@ else:
                 disabled=pereba_disabled
             )
 
-            if pereba_disabled:
-                st.info("👆 Selecione o craque antes de votar no pereba.")
-
             goleiro_opcoes = ["-- Selecione --"] + goleiros
             goleiro = st.selectbox("🧤 Melhor goleiro", options=goleiro_opcoes, index=0, key="select_goleiro")
 
