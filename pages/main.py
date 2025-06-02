@@ -1315,12 +1315,12 @@ else:
                     st.success("✅ Presença registrada com sucesso!")
                     st.rerun()
 
-            # 🔁 Botão para mudar de ideia
-            if st.button("🔁 Mudar de ideia"):
-                st.session_state.pop("presenca_confirmada", None)
-                st.session_state.pop("motivo", None)
-                st.session_state["mudando_ideia"] = True  # ← impede recarregar a info da planilha
-                st.rerun()
+        # 🔁 Botão para mudar de ideia
+        if st.button("🔁 Mudar de ideia"):
+            st.session_state.pop("presenca_confirmada", None)
+            st.session_state.pop("motivo", None)
+            st.session_state["mudando_ideia"] = True  # ← impede recarregar a info da planilha
+            st.rerun()
 
         # ✅ Lista de presença sempre visível após as opções
         presencas = st.session_state.get("presencas_confirmadas", {})
