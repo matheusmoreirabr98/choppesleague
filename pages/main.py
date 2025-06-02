@@ -1258,6 +1258,13 @@ else:
             else:
                 motivo = st.session_state.get("motivo", "não informado")
                 st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
+
+            # 🔁 Botão para mudar de ideia
+            if st.button("🔁 Mudar de ideia"):
+                st.session_state.pop("presenca_confirmada", None)
+                st.session_state.pop("motivo", None)
+                st.rerun()
+
         else:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
             motivo = ""
@@ -1299,6 +1306,7 @@ else:
                     if presenca == "❌ Não":
                         st.session_state["motivo"] = justificativa
 
+                    # atualiza dicionário
                     df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
                     presencas_dict = {}
                     for _, row in df_atualizado.iterrows():
@@ -1312,12 +1320,6 @@ else:
                     st.success("✅ Presença registrada com sucesso!")
                     st.rerun()
 
-                if st.button("🔁 Mudar de ideia"):
-                    for key in ["presenca_confirmada", "motivo"]:
-                        if key in st.session_state:
-                            del st.session_state[key]
-                    st.experimental_rerun()
-                return  # <-- ESSENCIAL para evitar o erro
 
 
 
