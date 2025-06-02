@@ -962,7 +962,7 @@ else:
 
         # filtra jogadores presentes
         jogadores_presentes_data = presencas[
-            (presencas["DataPartida"] == data_escolhida) & (presencas["Presença"] == "sim")
+            (presencas["DataPartida"] == data) & (presencas["Presença"] == "sim")
         ]["Nome"].tolist()
 
         if not jogadores_presentes_data:
