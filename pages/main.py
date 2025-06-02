@@ -1198,21 +1198,6 @@ else:
         _, _, usuarios_atualizados, _ = load_data()
         st.session_state["usuarios"] = usuarios_atualizados
 
-        gc = autenticar_gsheets()
-        sh = gc.open(NOME_PLANILHA)
-        aba_presencas = sh.worksheet("Presenças")
-        df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
-
-        presencas_dict = {}
-        if "Email" in df_atualizado.columns and "Nome" in df_atualizado.columns and "Presença" in df_atualizado.columns:
-            for _, row in df_atualizado.iterrows():
-                presencas_dict[row["Email"]] = {
-                    "nome": row["Nome"],
-                    "presenca": "sim" if row["Presença"].strip().lower() == "sim" else "nao",
-                    "motivo": row.get("Motivo", ""),
-                }
-            st.session_state["presencas_confirmadas"] = presencas_dict
-
         nome = st.session_state.get("nome", "usuário")
         usuarios = st.session_state.get("usuarios", {})
         email = st.session_state.get("email", "")
@@ -1240,15 +1225,21 @@ else:
 
         # carregar confirmação anterior, se não estiver mudando de ideia
         if "presenca_confirmada" not in st.session_state and not st.session_state.get("mudando_ideia", False):
-            presenca_jogador = presencas_dict.get(email)
-            if presenca_jogador:
-                st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
-                if presenca_jogador["presenca"] == "nao":
-                    st.session_state["motivo"] = presenca_jogador.get("motivo", "")
+            # carrega apenas a linha do próprio usuário
+            gc = autenticar_gsheets()
+            sh = gc.open(NOME_PLANILHA)
+            aba_presencas = sh.worksheet("Presenças")
+            df = get_as_dataframe(aba_presencas).dropna(how="all")
+
+            for _, row in df.iterrows():
+                if row.get("Email", "") == email:
+                    st.session_state["presenca_confirmada"] = "sim" if row["Presença"].strip().lower() == "sim" else "nao"
+                    st.session_state["motivo"] = row.get("Motivo", "")
+                    break
 
         resposta_enviada = "presenca_confirmada" in st.session_state
 
-        # SE A RESPOSTA JÁ FOI ENVIADA
+        # 👉 SE JÁ RESPONDEU
         if resposta_enviada:
             status = st.session_state["presenca_confirmada"]
             if status == "sim":
@@ -1264,8 +1255,22 @@ else:
                 st.session_state["mudando_ideia"] = True
                 st.rerun()
 
-            # LISTA DE PRESENÇA (apenas após resposta)
-            presencas = st.session_state.get("presencas_confirmadas", {})
+            # carrega e exibe a lista somente após resposta
+            gc = autenticar_gsheets()
+            sh = gc.open(NOME_PLANILHA)
+            aba_presencas = sh.worksheet("Presenças")
+            df = get_as_dataframe(aba_presencas).dropna(how="all")
+
+            presencas_dict = {}
+            for _, row in df.iterrows():
+                presencas_dict[row["Email"]] = {
+                    "nome": row["Nome"],
+                    "presenca": "sim" if row["Presença"].strip().lower() == "sim" else "nao",
+                    "motivo": row.get("Motivo", ""),
+                }
+            st.session_state["presencas_confirmadas"] = presencas_dict
+
+            presencas = st.session_state["presencas_confirmadas"]
             todos_usuarios = st.session_state.get("usuarios", {})
 
             linhas_html = ""
@@ -1273,29 +1278,29 @@ else:
             linha_confirmados = 0
             goleiros_confirmados = 0
 
-            for email, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
-                nome = dados_usuario["nome"]
-                posicao = dados_usuario.get("posicao", "Linha")
+            for email_u, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
+                nome_u = dados_usuario["nome"]
+                posicao_u = dados_usuario.get("posicao", "Linha")
                 status = "❓"
                 motivo = ""
 
-                if email in presencas:
-                    presenca_info = presencas[email]
-                    if presenca_info.get("presenca") == "sim":
+                info = presencas.get(email_u)
+                if info:
+                    if info["presenca"] == "sim":
                         status = "✅"
                         confirmados += 1
-                        if posicao and "goleiro" in posicao.strip().lower():
+                        if "goleiro" in posicao_u.strip().lower():
                             goleiros_confirmados += 1
                         else:
                             linha_confirmados += 1
-                    elif presenca_info.get("presenca") == "nao":
+                    elif info["presenca"] == "nao":
                         status = "❌"
-                        motivo = presenca_info.get("motivo", "")
+                        motivo = info.get("motivo", "")
 
                 if status == "❌" and motivo:
-                    linhas_html += f"<li>{status} {nome} ({posicao}) — <em>{motivo}</em></li>"
+                    linhas_html += f"<li>{status} {nome_u} ({posicao_u}) — <em>{motivo}</em></li>"
                 else:
-                    linhas_html += f"<li>{status} {nome} ({posicao})</li>"
+                    linhas_html += f"<li>{status} {nome_u} ({posicao_u})</li>"
 
             st.markdown(
                 f"""
@@ -1313,7 +1318,7 @@ else:
                 unsafe_allow_html=True,
             )
 
-        # SE AINDA NÃO CONFIRMOU PRESENÇA
+        # 👉 SE AINDA NÃO RESPONDEU
         else:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
             motivo = ""
@@ -1348,25 +1353,19 @@ else:
                         "Motivo": justificativa,
                     }
 
-                    df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
-                    df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
-                    set_with_dataframe(aba_presencas, df_presencas)
+                    gc = autenticar_gsheets()
+                    sh = gc.open(NOME_PLANILHA)
+                    aba_presencas = sh.worksheet("Presenças")
+                    df = get_as_dataframe(aba_presencas).dropna(how="all")
+                    df = pd.concat([df, pd.DataFrame([nova_linha])], ignore_index=True)
+                    set_with_dataframe(aba_presencas, df)
 
                     st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
                     if presenca == "❌ Não":
                         st.session_state["motivo"] = justificativa
 
-                    df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
-                    presencas_dict = {}
-                    for _, row in df_atualizado.iterrows():
-                        presencas_dict[row["Email"]] = {
-                            "nome": row["Nome"],
-                            "presenca": "sim" if row["Presença"] == "Sim" else "nao",
-                            "motivo": row.get("Motivo", ""),
-                        }
-
-                    st.session_state["presencas_confirmadas"] = presencas_dict
                     st.rerun()
+
 
 
 
