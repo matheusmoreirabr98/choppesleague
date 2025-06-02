@@ -1250,19 +1250,17 @@ else:
             st.warning("⚠️ O prazo para confirmar presença ou ausência é toda **quarta-feira até às 22h**.")
 
         if resposta_enviada:
-            status = st.session_state["presenca_confirmada"]
-            if status == "sim":
-                st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
-            else:
-                motivo = st.session_state.get("motivo", "não informado")
-                st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
+                    status = st.session_state["presenca_confirmada"]
+                    if status == "sim":
+                        st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
+                    else:
+                        motivo = st.session_state.get("motivo", "não informado")
+                        st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
 
-            mudou_ideia = st.button("🔁 Mudar de ideia")
-
-        if mudou_ideia:
-            for key in ["presenca_confirmada", "motivo"]:
-                st.session_state.pop(key, None)
-            st.rerun()
+                    if st.button("🔁 Mudar de ideia"):
+                        for key in ["presenca_confirmada", "motivo"]:
+                            st.session_state.pop(key, None)
+                        st.rerun()
 
         if not resposta_enviada:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
