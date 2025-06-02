@@ -1398,8 +1398,8 @@ else:
         # Lista ordenada pela ordem na planilha
         nomes_confirmados = confirmados["Nome"].tolist()
 
-        if len(nomes_confirmados) <= 10:
-            st.warning("⚠️ É necessário pelo menos 10 jogadores confirmados para realizar o sorteio.")
+        if len(nomes_confirmados) <= 15:
+            st.warning("⚠️ É necessário pelo menos 15 jogadores confirmados para realizar o sorteio.")
             return
 
         if st.button("🎯 Sortear Times") or "times_sorteados" not in st.session_state:
@@ -1545,16 +1545,17 @@ else:
             craque_opcoes = ["-- Selecione --"] + linha
             craque = st.selectbox("⭐ Craque da rodada", options=craque_opcoes, index=0, key="select_craque")
 
-            pereba = None
-            if craque != "-- Selecione --":
-                pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
-                pereba = st.selectbox(
-                    "🥴 Pereba da rodada",
-                    options=pereba_opcoes,
-                    index=0,
-                    key="select_pereba"
-                )
-            else:
+            pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
+            pereba_disabled = craque == "-- Selecione --"
+            pereba = st.selectbox(
+                "🥴 Pereba da rodada",
+                options=pereba_opcoes,
+                index=0,
+                key="select_pereba",
+                disabled=pereba_disabled
+            )
+
+            if pereba_disabled:
                 st.info("👆 Selecione o craque antes de votar no pereba.")
 
             goleiro_opcoes = ["-- Selecione --"] + goleiros
