@@ -1337,7 +1337,7 @@ else:
                 if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
                     st.warning("Descreva o motivo da ausência.")
                 else:
-                    fuso_utc_minus_3 = timezone(timedelta(hours=-3))
+                    fuso_utc_minus_3 = timezone("America/Sao_Paulo")
                     data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
                     data_partida = horario_partida.date()
 
