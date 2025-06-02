@@ -1195,12 +1195,9 @@ else:
 
     # Estatisticas dos jogadores
     def tela_presenca_login():
-
-        # 🧠 Garante que a lista de usuários esteja atualizada
         _, _, usuarios_atualizados, _ = load_data()
         st.session_state["usuarios"] = usuarios_atualizados
 
-        # 🔄 Garante que os dados estejam atualizados diretamente da planilha
         gc = autenticar_gsheets()
         sh = gc.open(NOME_PLANILHA)
         aba_presencas = sh.worksheet("Presenças")
@@ -1213,22 +1210,21 @@ else:
                     "nome": row["Nome"],
                     "presenca": "sim" if row["Presença"].strip().lower() == "sim" else "nao",
                     "motivo": row.get("Motivo", ""),
-        }
-                
+                }
+
             st.session_state["presencas_confirmadas"] = presencas_dict
 
-            st.markdown("<br>", unsafe_allow_html=True)
-            nome = st.session_state.get("nome", "usuário")
-            usuarios = st.session_state.get("usuarios", {})
-            email = st.session_state.get("email", "")
+        nome = st.session_state.get("nome", "usuário")
+        usuarios = st.session_state.get("usuarios", {})
+        email = st.session_state.get("email", "")
 
-            # 🔍 Só agora usamos o email, que foi definido
+        # só carrega se ainda não estiver no session_state
+        if "presenca_confirmada" not in st.session_state:
             presenca_jogador = presencas_dict.get(email)
             if presenca_jogador:
                 st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
                 if presenca_jogador["presenca"] == "nao":
                     st.session_state["motivo"] = presenca_jogador.get("motivo", "")
-
 
         posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
@@ -1248,6 +1244,14 @@ else:
         proxima_quarta = agora + timedelta(days=dias_para_quarta)
         prazo_limite = proxima_quarta.replace(hour=22, minute=0, second=0, microsecond=0)
         passou_do_prazo = agora > prazo_limite
+
+        # 🔁 Mudar de ideia
+        if "presenca_confirmada" in st.session_state and st.button("🔁 Mudar de ideia"):
+            for key in ["presenca_confirmada", "motivo"]:
+                st.session_state.pop(key, None)
+            st.rerun()
+
+        # só agora verifica se a resposta já foi enviada
         resposta_enviada = "presenca_confirmada" in st.session_state
 
         if passou_do_prazo:
@@ -1255,17 +1259,11 @@ else:
 
         if resposta_enviada:
             status = st.session_state["presenca_confirmada"]
-            
             if status == "sim":
                 st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
             else:
                 motivo = st.session_state.get("motivo", "não informado")
                 st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
-
-            if st.button("🔁 Mudar de ideia"):
-                for key in ["presenca_confirmada", "motivo"]:
-                    st.session_state.pop(key, None)
-                st.rerun()
         else:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
             motivo = ""
@@ -1291,17 +1289,14 @@ else:
 
                     nova_linha = {
                         "Nome": nome,
-                        "Email": email,  # ← ADICIONAR
+                        "Email": email,
                         "Posição": posicao,
                         "Presença": "Sim" if presenca == "✅ Sim" else "Não",
-                        "DataPartida": data_partida,
+                        "DataPartida": data_partida.strftime("%Y-%m-%d"),
                         "Data": data_envio,
                         "Motivo": justificativa,
                     }
 
-                    gc = autenticar_gsheets()
-                    sh = gc.open(NOME_PLANILHA)
-                    aba_presencas = sh.worksheet("Presenças")
                     df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
                     df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
                     set_with_dataframe(aba_presencas, df_presencas)
@@ -1310,33 +1305,19 @@ else:
                     if presenca == "❌ Não":
                         st.session_state["motivo"] = justificativa
 
-                    # 🔄 Recarrega presenças e atualiza a lista geral
                     df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
-                    if "Email" in df_atualizado.columns and "Nome" in df_atualizado.columns and "Presença" in df_atualizado.columns:
-                        presencas_dict = {}
-
-                        for _, row in df_atualizado.iterrows():
-                            presencas_dict[row["Email"]] = {
-                                "nome": row["Nome"],
-                                "presenca": "sim" if row["Presença"] == "Sim" else "nao",
-                                "motivo": row.get("Motivo", ""),
-                            }
-
-                        st.session_state["presencas_confirmadas"] = presencas_dict
-                    else:
-                        st.warning("⚠️ Não foi possível atualizar a lista de presenças. Verifique se a planilha tem as colunas: Nome, Email e Presença.")
-
-
-                    presencas_dict[row["Email"]] = {
-                        "nome": row["Nome"],
-                        "presenca": "sim" if row["Presença"] == "Sim" else "nao",
-                        "motivo": row.get("Motivo", ""),
-                    }
+                    presencas_dict = {}
+                    for _, row in df_atualizado.iterrows():
+                        presencas_dict[row["Email"]] = {
+                            "nome": row["Nome"],
+                            "presenca": "sim" if row["Presença"] == "Sim" else "nao",
+                            "motivo": row.get("Motivo", ""),
+                        }
 
                     st.session_state["presencas_confirmadas"] = presencas_dict
-
                     st.success("✅ Presença registrada com sucesso!")
                     st.rerun()
+
 
 
 
