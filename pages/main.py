@@ -1526,14 +1526,14 @@ else:
         ja_votou = not df_votos[
             (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
         ].empty
+        # ✅ Mensagem se já votou (inclusive após envio)
+        if ja_votou or st.session_state.get("voto_registrado"):
+            st.success("✅ Você já votou nesta rodada.")
+            return
 
         if not ja_votou:
             if votante not in jogadores_presentes:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
-                return
-            # ✅ Mensagem se já votou (inclusive após envio)
-            if ja_votou or st.session_state.get("voto_registrado"):
-                st.success("✅ Você já votou nesta rodada.")
                 return
 
             # ⏬ Título e instruções
