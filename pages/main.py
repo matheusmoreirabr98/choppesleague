@@ -1262,7 +1262,7 @@ else:
             if mudou_ideia:
                 for key in ["presenca_confirmada", "motivo"]:
                     st.session_state.pop(key, None)
-                st.experimental_rerun()
+                st.rerun()
 
         if not resposta_enviada:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
