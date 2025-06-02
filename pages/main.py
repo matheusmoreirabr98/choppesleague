@@ -1526,10 +1526,6 @@ else:
         ja_votou = not df_votos[
             (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
         ].empty
-        # ✅ Mensagem se já votou (inclusive após envio)
-        if ja_votou or st.session_state.get("voto_registrado"):
-            st.success("✅ Você já votou nesta rodada.")
-            return
 
         if not ja_votou:
             if votante not in jogadores_presentes:
@@ -1539,6 +1535,10 @@ else:
             # ⏬ Título e instruções
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
             st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
+            # ✅ Mensagem se já votou (inclusive após envio)
+            if ja_votou or st.session_state.get("voto_registrado"):
+                st.success("✅ Você já votou nesta rodada.")
+                return
 
             # ⏬ CAMPO: Craque da Rodada
             craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
