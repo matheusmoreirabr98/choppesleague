@@ -201,6 +201,7 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
 # -----------------------------------------
 def load_data():
     return load_data_gsheets()
+time.sleep(1)
 
 
 def save_data(partidas, jogadores, usuarios, presencas):
