@@ -1251,75 +1251,75 @@ else:
         if passou_do_prazo:
             st.warning("⚠️ O prazo para confirmar presença ou ausência é toda **quarta-feira até às 22h**.")
 
-            if resposta_enviada:
-                status = st.session_state["presenca_confirmada"]
-                if status == "sim":
-                    st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
-                else:
-                    motivo = st.session_state.get("motivo", "não informado")
-                    st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
-
+        if resposta_enviada:
+            status = st.session_state["presenca_confirmada"]
+            if status == "sim":
+                st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
             else:
-                presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
-                motivo = ""
-                motivo_outros = ""
+                motivo = st.session_state.get("motivo", "não informado")
+                st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
 
-                if presenca == "❌ Não":
-                    motivo = st.selectbox(
-                        "Qual o motivo da ausência?",
-                        ["Saúde", "Trabalho", "Compromisso acadêmico", "Viagem", "Problemas pessoais", "Lesão", "Outros"],
-                    )
-                    if motivo == "Outros":
-                        motivo_outros = st.text_area("Descreva o motivo")
+        else:
+            presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
+            motivo = ""
+            motivo_outros = ""
 
-                if st.button("Enviar resposta"):
-                    st.session_state.pop("mudando_ideia", None)
-                    if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
-                        st.warning("Descreva o motivo da ausência.")
-                    else:
-                        fuso_utc_minus_3 = timezone(timedelta(hours=-3))
-                        data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
-                        data_partida = horario_partida.date()
+            if presenca == "❌ Não":
+                motivo = st.selectbox(
+                    "Qual o motivo da ausência?",
+                    ["Saúde", "Trabalho", "Compromisso acadêmico", "Viagem", "Problemas pessoais", "Lesão", "Outros"],
+                )
+                if motivo == "Outros":
+                    motivo_outros = st.text_area("Descreva o motivo")
 
-                        justificativa = motivo_outros.strip() if (presenca == "❌ Não" and motivo == "Outros") else (motivo if presenca == "❌ Não" else "")
+            if st.button("Enviar resposta"):
+                st.session_state.pop("mudando_ideia", None)
+                if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
+                    st.warning("Descreva o motivo da ausência.")
+                else:
+                    fuso_utc_minus_3 = timezone(timedelta(hours=-3))
+                    data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
+                    data_partida = horario_partida.date()
 
-                        nova_linha = {
-                            "Nome": nome,
-                            "Email": email,
-                            "Posição": posicao,
-                            "Presença": "Sim" if presenca == "✅ Sim" else "Não",
-                            "DataPartida": data_partida.strftime("%Y-%m-%d"),
-                            "Data": data_envio,
-                            "Motivo": justificativa,
+                    justificativa = motivo_outros.strip() if (presenca == "❌ Não" and motivo == "Outros") else (motivo if presenca == "❌ Não" else "")
+
+                    nova_linha = {
+                        "Nome": nome,
+                        "Email": email,
+                        "Posição": posicao,
+                        "Presença": "Sim" if presenca == "✅ Sim" else "Não",
+                        "DataPartida": data_partida.strftime("%Y-%m-%d"),
+                        "Data": data_envio,
+                        "Motivo": justificativa,
+                    }
+
+                    df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
+                    df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
+                    set_with_dataframe(aba_presencas, df_presencas)
+
+                    st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
+                    if presenca == "❌ Não":
+                        st.session_state["motivo"] = justificativa
+
+                    # atualiza dicionário
+                    df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
+                    presencas_dict = {}
+                    for _, row in df_atualizado.iterrows():
+                        presencas_dict[row["Email"]] = {
+                            "nome": row["Nome"],
+                            "presenca": "sim" if row["Presença"] == "Sim" else "nao",
+                            "motivo": row.get("Motivo", ""),
                         }
 
-                        df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
-                        df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
-                        set_with_dataframe(aba_presencas, df_presencas)
+                    st.session_state["presencas_confirmadas"] = presencas_dict
+                    st.success("✅ Presença registrada com sucesso!")
+                    st.rerun()
 
-                        st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
-                        if presenca == "❌ Não":
-                            st.session_state["motivo"] = justificativa
-
-                        # atualiza dicionário
-                        df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
-                        presencas_dict = {}
-                        for _, row in df_atualizado.iterrows():
-                            presencas_dict[row["Email"]] = {
-                                "nome": row["Nome"],
-                                "presenca": "sim" if row["Presença"] == "Sim" else "nao",
-                                "motivo": row.get("Motivo", ""),
-                            }
-
-                        st.session_state["presencas_confirmadas"] = presencas_dict
-                        st.success("✅ Presença registrada com sucesso!")
-                        st.rerun()
-
-            # 🔁 Botão para mudar de ideia
-            if st.button("🔁 Mudar de ideia"):
-                st.session_state.pop("presenca_confirmada", None)
-                st.session_state.pop("motivo", None)
-                st.session_state["mudando_ideia"] = True  # ← impede recarregar a info da planilha
+                    # 🔁 Botão para mudar de ideia
+                    if st.button("🔁 Mudar de ideia"):
+                        st.session_state.pop("presenca_confirmada", None)
+                        st.session_state.pop("motivo", None)
+                        st.session_state["mudando_ideia"] = True  # ← impede recarregar a info da planilha
                 st.rerun()
 
         # ✅ Lista de presença sempre visível após as opções
