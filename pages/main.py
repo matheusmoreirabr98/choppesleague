@@ -951,7 +951,7 @@ else:
         if not partidas.empty:
             partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
             presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
-            presencas["Presença"] = presencas["Presença"].astype(str).str.strip().str.lower()
+            presencas["Presenças"] = presencas["Presenças"].astype(str).str.strip().str.lower()
         
         # seleção de data da partida
         data = st.date_input("📅 Data da partida")
@@ -962,7 +962,7 @@ else:
 
         # filtra jogadores presentes
         jogadores_presentes_data = presencas[
-            (presencas["DataPartida"] == data) & (presencas["Presença"] == "sim")
+            (presencas["DataPartida"] == data) & (presencas["Presenças"] == "sim")
         ]["Nome"].tolist()
 
         if not jogadores_presentes_data:
