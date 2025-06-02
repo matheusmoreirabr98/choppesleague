@@ -1532,10 +1532,6 @@ else:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
 
-            # ✅ Seletor do craque fora do formulário
-            craque_opcoes = ["-- Selecione --"] + linha
-            craque = st.selectbox("⭐ Craque da rodada", options=craque_opcoes, index=0, key="select_craque")
-
             # 🥴 Seletor do pereba dentro do formulário (com base no craque escolhido)
             pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
             pereba_disabled = craque == "-- Selecione --"
