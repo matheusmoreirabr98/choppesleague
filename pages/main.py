@@ -781,10 +781,6 @@ else:
             )
             df.to_csv(FILE_JOGADORES, index=False)
 
-    def load_data_csv():
-        partidas, jogadores = load_data_safe_csv()
-        return partidas, jogadores
-
     def save_data(partidas, jogadores, usuarios):
         save_data_gsheets(partidas, jogadores, usuarios, presencas=[])
 
@@ -968,7 +964,7 @@ else:
         jogadores_presentes_data = presencas[
             (presencas["DataPartida"] == data_escolhida) & (presencas["Presença"] == "sim")
         ]["Nome"].tolist()
-        
+
         if not jogadores_presentes_data:
             st.warning("⚠️ Nenhum jogador confirmou presença para esta data.")
             return
