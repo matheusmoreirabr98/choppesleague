@@ -1257,9 +1257,12 @@ else:
                 motivo = st.session_state.get("motivo", "não informado")
                 st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
 
-            if st.button("🔁 Mudar de ideia"):
+            mudou_ideia = st.button("🔁 Mudar de ideia")
+
+            if mudou_ideia:
                 for key in ["presenca_confirmada", "motivo"]:
                     st.session_state.pop(key, None)
+                st.experimental_rerun()
 
         if not resposta_enviada:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
