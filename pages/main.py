@@ -1469,7 +1469,7 @@ else:
         
 
 
-
+    # Avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
 
@@ -1532,6 +1532,9 @@ else:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
 
+            # ⏬ CAMPO: Craque da Rodada
+            craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
+
             # 🥴 Seletor do pereba dentro do formulário (com base no craque escolhido)
             pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
             pereba_disabled = craque == "-- Selecione --"
@@ -1557,9 +1560,6 @@ else:
             if votante not in jogadores_presentes:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
-
-            # ⏬ CAMPO: Craque da Rodada
-            craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
 
             # ⏬ CAMPO: Pereba (só habilita se craque for selecionado)
             if craque and craque != "-- Selecione --":
