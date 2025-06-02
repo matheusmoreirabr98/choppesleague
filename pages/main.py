@@ -1568,11 +1568,6 @@ else:
                 pereba_opcoes = []
 
             # Agrupando visualmente
-            with st.container():
-                # ✅ Mensagem se já votou (inclusive após envio)
-                if ja_votou or st.session_state.get("voto_registrado"):
-                    st.success("✅ Você já votou nesta rodada.")
-                    return
                 pereba = st.selectbox("🥴 Pereba da rodada", options=["-- Selecione --"] + pereba_opcoes, index=0, key="pereba")
                 goleiro = st.selectbox("🧤 Melhor goleiro", options=["-- Selecione --"] + goleiros, index=0, key="goleiro")
 
