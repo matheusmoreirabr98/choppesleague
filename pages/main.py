@@ -1535,10 +1535,6 @@ else:
             # ⏬ Título e instruções
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
             st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
-            # ✅ Mensagem se já votou (inclusive após envio)
-            if ja_votou or st.session_state.get("voto_registrado"):
-                st.success("✅ Você já votou nesta rodada.")
-                return
 
             # ⏬ CAMPO: Craque da Rodada
             craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
@@ -1573,6 +1569,10 @@ else:
 
             # Agrupando visualmente
             with st.container():
+                # ✅ Mensagem se já votou (inclusive após envio)
+                if ja_votou or st.session_state.get("voto_registrado"):
+                    st.success("✅ Você já votou nesta rodada.")
+                    return
                 pereba = st.selectbox("🥴 Pereba da rodada", options=["-- Selecione --"] + pereba_opcoes, index=0, key="pereba")
                 goleiro = st.selectbox("🧤 Melhor goleiro", options=["-- Selecione --"] + goleiros, index=0, key="goleiro")
 
