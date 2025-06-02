@@ -1195,7 +1195,6 @@ else:
 
     # Estatisticas dos jogadores
     def tela_presenca_login():
-
         # 🧠 Garante que a lista de usuários esteja atualizada
         _, _, usuarios_atualizados, _ = load_data()
         st.session_state["usuarios"] = usuarios_atualizados
@@ -1213,22 +1212,19 @@ else:
                     "nome": row["Nome"],
                     "presenca": "sim" if row["Presença"].strip().lower() == "sim" else "nao",
                     "motivo": row.get("Motivo", ""),
-        }
-                
+                }
+
             st.session_state["presencas_confirmadas"] = presencas_dict
 
-            st.markdown("<br>", unsafe_allow_html=True)
             nome = st.session_state.get("nome", "usuário")
             usuarios = st.session_state.get("usuarios", {})
             email = st.session_state.get("email", "")
 
-            # 🔍 Só agora usamos o email, que foi definido
             presenca_jogador = presencas_dict.get(email)
             if presenca_jogador:
                 st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
                 if presenca_jogador["presenca"] == "nao":
                     st.session_state["motivo"] = presenca_jogador.get("motivo", "")
-
 
         posicao = usuarios.get(email, {}).get("posicao", "Linha")
 
@@ -1255,7 +1251,6 @@ else:
 
         if resposta_enviada:
             status = st.session_state["presenca_confirmada"]
-            
             if status == "sim":
                 st.success(f"{nome}, sua **presença** foi confirmada com sucesso! ✅")
             else:
@@ -1266,128 +1261,110 @@ else:
                 for key in ["presenca_confirmada", "motivo"]:
                     st.session_state.pop(key, None)
                 st.rerun()
-            else:
-                presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
-                motivo = ""
-                motivo_outros = ""
 
-                if presenca == "❌ Não":
-                    motivo = st.selectbox(
-                        "Qual o motivo da ausência?",
-                        ["Saúde", "Trabalho", "Compromisso acadêmico", "Viagem", "Problemas pessoais", "Lesão", "Outros"],
-                    )
-                    if motivo == "Outros":
-                        motivo_outros = st.text_area("Descreva o motivo")
+        if not resposta_enviada:
+            presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
+            motivo = ""
+            motivo_outros = ""
 
-                if st.button("Enviar resposta"):
-                    if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
-                        st.warning("Descreva o motivo da ausência.")
-                    else:
-                        fuso_utc_minus_3 = timezone(timedelta(hours=-3))
-                        data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
-                        data_partida = horario_partida.date()
+            if presenca == "❌ Não":
+                motivo = st.selectbox(
+                    "Qual o motivo da ausência?",
+                    ["Saúde", "Trabalho", "Compromisso acadêmico", "Viagem", "Problemas pessoais", "Lesão", "Outros"],
+                )
+                if motivo == "Outros":
+                    motivo_outros = st.text_area("Descreva o motivo")
 
-                        justificativa = motivo_outros.strip() if (presenca == "❌ Não" and motivo == "Outros") else (motivo if presenca == "❌ Não" else "")
+            if st.button("Enviar resposta"):
+                if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
+                    st.warning("Descreva o motivo da ausência.")
+                else:
+                    fuso_utc_minus_3 = timezone(timedelta(hours=-3))
+                    data_envio = datetime.now(fuso_utc_minus_3).strftime("%d/%m/%Y %H:%M:%S")
+                    data_partida = horario_partida.date()
 
-                        nova_linha = {
-                            "Nome": nome,
-                            "Email": email,  # ← ADICIONAR
-                            "Posição": posicao,
-                            "Presença": "Sim" if presenca == "✅ Sim" else "Não",
-                            "DataPartida": data_partida.strftime("%Y-%m-%d"),
-                            "Data": data_envio,
-                            "Motivo": justificativa,
-                        }
+                    justificativa = motivo_outros.strip() if (presenca == "❌ Não" and motivo == "Outros") else (motivo if presenca == "❌ Não" else "")
 
-                        gc = autenticar_gsheets()
-                        sh = gc.open(NOME_PLANILHA)
-                        aba_presencas = sh.worksheet("Presenças")
-                        df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
-                        df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
-                        set_with_dataframe(aba_presencas, df_presencas)
+                    nova_linha = {
+                        "Nome": nome,
+                        "Email": email,
+                        "Posição": posicao,
+                        "Presença": "Sim" if presenca == "✅ Sim" else "Não",
+                        "DataPartida": data_partida.strftime("%Y-%m-%d"),
+                        "Data": data_envio,
+                        "Motivo": justificativa,
+                    }
 
-                        st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
-                        if presenca == "❌ Não":
-                            st.session_state["motivo"] = justificativa
+                    df_presencas = get_as_dataframe(aba_presencas).dropna(how="all")
+                    df_presencas = pd.concat([df_presencas, pd.DataFrame([nova_linha])], ignore_index=True)
+                    set_with_dataframe(aba_presencas, df_presencas)
 
-                        # 🔄 Recarrega presenças e atualiza a lista geral
-                        df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
-                        if "Email" in df_atualizado.columns and "Nome" in df_atualizado.columns and "Presença" in df_atualizado.columns:
-                            presencas_dict = {}
+                    st.session_state["presenca_confirmada"] = "sim" if presenca == "✅ Sim" else "nao"
+                    if presenca == "❌ Não":
+                        st.session_state["motivo"] = justificativa
 
-                            for _, row in df_atualizado.iterrows():
-                                presencas_dict[row["Email"]] = {
-                                    "nome": row["Nome"],
-                                    "presenca": "sim" if row["Presença"] == "Sim" else "nao",
-                                    "motivo": row.get("Motivo", ""),
-                                }
-
-                            st.session_state["presencas_confirmadas"] = presencas_dict
-                        else:
-                            st.warning("⚠️ Não foi possível atualizar a lista de presenças. Verifique se a planilha tem as colunas: Nome, Email e Presença.")
-
-
+                    df_atualizado = get_as_dataframe(aba_presencas).dropna(how="all")
+                    presencas_dict = {}
+                    for _, row in df_atualizado.iterrows():
                         presencas_dict[row["Email"]] = {
                             "nome": row["Nome"],
                             "presenca": "sim" if row["Presença"] == "Sim" else "nao",
                             "motivo": row.get("Motivo", ""),
                         }
 
-                        st.session_state["presencas_confirmadas"] = presencas_dict
+                    st.session_state["presencas_confirmadas"] = presencas_dict
+                    st.success("✅ Presença registrada com sucesso!")
+                    st.rerun()
 
-                        st.success("✅ Presença registrada com sucesso!")
-                        st.rerun()
+        # ✅ Mostra lista de presença apenas se resposta já foi enviada
+        if resposta_enviada:
+            presencas = st.session_state.get("presencas_confirmadas", {})
+            todos_usuarios = st.session_state.get("usuarios", {})
 
+            linhas_html = ""
+            confirmados = 0
+            linha_confirmados = 0
+            goleiros_confirmados = 0
 
-       # ✅ Lista de presença sempre visível após as opções
-        presencas = st.session_state.get("presencas_confirmadas", {})
-        todos_usuarios = st.session_state.get("usuarios", {})
+            for email, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
+                nome = dados_usuario["nome"]
+                posicao = dados_usuario.get("posicao", "Linha")
+                status = "❓"
+                motivo = ""
 
-        linhas_html = ""
-        confirmados = 0
-        linha_confirmados = 0
-        goleiros_confirmados = 0
+                if email in presencas:
+                    presenca_info = presencas[email]
+                    if presenca_info.get("presenca") == "sim":
+                        status = "✅"
+                        confirmados += 1
+                        if posicao and "goleiro" in posicao.strip().lower():
+                            goleiros_confirmados += 1
+                        else:
+                            linha_confirmados += 1
+                    elif presenca_info.get("presenca") == "nao":
+                        status = "❌"
+                        motivo = presenca_info.get("motivo", "")
 
-        for email, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
-            nome = dados_usuario["nome"]
-            posicao = dados_usuario.get("posicao", "Linha")
-            status = "❓"
-            motivo = ""
+                if status == "❌" and motivo:
+                    linhas_html += f"<li>{status} {nome} ({posicao}) — <em>{motivo}</em></li>"
+                else:
+                    linhas_html += f"<li>{status} {nome} ({posicao})</li>"
 
-            if email in presencas:
-                presenca_info = presencas[email]
-                if presenca_info.get("presenca") == "sim":
-                    status = "✅"
-                    confirmados += 1
-                    if posicao and "goleiro" in posicao.strip().lower():
-                        goleiros_confirmados += 1
-                    else:
-                        linha_confirmados += 1
-                elif presenca_info.get("presenca") == "nao":
-                    status = "❌"
-                    motivo = presenca_info.get("motivo", "")
-
-            # monta linha com posição
-            if status == "❌" and motivo:
-                linhas_html += f"<li>{status} {nome} ({posicao}) — <em>{motivo}</em></li>"
-            else:
-                linhas_html += f"<li>{status} {nome} ({posicao})</li>"
-
-        st.markdown(
-            f"""
-            <div style="text-align: center; margin-top: 2rem;">
-                <h6 style="text-align: center;">
-                    📋 Presença da Semana — Confirmados: {confirmados}  
-                    <br>👟 Jogadores de Linha: {linha_confirmados}  
-                    <br>🧤 Goleiros: {goleiros_confirmados}
-                </h6>
-                <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
-                    {linhas_html}
-                </ul>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+            st.markdown(
+                f"""
+                <div style="text-align: center; margin-top: 2rem;">
+                    <h6 style="text-align: center;">
+                        📋 Presença da Semana — Confirmados: {confirmados}  
+                        <br>👟 Jogadores de Linha: {linha_confirmados}  
+                        <br>🧤 Goleiros: {goleiros_confirmados}
+                    </h6>
+                    <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
+                        {linhas_html}
+                    </ul>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
 
 
