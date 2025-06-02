@@ -1260,7 +1260,6 @@ else:
             if st.button("🔁 Mudar de ideia"):
                 for key in ["presenca_confirmada", "motivo"]:
                     st.session_state.pop(key, None)
-                st.rerun()
 
         if not resposta_enviada:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
