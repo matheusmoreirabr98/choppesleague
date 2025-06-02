@@ -941,6 +941,10 @@ else:
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
         partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
+        presencas.rename(columns={
+            "Nome do Jogador": "Nome",
+            "Data da partida": "DataPartida"
+        }, inplace=True)
 
         # 🟢 inicializa form_id para controle dos multiselects
         if "form_id" not in st.session_state:
