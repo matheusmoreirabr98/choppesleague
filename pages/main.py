@@ -963,8 +963,10 @@ else:
                 presencas["Presença"] = presencas["Presença"].astype(str).str.strip().str.lower()
             else:
                 st.error("❌ Coluna 'Presença' não encontrada na planilha. Verifique o nome exato.")
-                st.stop()        
-                
+                st.stop()
+        st.write("Colunas da planilha:", presencas.columns.tolist())
+        st.dataframe(presencas) 
+
         # seleção de data da partida
         data = st.date_input("📅 Data da partida")
 
