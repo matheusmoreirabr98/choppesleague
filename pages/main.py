@@ -951,8 +951,20 @@ else:
         if not partidas.empty:
             partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
             presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
-            presencas["Presenças"] = presencas["Presenças"].astype(str).str.strip().str.lower()
-        
+            # Detecta automaticamente a coluna de presença e padroniza
+            coluna_presenca = None
+            for col in presencas.columns:
+                if col.strip().lower() == "presença":
+                    coluna_presenca = col
+                    break
+
+            if coluna_presenca:
+                presencas.rename(columns={coluna_presenca: "Presença"}, inplace=True)
+                presencas["Presença"] = presencas["Presença"].astype(str).str.strip().str.lower()
+            else:
+                st.error("❌ Coluna 'Presença' não encontrada na planilha. Verifique o nome exato.")
+                st.stop()        
+                
         # seleção de data da partida
         data = st.date_input("📅 Data da partida")
 
@@ -962,7 +974,7 @@ else:
 
         # filtra jogadores presentes
         jogadores_presentes_data = presencas[
-            (presencas["DataPartida"] == data) & (presencas["Presenças"] == "sim")
+            (presencas["DataPartida"] == data) & (presencas["Presença"] == "sim")
         ]["Nome"].tolist()
 
         if not jogadores_presentes_data:
