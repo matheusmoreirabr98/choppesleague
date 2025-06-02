@@ -1536,8 +1536,6 @@ else:
                 st.success("✅ Você já votou nesta rodada.")
                 return
 
-
-
             # ⏬ Título e instruções
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
             st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
