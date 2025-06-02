@@ -1519,9 +1519,6 @@ else:
                         linha.append(j)
                     break
 
-        st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
-        st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
-
         votante = st.session_state.get("nome", "usuário")
         linha = [j for j in linha if j != votante]
         goleiros = [g for g in goleiros if g != votante]
