@@ -957,7 +957,6 @@ else:
 
         # seleção de data da partida
         data = st.date_input("📅 Data da partida")
-        st.write("Data selecionada:", data)
 
         # define número da nova partida com base nas partidas da mesma data
         partidas_do_dia = partidas[partidas["Data"] == data]
