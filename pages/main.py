@@ -1469,7 +1469,7 @@ else:
         
 
 
-
+    # Avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
 
@@ -1519,9 +1519,6 @@ else:
                         linha.append(j)
                     break
 
-        st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
-        st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
-
         votante = st.session_state.get("nome", "usuário")
         linha = [j for j in linha if j != votante]
         goleiros = [g for g in goleiros if g != votante]
@@ -1535,29 +1532,47 @@ else:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
 
-            # ✅ Seletor do craque fora do formulário
-            craque_opcoes = ["-- Selecione --"] + linha
-            craque = st.selectbox("⭐ Craque da rodada", options=craque_opcoes, index=0, key="select_craque")
+            # ⏬ Título e instruções
+            st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
+            st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
+
+            # ⏬ CAMPO: Craque da Rodada
+            craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
 
             # 🥴 Seletor do pereba dentro do formulário (com base no craque escolhido)
             pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
             pereba_disabled = craque == "-- Selecione --"
 
-            with st.form("votacao_form"):
-                pereba = st.selectbox(
-                    "🥴 Pereba da rodada",
-                    options=pereba_opcoes,
-                    index=0,
-                    key="select_pereba",
-                    disabled=pereba_disabled
-                )
+            # 🔁 Remove o votante da lista de opções
+            votante = st.session_state.get("nome", "usuário")
+            linha = [j for j in linha if j != votante]
+            goleiros = [g for g in goleiros if g != votante]
 
-                goleiro_opcoes = ["-- Selecione --"] + goleiros
-                goleiro = st.selectbox("🧤 Melhor goleiro", options=goleiro_opcoes, index=0, key="select_goleiro")
+            # 🟢 Verifica se já votou
+            ja_votou = not df_votos[
+                (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
+            ].empty
 
-                submit = st.form_submit_button("Votar")
+            if ja_votou:
+                st.success("✅ Você já votou nesta rodada.")
+                return
 
-                if submit:
+            if votante not in jogadores_presentes:
+                st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
+                return
+
+            # ⏬ CAMPO: Pereba (só habilita se craque for selecionado)
+            if craque and craque != "-- Selecione --":
+                pereba_opcoes = [j for j in linha if j != craque]
+            else:
+                pereba_opcoes = []
+
+            # Agrupando visualmente
+            with st.container():
+                pereba = st.selectbox("🥴 Pereba da rodada", options=["-- Selecione --"] + pereba_opcoes, index=0, key="pereba")
+                goleiro = st.selectbox("🧤 Melhor goleiro", options=["-- Selecione --"] + goleiros, index=0, key="goleiro")
+
+                if st.button("Votar"):
                     if (
                         craque == "-- Selecione --"
                         or pereba == "-- Selecione --"
@@ -1576,10 +1591,9 @@ else:
                         }])
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
                         df_votos.to_csv(FILE_VOTOS, index=False)
-                        st.success("✅ Voto registrado com sucesso!")
+                        st.session_state["voto_registrado"] = True
                         st.rerun()
-        else:
-            st.info("✅ Você já votou nesta rodada.")
+
 
 
 
