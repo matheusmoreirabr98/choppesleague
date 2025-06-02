@@ -1296,7 +1296,7 @@ else:
                         "Email": email,  # ← ADICIONAR
                         "Posição": posicao,
                         "Presença": "Sim" if presenca == "✅ Sim" else "Não",
-                        "DataPartida": data_partida,
+                        "DataPartida": data_partida.strftime("%Y-%m-%d"),
                         "Data": data_envio,
                         "Motivo": justificativa,
                     }
