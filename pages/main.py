@@ -1259,12 +1259,12 @@ else:
                 motivo = st.session_state.get("motivo", "não informado")
                 st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
 
-        # 🔁 Botão para mudar de ideia
-        if st.button("🔁 Mudar de ideia"):
-            st.session_state.pop("presenca_confirmada", None)
-            st.session_state.pop("motivo", None)
-            st.session_state["mudando_ideia"] = True  # ← impede recarregar a info da planilha
-            st.rerun()
+            # 🔁 Botão para mudar de ideia
+            if st.button("🔁 Mudar de ideia"):
+                st.session_state.pop("presenca_confirmada", None)
+                st.session_state.pop("motivo", None)
+                st.session_state["mudando_ideia"] = True  # ← impede recarregar a info da planilha
+                st.rerun()
 
         else:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
