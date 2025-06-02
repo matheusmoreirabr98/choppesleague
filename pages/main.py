@@ -1311,13 +1311,13 @@ else:
                     st.session_state["presencas_confirmadas"] = presencas_dict
                     st.success("✅ Presença registrada com sucesso!")
                     st.rerun()
-                    
-            if st.button("🔁 Mudar de ideia"):
-                for key in ["presenca_confirmada", "motivo"]:
-                    if key in st.session_state:
-                        del st.session_state[key]
-                st.experimental_rerun()
-            return  # <-- ESSENCIAL para evitar o erro
+
+                if st.button("🔁 Mudar de ideia"):
+                    for key in ["presenca_confirmada", "motivo"]:
+                        if key in st.session_state:
+                            del st.session_state[key]
+                    st.experimental_rerun()
+                return  # <-- ESSENCIAL para evitar o erro
 
 
 
