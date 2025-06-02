@@ -1366,7 +1366,6 @@ else:
                         }
 
                     st.session_state["presencas_confirmadas"] = presencas_dict
-                    st.success("✅ Presença registrada com sucesso!")
                     st.rerun()
 
 
