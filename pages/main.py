@@ -1543,21 +1543,43 @@ else:
             pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
             pereba_disabled = craque == "-- Selecione --"
 
-            with st.form("votacao_form"):
-                pereba = st.selectbox(
-                    "🥴 Pereba da rodada",
-                    options=pereba_opcoes,
-                    index=0,
-                    key="select_pereba",
-                    disabled=pereba_disabled
-                )
+            # ⏬ Título e instruções
+            st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
+            st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
 
-                goleiro_opcoes = ["-- Selecione --"] + goleiros
-                goleiro = st.selectbox("🧤 Melhor goleiro", options=goleiro_opcoes, index=0, key="select_goleiro")
+            # 🔁 Remove o votante da lista de opções
+            votante = st.session_state.get("nome", "usuário")
+            linha = [j for j in linha if j != votante]
+            goleiros = [g for g in goleiros if g != votante]
 
-                submit = st.form_submit_button("Votar")
+            # 🟢 Verifica se já votou
+            ja_votou = not df_votos[
+                (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
+            ].empty
 
-                if submit:
+            if ja_votou:
+                st.success("✅ Você já votou nesta rodada.")
+                return
+
+            if votante not in jogadores_presentes:
+                st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
+                return
+
+            # ⏬ CAMPO: Craque da Rodada
+            craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
+
+            # ⏬ CAMPO: Pereba (só habilita se craque for selecionado)
+            if craque and craque != "-- Selecione --":
+                pereba_opcoes = [j for j in linha if j != craque]
+            else:
+                pereba_opcoes = []
+
+            # Agrupando visualmente
+            with st.container():
+                pereba = st.selectbox("🥴 Pereba da rodada", options=["-- Selecione --"] + pereba_opcoes, index=0, key="pereba")
+                goleiro = st.selectbox("🧤 Melhor goleiro", options=["-- Selecione --"] + goleiros, index=0, key="goleiro")
+
+                if st.button("Votar"):
                     if (
                         craque == "-- Selecione --"
                         or pereba == "-- Selecione --"
@@ -1578,8 +1600,7 @@ else:
                         df_votos.to_csv(FILE_VOTOS, index=False)
                         st.success("✅ Voto registrado com sucesso!")
                         st.rerun()
-        else:
-            st.info("✅ Você já votou nesta rodada.")
+
 
 
 
