@@ -954,8 +954,9 @@ else:
         # garante que colunas estejam no formato correto
         if not partidas.empty:
             partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
-            presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], dayfirst=True, errors="coerce").dt.date
-
+            presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+            presencas["Presença"] = presencas["Presença"].astype(str).str.strip().str.lower()
+        
         # seleção de data da partida
         data = st.date_input("📅 Data da partida")
 
@@ -964,8 +965,10 @@ else:
         numero_partida = len(partidas_do_dia) + 1
 
         # filtra jogadores presentes
-        jogadores_presentes_data = presencas[(presencas["DataPartida"] == data) & (presencas["Presença"] == "Sim")]["Nome"].tolist()
-
+        jogadores_presentes_data = presencas[
+            (presencas["DataPartida"] == data_escolhida) & (presencas["Presença"] == "sim")
+        ]["Nome"].tolist()
+        
         if not jogadores_presentes_data:
             st.warning("⚠️ Nenhum jogador confirmou presença para esta data.")
             return
