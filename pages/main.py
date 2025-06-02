@@ -1491,10 +1491,6 @@ else:
         agora = datetime.now()
         hoje = agora.weekday()
         dias_para_quinta = (3 - hoje) % 7
-        data_rodada = (agora + timedelta(days=dias_para_quinta)).date()
-
-        # Data da quinta-feira da rodada (próxima ou atual)
-        dias_para_quinta = (3 - hoje) % 7
         proxima_quinta = agora + timedelta(days=dias_para_quinta)
         data_rodada = proxima_quinta.date()
 
@@ -1533,54 +1529,58 @@ else:
         ja_votou = not df_votos[
             (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
         ].empty
-            
+
         if not ja_votou:
             if votante not in jogadores_presentes:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
 
-
-        with st.form("votacao_form"):
-            # opções com placeholder
+            # ✅ Seletor do craque fora do formulário
             craque_opcoes = ["-- Selecione --"] + linha
             craque = st.selectbox("⭐ Craque da rodada", options=craque_opcoes, index=0, key="select_craque")
 
+            # 🥴 Seletor do pereba dentro do formulário (com base no craque escolhido)
             pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
             pereba_disabled = craque == "-- Selecione --"
-            pereba = st.selectbox(
-                "🥴 Pereba da rodada",
-                options=pereba_opcoes,
-                index=0,
-                key="select_pereba",
-                disabled=pereba_disabled
-            )
 
-            goleiro_opcoes = ["-- Selecione --"] + goleiros
-            goleiro = st.selectbox("🧤 Melhor goleiro", options=goleiro_opcoes, index=0, key="select_goleiro")
+            with st.form("votacao_form"):
+                pereba = st.selectbox(
+                    "🥴 Pereba da rodada",
+                    options=pereba_opcoes,
+                    index=0,
+                    key="select_pereba",
+                    disabled=pereba_disabled
+                )
 
-            submit = st.form_submit_button("Votar")
+                goleiro_opcoes = ["-- Selecione --"] + goleiros
+                goleiro = st.selectbox("🧤 Melhor goleiro", options=goleiro_opcoes, index=0, key="select_goleiro")
 
-            if submit:
-                if (
-                    craque == "-- Selecione --"
-                    or pereba == "-- Selecione --"
-                    or goleiro == "-- Selecione --"
-                ):
-                    st.error("⚠️ Preencha todas as categorias antes de votar.")
-                elif craque == pereba:
-                    st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
-                else:
-                    novo_voto = pd.DataFrame([{
-                        "Votante": votante,
-                        "Craque": craque,
-                        "Pereba": pereba,
-                        "Goleiro": goleiro,
-                        "DataRodada": str(data_rodada)
-                    }])
-                    df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
-                    df_votos.to_csv(FILE_VOTOS, index=False)
-                    st.success("✅ Voto registrado com sucesso!")
-                    st.rerun()
+                submit = st.form_submit_button("Votar")
+
+                if submit:
+                    if (
+                        craque == "-- Selecione --"
+                        or pereba == "-- Selecione --"
+                        or goleiro == "-- Selecione --"
+                    ):
+                        st.error("⚠️ Preencha todas as categorias antes de votar.")
+                    elif craque == pereba:
+                        st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
+                    else:
+                        novo_voto = pd.DataFrame([{
+                            "Votante": votante,
+                            "Craque": craque,
+                            "Pereba": pereba,
+                            "Goleiro": goleiro,
+                            "DataRodada": str(data_rodada)
+                        }])
+                        df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
+                        df_votos.to_csv(FILE_VOTOS, index=False)
+                        st.success("✅ Voto registrado com sucesso!")
+                        st.rerun()
+        else:
+            st.info("✅ Você já votou nesta rodada.")
+
 
 
         
