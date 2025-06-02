@@ -1218,8 +1218,8 @@ else:
         usuarios = st.session_state.get("usuarios", {})
         email = st.session_state.get("email", "")
 
-        # só carrega se ainda não estiver no session_state
-        if "presenca_confirmada" not in st.session_state:
+        # só carrega se ainda não estiver no session_state e não estiver mudando de ideia
+        if "presenca_confirmada" not in st.session_state and not st.session_state.get("mudando_ideia", False):
             presenca_jogador = presencas_dict.get(email)
             if presenca_jogador:
                 st.session_state["presenca_confirmada"] = presenca_jogador["presenca"]
@@ -1259,11 +1259,12 @@ else:
                 motivo = st.session_state.get("motivo", "não informado")
                 st.success(f"{nome}, sua **ausência** foi registrada com o motivo: **{motivo}** ❌")
 
-            # 🔁 Botão para mudar de ideia
-            if st.button("🔁 Mudar de ideia"):
-                st.session_state.pop("presenca_confirmada", None)
-                st.session_state.pop("motivo", None)
-                st.rerun()
+        # 🔁 Botão para mudar de ideia
+        if st.button("🔁 Mudar de ideia"):
+            st.session_state.pop("presenca_confirmada", None)
+            st.session_state.pop("motivo", None)
+            st.session_state["mudando_ideia"] = True  # ← impede recarregar a info da planilha
+            st.rerun()
 
         else:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
@@ -1279,6 +1280,7 @@ else:
                     motivo_outros = st.text_area("Descreva o motivo")
 
             if st.button("Enviar resposta"):
+                st.session_state.pop("mudando_ideia", None)
                 if presenca == "❌ Não" and motivo == "Outros" and not motivo_outros.strip():
                     st.warning("Descreva o motivo da ausência.")
                 else:
