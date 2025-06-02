@@ -1246,8 +1246,12 @@ else:
         proxima_quarta = agora + timedelta(days=dias_para_quarta)
         prazo_limite = proxima_quarta.replace(hour=22, minute=0, second=0, microsecond=0)
         passou_do_prazo = agora > prazo_limite
-        resposta_enviada = "presenca_confirmada" in st.session_state
+        if st.button("🔁 Mudar de ideia") and "presenca_confirmada" in st.session_state:
+            for key in ["presenca_confirmada", "motivo"]:
+                st.session_state.pop(key, None)
+            st.rerun()
 
+        resposta_enviada = "presenca_confirmada" in st.session_state
         if passou_do_prazo:
             st.warning("⚠️ O prazo para confirmar presença ou ausência é toda **quarta-feira até às 22h**.")
 
