@@ -1812,7 +1812,10 @@ else:
 
 
     def tela_portal_transparencia():
-        st.title("Caixa da Chopp's League")
+        st.markdown(
+            "<h4 style='font-weight:bold;'>🍺 Caixa da Chopp's League</h4>",
+            unsafe_allow_html=True
+        )
 
         # Corrige: define df logo após leitura dos dados
         def ler_dados():
