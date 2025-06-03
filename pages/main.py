@@ -977,26 +977,28 @@ else:
 
 
     # Tela de registro das partidas
-# Tela de registro das partidas
     def registrar_partidas():
         st.markdown("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>", unsafe_allow_html=True)
         st.markdown("---")
 
+        # carrega os dados do session_state ou do GSheets
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
         partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = st.session_state["dados_gsheets"]
-        presencas.rename(columns={"Nome do Jogador": "Nome", "Data da partida": "DataPartida"}, inplace=True)
+        presencas.rename(columns={
+            "Nome do Jogador": "Nome",
+            "Data da partida": "DataPartida"
+        }, inplace=True)
 
+        # 🟢 inicializa form_id para controle dos multiselects
         if "form_id" not in st.session_state:
             st.session_state["form_id"] = 0
 
-        # garante a existência da coluna "Data" mesmo com DataFrame vazio
-        if "Data" not in partidas.columns:
-            partidas["Data"] = pd.NaT
-
+        # garante que colunas estejam no formato correto
         if not partidas.empty:
             partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
             presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+            # Detecta automaticamente a coluna de presença e padroniza
             coluna_presenca = None
             for col in presencas.columns:
                 if col.strip().lower() == "presença":
@@ -1010,17 +1012,24 @@ else:
                 st.error("❌ Coluna 'Presença' não encontrada na planilha. Verifique o nome exato.")
                 st.stop()
 
+        # seleção de data da partida
         data = st.date_input("📅 Data da partida")
+
+        # define número da nova partida com base nas partidas da mesma data
         partidas_do_dia = partidas[partidas["Data"] == data]
         numero_partida = len(partidas_do_dia) + 1
 
-        jogadores_presentes_data = presencas[(presencas["DataPartida"] == data) & (presencas["Presença"] == "sim")]["Nome"].tolist()
+        # filtra jogadores presentes
+        jogadores_presentes_data = presencas[
+            (presencas["DataPartida"] == data) & (presencas["Presença"] == "sim")
+        ]["Nome"].tolist()
 
         if not jogadores_presentes_data:
             st.warning("⚠️ Nenhum jogador confirmou presença para esta data.")
             return
 
         jogadores_originais = jogadores_presentes_data
+
         col1, col2 = st.columns(2)
 
         with col1:
@@ -1033,12 +1042,11 @@ else:
                 key=f"gols_borussia_{st.session_state['form_id']}",
                 help="Máximo 2 jogadores"
             )
-            if not gols_borussia:
-                gols_borussia = ["Ninguém marcou"]
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
                 st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
                 gols_borussia = ["Ninguém marcou"]
                 st.session_state["gols_borussia"] = ["Ninguém marcou"]
+
             placar_borussia = 0 if "Ninguém marcou" in gols_borussia else len(gols_borussia)
 
         with col2:
@@ -1052,12 +1060,11 @@ else:
                 key=f"gols_inter_{st.session_state['form_id']}",
                 help="Máximo 2 jogadores"
             )
-            if not gols_inter:
-                gols_inter = ["Ninguém marcou"]
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
                 st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
                 gols_inter = ["Ninguém marcou"]
                 st.session_state["gols_inter"] = ["Ninguém marcou"]
+
             placar_inter = 0 if "Ninguém marcou" in gols_inter else len(gols_inter)
 
             if placar_borussia == 2 and placar_inter == 2:
@@ -1085,7 +1092,7 @@ else:
             """, unsafe_allow_html=True
         )
 
-        if st.button("Registrar", use_container_width=True):
+        if st.button("Registrar"):
             nova = {
                 "Data": data.strftime("%d/%m/%Y"),
                 "Número da Partida": numero_partida,
@@ -1113,25 +1120,122 @@ else:
             st.rerun()
 
         st.markdown("---")
-        st.markdown("<h5 style='text-align: center; font-weight: bold;'>📋 Histórico de Partidas Registradas</h5>", unsafe_allow_html=True)
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>✏️ Editar ou Excluir Partida Registrada</h5>", unsafe_allow_html=True)
 
-        if "Data" in partidas.columns and "Número da Partida" in partidas.columns:
-            partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
-            partidas.index = partidas.index + 1
-            partidas.index.name = "#"
-            colunas_exibidas = ["Data", "Número da Partida", "Placar Borussia", "Placar Inter"]
-            st.dataframe(partidas[colunas_exibidas], use_container_width=True, hide_index=False)
 
-            # Botão para excluir todas as partidas (apenas para email autorizado)
-            if st.session_state.get("email") == "matheusmoreirabr@hotmail.com":
-                if st.button("🗑️ Excluir todas as partidas", use_container_width=True):
-                    partidas = partidas.iloc[0:0]  # limpa todas as linhas
+        if not partidas.empty:
+            opcoes = [
+                f"#{row['Número da Partida']} – {row['Data']} – Borussia {row['Placar Borussia']} x {row['Placar Inter']} Inter"
+                for _, row in partidas.iterrows()
+            ]
+            partida_escolhida = st.selectbox("Selecione a partida:", opcoes)
+            index = opcoes.index(partida_escolhida)
+            row = partidas.iloc[index]
+
+            # inicializa flag se ainda não existir
+            if "mostrar_edicao_partida" not in st.session_state:
+                st.session_state.mostrar_edicao_partida = False
+
+            col1, col2 = st.columns([1, 1])  # Largura adequada para os botões
+            with col1:
+                if st.button("✏️ Editar Partida", use_container_width=True):
+                    st.session_state.mostrar_edicao_partida = True
+
+            with col2:
+                if st.button("🗑️ Excluir Partida", use_container_width=True):
+                    partidas = partidas.drop(partidas.index[index]).reset_index(drop=True)
+
+                    # Renumera as partidas
+                    partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors="coerce")
+                    partidas = partidas.sort_values(by=["Data_Ordenada", "Número da Partida"]).reset_index(drop=True)
+                    partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
+                    partidas.drop(columns=["Data_Ordenada"], inplace=True)
+
+                    jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
                     save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
-                    st.success("Todas as partidas foram excluídas com sucesso!")
                     st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+
+                    st.success("🗑️ Partida excluída com sucesso!")
+                    time.sleep(2)
+                    st.rerun()
+
+            if st.session_state.mostrar_edicao_partida:
+                with st.form("form_edicao_partida"):
+                    nova_data = st.date_input("📅 Data da partida", value=pd.to_datetime(row["Data"], dayfirst=True))
+
+                    novo_placar_borussia = st.number_input("Placar Borussia", value=int(row["Placar Borussia"]), min_value=0, max_value=2)
+                    novo_gols_borussia = st.text_input("Goleadores Borussia", value=row["Gols Borussia"])
+                    novo_placar_inter = st.number_input("Placar Inter", value=int(row["Placar Inter"]), min_value=0, max_value=2)
+                    novo_gols_inter = st.text_input("Goleadores Inter", value=row["Gols Inter"])
+
+                    col1, col2 = st.columns([1, 1])  # Largura adequada para os botões
+                    with col1:
+                        salvar = st.form_submit_button("💾 Salvar Alterações")
+                    with col2:
+                        cancelar = st.form_submit_button("❌ Cancelar Edição")
+
+                if salvar:
+                    partidas.at[index, "Data"] = nova_data.strftime("%d/%m/%Y") if pd.notnull(nova_data) else ""
+                    partidas.at[index, "Placar Borussia"] = int(novo_placar_borussia)
+                    partidas.at[index, "Gols Borussia"] = novo_gols_borussia
+                    partidas.at[index, "Placar Inter"] = int(novo_placar_inter)
+                    partidas.at[index, "Gols Inter"] = novo_gols_inter
+
+                    # renumera as partidas
+                    partidas["Data_Ordenada"] = pd.to_datetime(partidas["Data"], dayfirst=True)
+                    partidas = partidas.sort_values(by="Data_Ordenada").reset_index(drop=True)
+                    partidas["Número da Partida"] = partidas.groupby("Data_Ordenada").cumcount() + 1
+                    partidas.drop(columns=["Data_Ordenada"], inplace=True)
+
+                    jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
+                    save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+
+                    st.success("✅ Partida editada com sucesso!")
+                    time.sleep(2)
+                    st.session_state.mostrar_edicao_partida = False
+                    st.rerun()
+
+                elif cancelar:
+                    st.session_state.mostrar_edicao_partida = False
                     st.rerun()
         else:
-            st.warning("⚠️ Ainda não há partidas registradas válidas.")
+            st.info("Nenhuma partida registrada ainda.")
+        st.markdown("---")
+        st.markdown("<h5 style='text-align: center; font-weight: bold;'>📋 Histórico de Partidas Registradas</h5>", unsafe_allow_html=True)
+
+
+        if "Gols Borussia" in partidas.columns and "Gols Inter" in partidas.columns:
+            partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
+
+            # Resto do seu código segue aqui
+        else:
+            st.warning("⚠️ Ainda não há partidas registradas com gols.")
+            return
+
+        # Limpa dados incompletos
+        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+
+        # Estilo para reduzir a altura da célula
+        st.markdown(
+            """
+            <style>
+            div[data-testid="stDataFrame"] td {
+                padding-top: 2px !important;
+                padding-bottom: 2px !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
+        # Configura DataFrame com índice começando de 1
+        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
+        partidas.index = partidas.index + 1
+        partidas.index.name = "#"
+
+        # Exibe com colunas ajustadas e célula mais compacta
+        st.dataframe(partidas, use_container_width=True, hide_index=False)
 
 
 
