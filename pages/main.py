@@ -566,6 +566,9 @@ else:
     def tela_avaliacao_pos_jogo():
         pass
 
+    def tela_pagamento_mensalidade():
+        pass
+
     def tela_galeria_momentos():
         pass
 
@@ -680,7 +683,9 @@ else:
         tela_presenca_login()
     elif pag == "🏅 Avaliação Pós-Jogo":
         tela_avaliacao_pos_jogo()
-    elif pag == "📸 Galeria de Momentos":
+    elif pag == "💰 Controle da Mensalidade":
+        tela_pagamento_mensalidade()
+    elif pag == "📸 Galeria de Momentos":    
         tela_galeria_momentos()
     elif pag == "💬 Fórum":
         tela_forum()
@@ -1698,6 +1703,41 @@ else:
 
             st.markdown("---")
 
+
+    def tela_pagamento_mensalidade():
+        st.title("💰 Controle de Pagamento da Mensalidade")
+
+        email_usuario = st.session_state.get("email", "").lower()
+        usuarios_autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
+
+        if email_usuario not in usuarios_autorizados:
+            st.warning("⚠️ Você não tem permissão para acessar esta página.")
+            return
+
+        st.markdown("Marque os jogadores que realizaram o pagamento da mensalidade do mês atual.")
+
+        # Carrega usuários do session state
+        usuarios = st.session_state.get("usuarios", {})
+
+        # Lista de nomes ordenada
+        nomes_ordenados = sorted([(info.get("nome", ""), email) for email, info in usuarios.items()])
+
+        with st.form("form_pagamento"):
+            for nome, email in nomes_ordenados:
+                pago = usuarios[email].get("mensalidade_paga", False)
+                novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"check_{email}")
+                usuarios[email]["mensalidade_paga"] = novo_status
+
+            if st.form_submit_button("💾 Salvar Pagamentos"):
+                st.success("✅ Pagamentos atualizados com sucesso.")
+                st.session_state["usuarios"] = usuarios  # Atualiza o dicionário no session_state
+
+
+
+
+
+
+
     # Fórum
     def tela_forum():
         FILE_FORUM = "forum.csv"
@@ -1962,6 +2002,8 @@ else:
         tela_presenca_login()
     elif st.session_state.pagina_atual == "🏅 Avaliação Pós-Jogo":
         tela_avaliacao_pos_jogo()
+    elif st.session_state.pagina_atual == "💰 Controle da Mensalidade":
+        tela_pagamento_mensalidade()
     elif st.session_state.pagina_atual == "📸 Galeria de Momentos":
         tela_galeria_momentos()
     elif st.session_state.pagina_atual == "💬 Fórum":
