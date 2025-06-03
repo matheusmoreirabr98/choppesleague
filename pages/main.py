@@ -1511,7 +1511,8 @@ else:
         data_partida = st.date_input("📅 Data da Partida")
         data_partida = pd.to_datetime(data_partida).date()
 
-        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.normalize()
+        data = pd.to_datetime(data).normalize()
         confirmados = presencas[(presencas["DataPartida"] == data_partida) & (presencas["Presença"].str.lower() == "sim")]
 
         nomes_confirmados = confirmados["Nome"].tolist()
