@@ -1315,10 +1315,6 @@ else:
 
 
 
-
-
-
-
     # Presença/Ausência
     def tela_presenca_login():
         _, _, usuarios_atualizados, _, _, _, _ = load_data()
