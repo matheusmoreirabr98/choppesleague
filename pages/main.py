@@ -300,7 +300,7 @@ def tela_login():
                 st.markdown(
                     "<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True
                 )
-                submit = st.form_submit_button("Entrar")
+                submit = st.form_submit_button("Entrar", use_container_width=True)
 
             if submit:
                 if email in usuarios and usuarios[email]["senha"] == senha:
