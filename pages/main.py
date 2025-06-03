@@ -280,9 +280,8 @@ def formatar_telefone(numero):
 
 
 def tela_login():
-
     st.markdown(
-        "<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>",
+        "<h1 style='font-size: 1.6rem; text-align: center;'>🔐 Login / Cadastro</h1>",
         unsafe_allow_html=True,
     )
     aba = st.radio(
