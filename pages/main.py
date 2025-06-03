@@ -1276,7 +1276,11 @@ else:
             qnt_presencas = ultima_presenca["Presença"].str.lower().tolist().count("sim")
             qnt_ausencias = ultima_presenca["Presença"].str.lower().tolist().count("não")
 
-            mensalidade_paga = usuario.get("pagamentos", {}).get(mes_referencia, False)
+            mensalidade_paga = False
+            if isinstance(usuario, dict):
+                pagamentos = usuario.get("pagamentos", {})
+                if isinstance(pagamentos, dict):
+                    mensalidade_paga = pagamentos.get(mes_referencia, False)
             mensalidade_status = "✅" if mensalidade_paga else "❌"
 
             estatisticas.append({
