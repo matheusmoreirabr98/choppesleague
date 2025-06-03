@@ -317,8 +317,29 @@ def tela_login():
                     st.error("E-mail ou senha inválidos.")
 
         if not st.session_state.modo_recuperacao:
-            with st.container():
-                if st.button("Esqueci minha senha", use_container_width=True):
+                st.markdown("""
+                    <style>
+                        .botao-vermelho {
+                            background-color: #e63946;
+                            color: white;
+                            padding: 0.6rem 1rem;
+                            border: none;
+                            border-radius: 8px;
+                            font-weight: bold;
+                            width: 100%;
+                            cursor: pointer;
+                            transition: background-color 0.3s ease;
+                        }
+                        .botao-vermelho:hover {
+                            background-color: #c9182c;
+                        }
+                    </style>
+                    <form action="" method="post">
+                        <button class="botao-vermelho" type="submit" name="esqueci_senha">Esqueci minha senha</button>
+                    </form>
+                """, unsafe_allow_html=True)
+
+                if "esqueci_senha" in st.session_state or st.experimental_get_query_params().get("esqueci_senha"):
                     st.session_state.modo_recuperacao = True
                     st.rerun()
 
