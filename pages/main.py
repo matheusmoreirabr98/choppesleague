@@ -16,12 +16,35 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 import random
 import math
+from openpyxl import load_workbook
+
 
 
 
 
 def sanitize_df(df):
     return df.fillna("").astype(str)
+
+def carregar_votos():
+    caminho_arquivo = "ChoppsLeague.xlsx"
+    aba = "Votação"
+    colunas = ["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"]
+
+    try:
+        df = pd.read_excel(caminho_arquivo, sheet_name=aba)
+        for col in colunas:
+            if col not in df.columns:
+                df[col] = ""
+    except:
+        df = pd.DataFrame(columns=colunas)
+        with pd.ExcelWriter(caminho_arquivo, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
+            df.to_excel(writer, sheet_name=aba, index=False)
+    return df
+
+def salvar_votos(df):
+    caminho_arquivo = "ChoppsLeague.xlsx"
+    with pd.ExcelWriter(caminho_arquivo, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
+        df.to_excel(writer, sheet_name="Votação", index=False)
 
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
@@ -1484,7 +1507,7 @@ else:
 
     # Avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
-        FILE_VOTOS = "votacao.csv"
+        df_votos = carregar_votos()
 
         if "dados_gsheets" not in st.session_state or len(st.session_state["dados_gsheets"]) < 4:
             st.session_state["dados_gsheets"] = load_data()
@@ -1501,7 +1524,7 @@ else:
 
         if not os.path.exists(FILE_VOTOS):
             df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
-            df_votos.to_csv(FILE_VOTOS, index=False)
+            salvar_votos(df_votos)
 
         df_votos = pd.read_csv(FILE_VOTOS)
         if "DataRodada" not in df_votos.columns:
@@ -1616,7 +1639,7 @@ else:
                             "DataRodada": str(data_rodada)
                         }])
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
-                        df_votos.to_csv(FILE_VOTOS, index=False)
+                        salvar_votos(df_votos)
                         st.session_state["voto_registrado"] = True
                         st.rerun()
 
@@ -1671,7 +1694,7 @@ else:
                     st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
                     if st.button("🗑️ Apagar votos desta rodada"):
                         df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
-                        df_votos.to_csv(FILE_VOTOS, index=False)
+                        salvar_votos(df_votos)
                         st.success("✅ Votos da rodada apagados com sucesso. Recarregue a página para atualizar.")
                         # Mostra botão para recarregar
                         st.markdown("<br>", unsafe_allow_html=True)
@@ -1879,7 +1902,7 @@ else:
                     df.to_csv(FILE_FINANCEIRO, index=False)
                     st.success("✅ Registro adicionado com sucesso!")
                     st.rerun()
-                    
+
         if email_usuario in autorizados:
             if st.button("🧹 Limpar registros inválidos"):
                 df = df[df["Descrição"].notna() & df["Data"].notna()]
