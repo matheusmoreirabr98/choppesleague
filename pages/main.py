@@ -418,7 +418,7 @@ def tela_login():
                 key="cad_dica",
                 help="Será exibida para te ajudar a lembrar da palavra-chave, se necessário.",
             )
-            submit = st.form_submit_button("Cadastrar")
+            submit = st.form_submit_button("Cadastrar", use_container_width=True)
 
             erros = []
 
