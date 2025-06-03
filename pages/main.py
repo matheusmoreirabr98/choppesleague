@@ -1798,7 +1798,11 @@ else:
                     st.markdown(f"**Responsável:** {row['Responsável']}")
                     if autorizado:
                         with st.form(f"editar_registro_{idx}"):
-                            nova_data = st.date_input("Data", value=pd.to_datetime(row["Data"], dayfirst=True), key=f"data_{idx}")
+                            # Converte com fallback seguro
+                            data_valida = pd.to_datetime(row["Data"], errors="coerce")
+                            if pd.isna(data_valida):
+                                data_valida = datetime.today()
+                            nova_data = st.date_input("Data", value=data_valida.date(), key=f"data_{idx}")
                             novo_tipo = st.selectbox("Tipo", ["Entrada", "Saída"], index=0 if row["Tipo"] == "Entrada" else 1, key=f"tipo_{idx}")
                             nova_desc = st.text_input("Descrição", value=row["Descrição"], key=f"desc_{idx}")
                             novo_valor = st.number_input("Valor (R$)", value=float(row["Valor"]), step=0.01, key=f"valor_{idx}")
