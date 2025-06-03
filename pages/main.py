@@ -996,8 +996,7 @@ else:
 
         # garante que colunas estejam no formato correto
         if not partidas.empty:
-            partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce')
-            partidas = partidas[partidas["Data"].notna()]
+            partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
             presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
             # Detecta automaticamente a coluna de presença e padroniza
             coluna_presenca = None
