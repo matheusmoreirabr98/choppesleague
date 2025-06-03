@@ -2017,10 +2017,9 @@ else:
 
     # Tela de mensagem a gestão
     def tela_comunicado():
-        st.title("📣 Comunicado à Gestão")
+        st.title("📢 Comunicado à Gestão")
 
         nome = st.session_state.get("nome", "usuário")
-        telefone = st.session_state.get("telefone", "não informado")
         email = st.session_state.get("email", "não informado")
 
         st.markdown(
@@ -2037,25 +2036,25 @@ else:
             placeholder="Digite aqui sua sugestão, reclamação ou comunicado...",
         )
 
-        if st.button("📤 Enviar via WhatsApp"):
-            if not mensagem.strip():
-                st.warning("Digite uma mensagem antes de enviar.")
-            else:
-                numero_destino = "5531991159656"  # Brasil + DDD + número
-                texto = f"""Olá, aqui é {nome}!
+        if mensagem.strip():
+            numero_destino = "5531991159656"  # Brasil + DDD + número
+            texto = f"""Olá, aqui é {nome}!
 
-    Telefone: {telefone}
     Email: {email}
 
-    📣 Comunicado:
+    📢 Comunicado:
     {mensagem}
     """
-                texto_codificado = urllib.parse.quote(texto)
-                link = f"https://wa.me/{numero_destino}?text={texto_codificado}"
-                st.success(
-                    "Clique no botão abaixo para abrir o WhatsApp com sua mensagem:"
-                )
-                st.markdown(f"[📲 Abrir WhatsApp]({link})", unsafe_allow_html=True)
+            texto_codificado = urllib.parse.quote(texto)
+            link = f"https://wa.me/{numero_destino}?text={texto_codificado}"
+            st.markdown(f"[📲 Enviar via WhatsApp]({link})", unsafe_allow_html=True)
+        else:
+            st.warning("Digite uma mensagem antes de gerar o link para o WhatsApp.")
+
+
+
+
+
 
     # Tela das Regras
     def tela_regras():
