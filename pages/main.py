@@ -1498,7 +1498,11 @@ else:
             df_votos["DataRodada"] = ""
 
         usuarios = st.session_state.get("usuarios", {})
-        presencas = st.session_state.get("dados_gsheets", [])[3]
+        dados = st.session_state.get("dados_gsheets", [])
+        if len(dados) < 4:
+            st.warning("❌ Dados de presença não carregados. Tente novamente mais tarde.")
+            return
+        presencas = dados[3]
 
         # Determina a data da quinta-feira da semana atual (rodada)
         agora = datetime.now()
