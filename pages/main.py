@@ -1744,9 +1744,9 @@ else:
 
 
 
-
+    # Mensalidades
     def tela_pagamento_mensalidade():
-        st.title("💰 Controle de Pagamento da Mensalidade")
+        st.markdown("<h3>💰 Controle de Pagamento da Mensalidade</h3>", unsafe_allow_html=True)
 
         email_usuario = st.session_state.get("email", "").lower()
         usuarios_autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
@@ -1755,9 +1755,8 @@ else:
             st.warning("⚠️ Você não tem permissão para acessar esta página.")
             return
 
-        usuarios = st.session_state.get("usuarios", {})
+        partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = st.session_state.get("dados_gsheets", load_data())
 
-        # Mês atual
         hoje = datetime.now()
         meses = [f"{m:02d}/{hoje.year}" for m in range(1, 13)]
         mes_atual = f"{hoje.month:02d}/{hoje.year}"
@@ -1771,13 +1770,28 @@ else:
             for nome, email in nomes_ordenados:
                 pagamentos = usuarios[email].get("pagamentos", {})
                 pago = pagamentos.get(mes_selecionado, False)
-                novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"{email}_{mes_selecionado}")
+                checkbox_html = f"""
+                <label style='display: flex; align-items: center;'>
+                    <input type='checkbox' name='{email}_{mes_selecionado}' {'checked' if pago else ''} style='margin-right: 10px; transform: scale(1.2); accent-color: green;'>
+                    <span style='font-size: 16px;'>{nome} ({email})</span>
+                </label>
+                """
+                st.markdown(checkbox_html, unsafe_allow_html=True)
+                novo_status = st.checkbox("", value=pago, key=f"{email}_{mes_selecionado}")
                 pagamentos[mes_selecionado] = novo_status
                 usuarios[email]["pagamentos"] = pagamentos
 
             if st.form_submit_button("💾 Salvar Pagamentos"):
                 st.success("✅ Pagamentos atualizados com sucesso.")
                 st.session_state["usuarios"] = usuarios
+                save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, usuarios_to_df(usuarios), transparencia)
+                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, usuarios_to_df(usuarios), transparencia)
+
+
+    def usuarios_to_df(usuarios):
+        usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
+        usuarios_df = usuarios_df.rename(columns={"index": "email"})
+        return usuarios_df
 
 
 
