@@ -2192,7 +2192,7 @@ else:
     elif st.session_state.pagina_atual == "📊 Registrar Partida":
         registrar_partidas()
     elif st.session_state.pagina_atual == "👟 Estatísticas dos Jogadores":
-        jogadores = tela_jogadores(jogadores)
+        jogadores = tela_jogadores()
     elif st.session_state.pagina_atual == "🎲 Sorteio de Times":
         tela_sorteio()
     elif st.session_state.pagina_atual == "✅ Confirmar Presença/Ausência":
