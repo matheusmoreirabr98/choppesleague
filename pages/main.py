@@ -1812,36 +1812,58 @@ else:
         autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
 
         if email_usuario in autorizados:
-            st.markdown("### ✏️ Editar ou 🗑️ Apagar registros")
+            st.markdown("---")
+            st.markdown("### ➕ Adicionar novo registro")
+            with st.form("form_financeiro"):
+                tipo = st.selectbox("Tipo", ["Entrada", "Saída"])
+                descricao = st.text_input("Descrição")
+                valor = st.number_input("Valor (R$)", min_value=0.0, step=0.01, format="%.2f")
+                data = st.date_input("Data", value=datetime.now())
+                submit = st.form_submit_button("💾 Registrar")
 
-            for i, row in df_sorted.iterrows():
-                with st.expander(f"{row['Data']} — {row['Tipo']} — {row['Descrição']} — R$ {row['Valor']:.2f}"):
-                    col1, col2 = st.columns(2)
+                if submit:
+                    novo_registro = pd.DataFrame([{
+                        "Data": data,
+                        "Tipo": tipo,
+                        "Descrição": descricao,
+                        "Valor": valor,
+                        "Responsável": email_usuario
+                    }])
+                    df = pd.concat([df, novo_registro], ignore_index=True)
+                    df.to_csv(FILE_FINANCEIRO, index=False)
+                    st.success("✅ Registro adicionado com sucesso!")
+                    st.rerun()
+                    if email_usuario in autorizados:
+                        st.markdown("### ✏️ Editar ou 🗑️ Apagar registros")
 
-                    with col1:
-                        if st.button(f"✏️ Editar {i}"):
-                            with st.form(f"form_editar_{i}"):
-                                novo_tipo = st.selectbox("Tipo", ["Entrada", "Saída"], index=0 if row["Tipo"] == "Entrada" else 1)
-                                nova_desc = st.text_input("Descrição", value=row["Descrição"])
-                                novo_valor = st.number_input("Valor (R$)", value=float(row["Valor"]), min_value=0.0, step=0.01, format="%.2f")
-                                nova_data = st.date_input("Data", value=pd.to_datetime(row["Data"], dayfirst=True))
-                                salvar = st.form_submit_button("💾 Salvar")
+                        for i, row in df_sorted.iterrows():
+                            with st.expander(f"{row['Data']} — {row['Tipo']} — {row['Descrição']} — R$ {row['Valor']:.2f}"):
+                                col1, col2 = st.columns(2)
 
-                                if salvar:
-                                    df.loc[i, "Tipo"] = novo_tipo
-                                    df.loc[i, "Descrição"] = nova_desc
-                                    df.loc[i, "Valor"] = novo_valor
-                                    df.loc[i, "Data"] = nova_data
-                                    df.to_csv(FILE_FINANCEIRO, index=False)
-                                    st.success("✅ Registro editado com sucesso!")
-                                    st.rerun()
+                                with col1:
+                                    if st.button(f"✏️ Editar {i}"):
+                                        with st.form(f"form_editar_{i}"):
+                                            novo_tipo = st.selectbox("Tipo", ["Entrada", "Saída"], index=0 if row["Tipo"] == "Entrada" else 1)
+                                            nova_desc = st.text_input("Descrição", value=row["Descrição"])
+                                            novo_valor = st.number_input("Valor (R$)", value=float(row["Valor"]), min_value=0.0, step=0.01, format="%.2f")
+                                            nova_data = st.date_input("Data", value=pd.to_datetime(row["Data"], dayfirst=True))
+                                            salvar = st.form_submit_button("💾 Salvar")
 
-                    with col2:
-                        if st.button(f"🗑️ Apagar {i}"):
-                            df = df.drop(i)
-                            df.to_csv(FILE_FINANCEIRO, index=False)
-                            st.warning("⚠️ Registro apagado com sucesso!")
-                            st.rerun()
+                                            if salvar:
+                                                df.loc[i, "Tipo"] = novo_tipo
+                                                df.loc[i, "Descrição"] = nova_desc
+                                                df.loc[i, "Valor"] = novo_valor
+                                                df.loc[i, "Data"] = nova_data
+                                                df.to_csv(FILE_FINANCEIRO, index=False)
+                                                st.success("✅ Registro editado com sucesso!")
+                                                st.rerun()
+
+                                with col2:
+                                    if st.button(f"🗑️ Apagar {i}"):
+                                        df = df.drop(i)
+                                        df.to_csv(FILE_FINANCEIRO, index=False)
+                                        st.warning("⚠️ Registro apagado com sucesso!")
+                                        st.rerun()
 
 
 
