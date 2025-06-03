@@ -1485,6 +1485,7 @@ else:
     # Avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
+        
         if "dados_gsheets" not in st.session_state or len(st.session_state["dados_gsheets"]) < 4:
             st.session_state["dados_gsheets"] = load_data()
 
