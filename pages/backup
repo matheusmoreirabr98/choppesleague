@@ -16,7 +16,7 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 import random
 import math
-from pytz import timezone
+
 
 
 
@@ -469,6 +469,8 @@ else:
             "🎲 Sorteio de Times",
             "✅ Confirmar Presença/Ausência",
             "🏅 Avaliação Pós-Jogo",
+            "💰 Controle da Mensalidade",
+            "🏦 Portal da Transparência",
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
@@ -481,6 +483,7 @@ else:
             "👟 Estatísticas dos Jogadores",
             "✅ Confirmar Presença/Ausência",
             "🏅 Avaliação Pós-Jogo",
+            "🏦 Portal da Transparência",
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
@@ -564,6 +567,12 @@ else:
         pass
 
     def tela_avaliacao_pos_jogo():
+        pass
+
+    def tela_pagamento_mensalidade():
+        pass
+
+    def tela_portal_transparencia():
         pass
 
     def tela_galeria_momentos():
@@ -680,7 +689,11 @@ else:
         tela_presenca_login()
     elif pag == "🏅 Avaliação Pós-Jogo":
         tela_avaliacao_pos_jogo()
-    elif pag == "📸 Galeria de Momentos":
+    elif pag == "💰 Controle da Mensalidade":
+        tela_pagamento_mensalidade()
+    elif pag == "🏦 Portal da Transparência":
+        tela_portal_transparencia()
+    elif pag == "📸 Galeria de Momentos":    
         tela_galeria_momentos()
     elif pag == "💬 Fórum":
         tela_forum()
@@ -1473,41 +1486,53 @@ else:
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
 
-        # Cria arquivo de votos se não existir
+        if "dados_gsheets" not in st.session_state or len(st.session_state["dados_gsheets"]) < 4:
+            st.session_state["dados_gsheets"] = load_data()
+
+        dados = st.session_state["dados_gsheets"]
+        if len(dados) < 4 or not isinstance(dados[3], pd.DataFrame):
+            st.warning("❌ Dados de presença não carregados corretamente.")
+            return
+
+        presencas = dados[3]
+        if not {"DataPartida", "Presença", "Nome"}.issubset(presencas.columns):
+            st.warning("❌ Colunas ausentes na planilha de presenças.")
+            return
+
         if not os.path.exists(FILE_VOTOS):
             df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
             df_votos.to_csv(FILE_VOTOS, index=False)
 
         df_votos = pd.read_csv(FILE_VOTOS)
-
-        # Garante a coluna DataRodada
         if "DataRodada" not in df_votos.columns:
             df_votos["DataRodada"] = ""
 
         usuarios = st.session_state.get("usuarios", {})
-        presencas = st.session_state.get("dados_gsheets", [])[3]
 
-        # Determina a data da quinta-feira da semana atual (rodada)
         agora = datetime.now()
         hoje = agora.weekday()
         dias_para_quinta = (3 - hoje) % 7
         proxima_quinta = agora + timedelta(days=dias_para_quinta)
         data_rodada = proxima_quinta.date()
 
-        # quarta-feira anterior à próxima quinta
         prazo_limite = proxima_quinta - timedelta(days=1)
         prazo_limite = prazo_limite.replace(hour=22, minute=0, second=0, microsecond=0)
 
-        # Filtra jogadores que confirmaram presença para a rodada
+        presencas["Presença"] = presencas["Presença"].fillna("").str.lower()
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+
         confirmados = presencas[
             (presencas["DataPartida"] == data_rodada) &
-            (presencas["Presença"].str.lower() == "sim")
+            (presencas["Presença"] == "sim")
         ]
+
+        if confirmados.empty:
+            st.warning("⚠️ Nenhum jogador confirmou presença para esta rodada.")
+            return
+
         jogadores_presentes = confirmados["Nome"].tolist()
         st.session_state["jogadores_presentes"] = jogadores_presentes
 
-        # Separa goleiros e jogadores de linha
         goleiros = []
         linha = []
         for j in jogadores_presentes:
@@ -1518,6 +1543,7 @@ else:
                     else:
                         linha.append(j)
                     break
+
 
         votante = st.session_state.get("nome", "usuário")
         linha = [j for j in linha if j != votante]
@@ -1534,7 +1560,7 @@ else:
 
             # ⏬ Título e instruções
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
-            st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
+            st.markdown("<p style='font-size:14px;'>Vote no <strong>craque</strong>, <strong>pereba</strong> e <strong>melhor goleiro</strong> da rodada</p>", unsafe_allow_html=True)
 
             # ⏬ CAMPO: Craque da Rodada
             craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
@@ -1589,19 +1615,10 @@ else:
                             "Goleiro": goleiro,
                             "DataRodada": str(data_rodada)
                         }])
-                        
-                        # grava na aba "Avaliação" da planilha
-                        fuso_brasilia = timezone("America/Sao_Paulo")
-                        data_voto = datetime.now(fuso_brasilia).strftime("%d/%m/%Y %H:%M:%S")
-                        linha_planilha = [data_voto, str(data_rodada), votante, craque, pereba, goleiro]
-                        aba_avaliacao.append_row(linha_planilha)
+                        df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
+                        df_votos.to_csv(FILE_VOTOS, index=False)
                         st.session_state["voto_registrado"] = True
                         st.rerun()
-
-
-
-
-        
 
         # Exibir resultados da rodada atual
         if ja_votou:
@@ -1640,9 +1657,9 @@ else:
             # ✅ Mensagem se já votou (inclusive após envio)
             if ja_votou or st.session_state.get("voto_registrado"):
                 st.success("✅ Você já votou nesta rodada.")
-            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craque da Chopp's League (Top 3)", "🏆"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada", "🧤"), unsafe_allow_html=True)
             st.markdown("<br>", unsafe_allow_html=True)
 
             # Opção de apagar votos da rodada - acesso restrito
@@ -1660,6 +1677,13 @@ else:
                         st.markdown("<br>", unsafe_allow_html=True)
                         if st.button("🔄 Recarregar página"):
                             st.rerun()
+
+
+
+
+
+
+
 
     # Midias
     def tela_galeria_momentos():
@@ -1706,6 +1730,113 @@ else:
                     st.video(os.path.join(pasta, vid))
 
             st.markdown("---")
+
+
+    def tela_pagamento_mensalidade():
+        st.title("💰 Controle de Pagamento da Mensalidade")
+
+        email_usuario = st.session_state.get("email", "").lower()
+        usuarios_autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
+
+        if email_usuario not in usuarios_autorizados:
+            st.warning("⚠️ Você não tem permissão para acessar esta página.")
+            return
+
+        usuarios = st.session_state.get("usuarios", {})
+
+        # Mês atual
+        hoje = datetime.now()
+        meses = [f"{m:02d}/{hoje.year}" for m in range(1, 13)]
+        mes_atual = f"{hoje.month:02d}/{hoje.year}"
+        mes_selecionado = st.selectbox("📅 Mês de referência", options=meses, index=hoje.month - 1)
+
+        st.markdown("Marque os jogadores que realizaram o pagamento da mensalidade para o mês selecionado.")
+
+        nomes_ordenados = sorted([(info.get("nome", ""), email) for email, info in usuarios.items()])
+
+        with st.form("form_pagamento"):
+            for nome, email in nomes_ordenados:
+                pagamentos = usuarios[email].get("pagamentos", {})
+                pago = pagamentos.get(mes_selecionado, False)
+                novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"{email}_{mes_selecionado}")
+                pagamentos[mes_selecionado] = novo_status
+                usuarios[email]["pagamentos"] = pagamentos
+
+            if st.form_submit_button("💾 Salvar Pagamentos"):
+                st.success("✅ Pagamentos atualizados com sucesso.")
+                st.session_state["usuarios"] = usuarios
+
+
+
+
+
+    def tela_portal_transparencia():
+        st.title("🏦 Portal da Transparência")
+
+        FILE_FINANCEIRO = "financeiro.csv"
+        if not os.path.exists(FILE_FINANCEIRO):
+            df_vazio = pd.DataFrame(columns=["Data", "Tipo", "Descrição", "Valor", "Responsável"])
+            df_vazio.to_csv(FILE_FINANCEIRO, index=False)
+
+        df = pd.read_csv(FILE_FINANCEIRO)
+
+        # Conversão de datas
+        if not df.empty:
+            df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
+
+        st.markdown("### 💸 Entradas e Saídas")
+        col1, col2 = st.columns(2)
+        with col1:
+            entradas = df[df["Tipo"] == "Entrada"]
+            total_entradas = entradas["Valor"].sum()
+            st.metric("Total Arrecadado", f"R$ {total_entradas:,.2f}")
+        with col2:
+            saidas = df[df["Tipo"] == "Saída"]
+            total_saidas = saidas["Valor"].sum()
+            st.metric("Total Gasto", f"R$ {total_saidas:,.2f}")
+
+        saldo = total_entradas - total_saidas
+        st.success(f"💰 **Saldo atual: R$ {saldo:,.2f}**")
+
+        st.markdown("---")
+        st.markdown("### 📜 Histórico Financeiro")
+        if df.empty:
+            st.info("Nenhum registro financeiro até o momento.")
+        else:
+            df_sorted = df.sort_values("Data", ascending=False)
+            df_sorted["Data"] = df_sorted["Data"].dt.strftime("%d/%m/%Y")
+            st.dataframe(df_sorted, use_container_width=True)
+
+        # Se for usuário autorizado, permitir adicionar entradas e saídas
+        email_usuario = st.session_state.get("email", "").lower()
+        autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
+
+        if email_usuario in autorizados:
+            st.markdown("---")
+            st.markdown("### ➕ Adicionar novo registro")
+            with st.form("form_financeiro"):
+                tipo = st.selectbox("Tipo", ["Entrada", "Saída"])
+                descricao = st.text_input("Descrição")
+                valor = st.number_input("Valor (R$)", min_value=0.0, step=0.01, format="%.2f")
+                data = st.date_input("Data", value=datetime.now())
+                submit = st.form_submit_button("💾 Registrar")
+
+                if submit:
+                    novo_registro = pd.DataFrame([{
+                        "Data": data,
+                        "Tipo": tipo,
+                        "Descrição": descricao,
+                        "Valor": valor,
+                        "Responsável": email_usuario
+                    }])
+                    df = pd.concat([df, novo_registro], ignore_index=True)
+                    df.to_csv(FILE_FINANCEIRO, index=False)
+                    st.success("✅ Registro adicionado com sucesso!")
+                    st.rerun()
+
+
+
+
 
     # Fórum
     def tela_forum():
@@ -1971,6 +2102,10 @@ else:
         tela_presenca_login()
     elif st.session_state.pagina_atual == "🏅 Avaliação Pós-Jogo":
         tela_avaliacao_pos_jogo()
+    elif st.session_state.pagina_atual == "💰 Controle da Mensalidade":
+        tela_pagamento_mensalidade()
+    elif st.session_state.pagina_atual == "🏦 Portal da Transparência":
+        tela_portal_transparencia()
     elif st.session_state.pagina_atual == "📸 Galeria de Momentos":
         tela_galeria_momentos()
     elif st.session_state.pagina_atual == "💬 Fórum":
