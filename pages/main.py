@@ -1846,20 +1846,24 @@ else:
                 st.success("✅ Pagamentos atualizados com sucesso.")
                 st.session_state["usuarios"] = usuarios
 
-                # salvar na aba 'Mensalidades'
+                # salvar acumulando na aba 'Mensalidades'
                 gc = autenticar_gsheets()
                 sh = gc.open(NOME_PLANILHA)
                 aba_mensalidades = sh.worksheet("Mensalidades")
-                aba_mensalidades.clear()
-                set_with_dataframe(aba_mensalidades, mensalidades_df)
+                dados_existentes = get_as_dataframe(aba_mensalidades).dropna(how="all")
 
-                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades_df, transparencia)
+                dados_atualizados = pd.concat([dados_existentes, mensalidades_df], ignore_index=True)
+                aba_mensalidades.clear()
+                set_with_dataframe(aba_mensalidades, dados_atualizados)
+
+                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, dados_atualizados, transparencia)
 
 
     def usuarios_to_df(usuarios):
         usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
         usuarios_df = usuarios_df.rename(columns={"index": "email"})
         return usuarios_df
+
 
 
 
