@@ -1823,7 +1823,13 @@ else:
                 st.session_state["dados_gsheets"] = load_data()
             return st.session_state["dados_gsheets"][-1]  # retorna a aba 'Transparência'
 
-        df = ler_dados()  # <-- ESTA LINHA FALTAVA NO SEU CÓDIGO
+        df = ler_dados()
+
+        # Corrige erro de KeyError se colunas estiverem ausentes
+        colunas_necessarias = ["Data", "Tipo", "Descrição", "Valor"]
+        for coluna in colunas_necessarias:
+            if coluna not in df.columns:
+                df[coluna] = None
 
         # Conversão de datas
         if not df.empty:
