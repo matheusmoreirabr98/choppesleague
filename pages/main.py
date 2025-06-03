@@ -1653,8 +1653,13 @@ else:
             email_autorizado = "matheusmoreirabr@hotmail.com"
             email_usuario = st.session_state.get("email", "")
 
+            # Corrige datas inválidas e evita erro no .strftime
+            if not pd.isna(row["Data"]) and hasattr(row["Data"], "strftime"):
+                data_formatada = row["Data"].strftime("%d/%m/%Y")
+            else:
+                data_formatada = "--/--/----"
             if email_usuario.lower() == email_autorizado:
-                with st.expander("⚠️ Apagar votos da rodada atual"):
+                with st.expander(f"{data_formatada} - {row['Tipo']} - {row['Descrição']} (R$ {row['Valor']:.2f})"):
                     st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
                     if st.button("🗑️ Apagar votos desta rodada"):
                         df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
