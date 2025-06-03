@@ -1591,7 +1591,7 @@ else:
                         }])
 
             # Exibir resultados da rodada atual
-            if ja_votou:
+            if ja_votou or st.session_state.get("voto_registrado"):
                 df_votos_rodada = df_votos[df_votos["DataRodada"] == str(data_rodada)]
 
                 def gerar_html_podio(serie, titulo, icone):
@@ -1624,9 +1624,8 @@ else:
 
                     podium_html += "</div>"
                     return podium_html
-                # ✅ Mensagem se já votou (inclusive após envio)
-                if ja_votou or st.session_state.get("voto_registrado"):
-                    st.success("✅ Você já votou nesta rodada.")
+
+                st.success("✅ Você já votou nesta rodada.")
                 st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
                 st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
                 st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
