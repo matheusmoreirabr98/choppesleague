@@ -1859,10 +1859,10 @@ else:
                 st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, dados_atualizados, transparencia)
 
 
-    def usuarios_to_df(usuarios):
-        usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
-        usuarios_df = usuarios_df.rename(columns={"index": "email"})
-        return usuarios_df
+        def usuarios_to_df(usuarios):
+            usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
+            usuarios_df = usuarios_df.rename(columns={"index": "email"})
+            return usuarios_df
 
 
 
