@@ -280,9 +280,8 @@ def formatar_telefone(numero):
 
 
 def tela_login():
-
     st.markdown(
-        "<h1 style='font-size: 1.6rem;'>🔐 Login / Cadastro</h1>",
+        "<h1 style='font-size: 1.6rem; text-align: center;'>🔐 Login / Cadastro</h1>",
         unsafe_allow_html=True,
     )
     aba = st.radio(
@@ -300,7 +299,7 @@ def tela_login():
                 st.markdown(
                     "<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True
                 )
-                submit = st.form_submit_button("Entrar")
+                submit = st.form_submit_button("Entrar", use_container_width=True)
 
             if submit:
                 if email in usuarios and usuarios[email]["senha"] == senha:
@@ -316,7 +315,7 @@ def tela_login():
                     st.error("E-mail ou senha inválidos.")
 
         if not st.session_state.modo_recuperacao:
-            if st.button("Esqueci minha senha"):
+            if st.button("Esqueci minha senha", use_container_width=True):
                 st.session_state.modo_recuperacao = True
                 st.rerun()
 
@@ -326,7 +325,7 @@ def tela_login():
                 unsafe_allow_html=True,
             )
 
-            if st.button("🔙 Voltar para o login"):
+            if st.button("🔙 Voltar para o login", use_container_width=True):
                 st.session_state.modo_recuperacao = False
                 st.rerun()
 
@@ -347,7 +346,7 @@ def tela_login():
                     type="password",
                     key="conf_nova_senha_final",
                 )
-                confirmar = st.form_submit_button("Atualizar senha")
+                confirmar = st.form_submit_button("Atualizar senha", use_container_width=True)
 
                 if confirmar:
                     if email not in usuarios:
