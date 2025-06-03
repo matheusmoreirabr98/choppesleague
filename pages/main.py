@@ -1789,7 +1789,9 @@ else:
             st.info("Nenhum registro financeiro até o momento.")
         else:
             df_sorted = df.sort_values("Data", ascending=False).reset_index(drop=True)
-            df_sorted["Data"] = df_sorted["Data"].dt.strftime("%d/%m/%Y")
+            df_exibicao = df_sorted.copy()
+            df_exibicao["Data"] = df_exibicao["Data"].dt.strftime("%d/%m/%Y")
+            st.dataframe(df_exibicao, use_container_width=True)
 
             for idx, row in df_sorted.iterrows():
                 with st.expander(f"{row['Data']} - {row['Tipo']} - {row['Descrição']} (R$ {row['Valor']:.2f})"):
