@@ -315,7 +315,7 @@ def tela_login():
                     st.error("E-mail ou senha inválidos.")
 
         if not st.session_state.modo_recuperacao:
-            if st.button("Esqueci minha senha"):
+            if "esqueci_senha" in st.session_state or st.query_params.get("esqueci_senha"):
                 st.session_state.modo_recuperacao = True
                 st.rerun()
 
