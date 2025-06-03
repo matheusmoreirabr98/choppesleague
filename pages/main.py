@@ -1948,7 +1948,6 @@ else:
 
 
 
-
     # Fórum
     def tela_forum():
         FILE_FORUM = "forum.csv"

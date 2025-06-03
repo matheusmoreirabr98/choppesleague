@@ -1092,7 +1092,7 @@ else:
             """, unsafe_allow_html=True
         )
 
-        if st.button("Registrar"):
+        if st.button("Registrar", use_container_width=True):
             nova = {
                 "Data": data.strftime("%d/%m/%Y"),
                 "Número da Partida": numero_partida,
@@ -1206,15 +1206,13 @@ else:
 
 
         if "Gols Borussia" in partidas.columns and "Gols Inter" in partidas.columns:
-            partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
+            partidas = partidas[partidas["Gols Borussia"].notna() & partidas["Gols Inter"].notna()]
+
 
             # Resto do seu código segue aqui
         else:
             st.warning("⚠️ Ainda não há partidas registradas com gols.")
             return
-
-        # Limpa dados incompletos
-        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
 
         # Estilo para reduzir a altura da célula
         st.markdown(
@@ -1245,7 +1243,14 @@ else:
 
     # Estatisticas dos jogadores
     def tela_jogadores():
-        st.title("\U0001F45F Estatísticas dos Jogadores")
+        st.markdown(
+            """
+            <p style='font-size:17px; line-height:1.6;'>
+                Este painel apresenta as estatísticas dos jogadores
+            </p>
+            """,
+            unsafe_allow_html=True
+        )
 
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
@@ -1278,7 +1283,11 @@ else:
             qnt_presencas = ultima_presenca["Presença"].str.lower().tolist().count("sim")
             qnt_ausencias = ultima_presenca["Presença"].str.lower().tolist().count("não")
 
-            mensalidade_paga = usuario.get("pagamentos", {}).get(mes_referencia, False)
+            mensalidade_paga = False
+            if isinstance(usuario, dict):
+                pagamentos = usuario.get("pagamentos", {})
+                if isinstance(pagamentos, dict):
+                    mensalidade_paga = pagamentos.get(mes_referencia, False)
             mensalidade_status = "✅" if mensalidade_paga else "❌"
 
             estatisticas.append({
@@ -1502,7 +1511,6 @@ else:
     # Tela de sorteio
 
     def tela_sorteio():
-        st.title("🎲 Sorteio de Times")
         st.markdown("Selecione a data da partida para sortear os times.")
 
         if "dados_gsheets" not in st.session_state:
@@ -1730,7 +1738,7 @@ else:
 
     # Mensalidade
     def tela_pagamento_mensalidade():
-        st.markdown("<h3>💰 Controle de Pagamento da Mensalidade</h3>", unsafe_allow_html=True)
+        st.markdown("<h3>Controle de Pagamentos</h3>", unsafe_allow_html=True)
 
         email_usuario = st.session_state.get("email", "").lower()
         usuarios_autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
@@ -1755,7 +1763,10 @@ else:
 
         with st.form("form_pagamento"):
             for nome, email in nomes_ordenados:
-                pagamentos = usuarios[email].get("pagamentos", {})
+                pagamentos = usuarios.get(email, {}).get("pagamentos", {})
+                if not isinstance(pagamentos, dict):
+                    pagamentos = {}
+
                 pago = pagamentos.get(mes_selecionado, False)
                 novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"{email}_{mes_selecionado}")
                 pagamentos[mes_selecionado] = novo_status
@@ -1768,24 +1779,25 @@ else:
                     "Pago": "Sim" if novo_status else "Não"
                 })
 
-            if st.form_submit_button("💾 Salvar Pagamentos"):
-                # Carregar registros existentes da aba Mensalidades
-                gc = autenticar_gsheets()
-                sh = gc.open(NOME_PLANILHA)
-                aba_mensalidades = sh.worksheet("Mensalidades")
-                dados_existentes = get_as_dataframe(aba_mensalidades).dropna(how="all")
+            # ✅ Submit button dentro do `with`
+            submit = st.form_submit_button("💾 Salvar Pagamentos")
 
-                # Remove registros do mês atual antes de adicionar os novos
-                dados_filtrados = dados_existentes[dados_existentes["Mês"] != mes_selecionado]
-                df_final = pd.concat([dados_filtrados, pd.DataFrame(pagamentos_registrados)], ignore_index=True)
+        if submit:
+            # 🟢 Resto do código de salvar no Sheets
+            gc = autenticar_gsheets()
+            sh = gc.open(NOME_PLANILHA)
+            aba_mensalidades = sh.worksheet("Mensalidades")
+            dados_existentes = get_as_dataframe(aba_mensalidades).dropna(how="all")
 
-                # Salvar no Google Sheets
-                aba_mensalidades.clear()
-                set_with_dataframe(aba_mensalidades, df_final)
+            dados_filtrados = dados_existentes[dados_existentes["Mês"] != mes_selecionado]
+            df_final = pd.concat([dados_filtrados, pd.DataFrame(pagamentos_registrados)], ignore_index=True)
 
-                st.success("✅ Pagamentos atualizados com sucesso.")
-                st.session_state["usuarios"] = usuarios
-                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, df_final, transparencia)
+            aba_mensalidades.clear()
+            set_with_dataframe(aba_mensalidades, df_final)
+
+            st.success("✅ Pagamentos atualizados com sucesso.")
+            st.session_state["usuarios"] = usuarios
+            st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, df_final, transparencia)
 
 
     def usuarios_to_df(usuarios):
@@ -1800,7 +1812,10 @@ else:
 
 
     def tela_portal_transparencia():
-        st.title("🏦 Portal da Transparência")
+        st.markdown(
+            "<h4 style='font-weight:bold;'>🍺 Caixa da Chopp's League</h4>",
+            unsafe_allow_html=True
+        )
 
         # Corrige: define df logo após leitura dos dados
         def ler_dados():
@@ -1928,7 +1943,6 @@ else:
                 save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
                 st.success("Registros inválidos removidos com sucesso!")
                 st.rerun()
-
 
 
 
