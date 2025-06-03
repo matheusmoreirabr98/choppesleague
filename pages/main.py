@@ -46,10 +46,7 @@ def carregar_votos():
         return df
     except Exception:
         return pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
-    
-if st.button("🔍 Ver votos atuais"):
-    df = carregar_votos()
-    st.dataframe(df)
+
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
