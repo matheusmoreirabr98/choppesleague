@@ -1298,21 +1298,21 @@ else:
         df_estatisticas.index += 1
         df_estatisticas.index.name = "#"
 
-    # Aplica centralização ao conteúdo da tabela via estilo
-    st.markdown("""
-        <style>
-            table td, table th {
-                text-align: center !important;
-                vertical-align: middle !important;
-            }
+        # Aplica centralização ao conteúdo da tabela via estilo
+        st.markdown("""
+            <style>
+                table td, table th {
+                    text-align: center !important;
+                    vertical-align: middle !important;
+                }
 
-            [data-testid="stDataFrame"] .row-widget.stDataFrame div {
-                justify-content: center;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+                [data-testid="stDataFrame"] .row-widget.stDataFrame div {
+                    justify-content: center;
+                }
+            </style>
+        """, unsafe_allow_html=True)
 
-    st.dataframe(df_estatisticas, use_container_width=True)
+        st.dataframe(df_estatisticas, use_container_width=True)
 
 
 
