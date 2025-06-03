@@ -1094,12 +1094,12 @@ else:
 
         if st.button("Registrar", use_container_width=True):
             nova = {
-                "📅": data.strftime("%d/%m/%Y"),
-                "#️⃣": numero_partida,
-                "Borussia": placar_borussia,
-                "⚽": ", ".join(gols_borussia),
-                "Inter": placar_inter,
-                "⚽": ", ".join(gols_inter),
+                "Data": data.strftime("%d/%m/%Y"),
+                "Número da Partida": numero_partida,
+                "Placar Borussia": placar_borussia,
+                "Gols Borussia": ", ".join(gols_borussia),
+                "Placar Inter": placar_inter,
+                "Gols Inter": ", ".join(gols_inter),
             }
 
             partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
