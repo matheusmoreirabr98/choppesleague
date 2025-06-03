@@ -1590,11 +1590,6 @@ else:
                             "DataRodada": str(data_rodada)
                         }])
 
-
-
-
-        
-
         # Exibir resultados da rodada atual
         if ja_votou:
             df_votos_rodada = df_votos[df_votos["DataRodada"] == str(data_rodada)]
@@ -1652,6 +1647,11 @@ else:
                         st.markdown("<br>", unsafe_allow_html=True)
                         if st.button("🔄 Recarregar página"):
                             st.rerun()
+
+
+
+
+                            
 
     # Midias
     def tela_galeria_momentos():
