@@ -1732,6 +1732,10 @@ else:
             st.markdown("---")
 
 
+
+
+
+
     def tela_pagamento_mensalidade():
         st.title("💰 Controle de Pagamento da Mensalidade")
 
@@ -1816,9 +1820,12 @@ else:
 
             if email_usuario in autorizados:
                 st.markdown("### ✏️ Editar ou Apagar Registros")
-                opcoes = df.index.astype(str) + " - " + df["Descrição"] + " - " + df["Data"].dt.strftime("%d/%m/%Y")
-                escolha = st.selectbox("Selecione um registro:", ["-- Selecione --"] + list(opcoes))
+                # Remove registros com campos obrigatórios nulos
+                df_validos = df[df["Descrição"].notna() & df["Data"].notna()]
 
+                # Gera opções seguras
+                opcoes = df_validos.index.astype(str) + " - " + df_validos["Descrição"] + " - " + df_validos["Data"].dt.strftime("%d/%m/%Y")
+                escolha = st.selectbox("Selecione um registro:", ["-- Selecione --"] + list(opcoes))
                 if escolha != "-- Selecione --":
                     idx = int(escolha.split(" - ")[0])
                     registro = df.loc[idx]
