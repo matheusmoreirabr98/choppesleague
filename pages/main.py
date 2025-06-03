@@ -1541,6 +1541,7 @@ else:
 
             # 🥴 Seletor do pereba dentro do formulário (com base no craque escolhido)
             pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
+            pereba_disabled = craque == "-- Selecione --"
 
             # 🔁 Remove o votante da lista de opções
             votante = st.session_state.get("nome", "usuário")
