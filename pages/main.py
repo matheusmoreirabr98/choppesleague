@@ -339,7 +339,7 @@ def tela_login():
                     </form>
                 """, unsafe_allow_html=True)
 
-                if "esqueci_senha" in st.session_state or st.experimental_get_query_params().get("esqueci_senha"):
+                if "esqueci_senha" in st.session_state or st.query_params.get("esqueci_senha"):
                     st.session_state.modo_recuperacao = True
                     st.rerun()
 
