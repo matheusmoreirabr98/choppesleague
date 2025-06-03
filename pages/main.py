@@ -1284,7 +1284,7 @@ else:
     sh = gc.open(NOME_PLANILHA)
     aba_jogadores = sh.worksheet("Jogadores")
     aba_jogadores.clear()
-    set_with_dataframe(aba_jogadores, df_jogadores_atualizados)
+    #set_with_dataframe(aba_jogadores, df_jogadores_atualizados)
 
     st.success("✅ Estatísticas dos jogadores atualizadas com sucesso!")
     #st.dataframe(df_jogadores_atualizados, use_container_width=True)
