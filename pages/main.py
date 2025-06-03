@@ -1522,7 +1522,7 @@ else:
 
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
-        _, _, usuarios, presencas = st.session_state["dados_gsheets"]
+        _, _, usuarios, presencas, _, _, _ = st.session_state["dados_gsheets"]
 
         # Escolha da data
         data_partida = st.date_input("📅 Data da Partida")
