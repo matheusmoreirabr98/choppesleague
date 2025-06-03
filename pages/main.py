@@ -1800,48 +1800,52 @@ else:
 
         st.markdown("---")
         st.markdown("### 📜 Histórico Financeiro")
-        if df.empty:
-            st.info("Nenhum registro financeiro até o momento.")
-        else:
-            df_sorted = df.sort_values("Data", ascending=False)
-            df_sorted["Data"] = df_sorted["Data"].dt.strftime("%d/%m/%Y")
-            st.dataframe(df_sorted, use_container_width=True)
-            if email_usuario in autorizados:
-                st.markdown("### ✏️ Editar ou 🗑️ Apagar registros")
-
-                for i, row in df_sorted.iterrows():
-                    with st.expander(f"{row['Data']} — {row['Tipo']} — {row['Descrição']} — R$ {row['Valor']:.2f}"):
-                        col1, col2 = st.columns(2)
-
-                        with col1:
-                            if st.button(f"✏️ Editar {i}"):
-                                with st.form(f"form_editar_{i}"):
-                                    novo_tipo = st.selectbox("Tipo", ["Entrada", "Saída"], index=0 if row["Tipo"] == "Entrada" else 1)
-                                    nova_desc = st.text_input("Descrição", value=row["Descrição"])
-                                    novo_valor = st.number_input("Valor (R$)", value=float(row["Valor"]), min_value=0.0, step=0.01, format="%.2f")
-                                    nova_data = st.date_input("Data", value=pd.to_datetime(row["Data"], dayfirst=True))
-                                    salvar = st.form_submit_button("💾 Salvar")
-
-                                    if salvar:
-                                        df.loc[i, "Tipo"] = novo_tipo
-                                        df.loc[i, "Descrição"] = nova_desc
-                                        df.loc[i, "Valor"] = novo_valor
-                                        df.loc[i, "Data"] = nova_data
-                                        df.to_csv(FILE_FINANCEIRO, index=False)
-                                        st.success("✅ Registro editado com sucesso!")
-                                        st.rerun()
-
-                        with col2:
-                            if st.button(f"🗑️ Apagar {i}"):
-                                df = df.drop(i)
-                                df.to_csv(FILE_FINANCEIRO, index=False)
-                                st.warning("⚠️ Registro apagado com sucesso!")
-                                st.rerun()
-
-        # Se for usuário autorizado, permitir adicionar entradas e saídas
         email_usuario = st.session_state.get("email", "").lower()
         autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
 
+        if df.empty:
+            st.info("Nenhum registro financeiro até o momento.")
+        else:
+            df_exibicao = df.copy()
+            df_exibicao["Data"] = df_exibicao["Data"].dt.strftime("%d/%m/%Y")
+            st.dataframe(df_exibicao.sort_values("Data", ascending=False), use_container_width=True)
+
+            if email_usuario in autorizados:
+                st.markdown("### ✏️ Editar ou Apagar Registros")
+                opcoes = df.index.astype(str) + " - " + df["Descrição"] + " - " + df["Data"].dt.strftime("%d/%m/%Y")
+                escolha = st.selectbox("Selecione um registro:", ["-- Selecione --"] + list(opcoes))
+
+                if escolha != "-- Selecione --":
+                    idx = int(escolha.split(" - ")[0])
+                    registro = df.loc[idx]
+
+                    with st.form("editar_registro"):
+                        tipo_edit = st.selectbox("Tipo", ["Entrada", "Saída"], index=["Entrada", "Saída"].index(registro["Tipo"]))
+                        desc_edit = st.text_input("Descrição", value=registro["Descrição"])
+                        valor_edit = st.number_input("Valor (R$)", min_value=0.0, value=registro["Valor"], step=0.01, format="%.2f")
+                        data_edit = st.date_input("Data", value=pd.to_datetime(registro["Data"]))
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            atualizar = st.form_submit_button("💾 Atualizar")
+                        with col2:
+                            apagar = st.form_submit_button("🗑️ Apagar")
+
+                        if atualizar:
+                            df.at[idx, "Tipo"] = tipo_edit
+                            df.at[idx, "Descrição"] = desc_edit
+                            df.at[idx, "Valor"] = valor_edit
+                            df.at[idx, "Data"] = data_edit
+                            df.to_csv(FILE_FINANCEIRO, index=False)
+                            st.success("✅ Registro atualizado com sucesso!")
+                            st.rerun()
+
+                        if apagar:
+                            df = df.drop(index=idx).reset_index(drop=True)
+                            df.to_csv(FILE_FINANCEIRO, index=False)
+                            st.success("🗑️ Registro removido com sucesso!")
+                            st.rerun()
+
+        # Adicionar novo registro
         if email_usuario in autorizados:
             st.markdown("---")
             st.markdown("### ➕ Adicionar novo registro")
@@ -1864,6 +1868,7 @@ else:
                     df.to_csv(FILE_FINANCEIRO, index=False)
                     st.success("✅ Registro adicionado com sucesso!")
                     st.rerun()
+
 
 
 
