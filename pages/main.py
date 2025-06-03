@@ -1524,18 +1524,12 @@ else:
             st.session_state["dados_gsheets"] = load_data()
         _, _, usuarios, presencas, _, _, _ = st.session_state["dados_gsheets"]
 
-        # Escolha da data
         data_partida = st.date_input("📅 Data da Partida")
         data_partida = pd.to_datetime(data_partida).date()
 
-        # Converte coluna para datetime e filtra os confirmados
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
-        confirmados = presencas[
-            (presencas["DataPartida"] == data_partida) &
-            (presencas["Presença"].str.lower() == "sim")
-        ]
+        confirmados = presencas[(presencas["DataPartida"] == data_partida) & (presencas["Presença"].str.lower() == "sim")]
 
-        # Lista ordenada pela ordem na planilha
         nomes_confirmados = confirmados["Nome"].tolist()
 
         if len(nomes_confirmados) <= 10:
@@ -1543,7 +1537,6 @@ else:
             return
 
         if st.button("🎯 Sortear Times") or "times_sorteados" not in st.session_state:
-            # Divide entre goleiros e linha, sem considerar ordem de confirmação
             goleiros = []
             linha = []
 
@@ -1556,47 +1549,44 @@ else:
                             linha.append(nome)
                         break
 
-            # Embaralha tudo
             random.shuffle(goleiros)
             random.shuffle(linha)
 
-            times = [[] for _ in range(2)]  # Time 1 e Time 2
-            jogadores_restantes = linha.copy()
-            goleiros_disponiveis = goleiros.copy()
+            times = [[] for _ in range(2)]
+            jogadores_usados = set()
 
             # Distribui goleiros para os dois primeiros times
-            if goleiros_disponiveis:
-                if len(goleiros_disponiveis) >= 1:
-                    times[0].append(goleiros_disponiveis.pop(0))
-                if len(goleiros_disponiveis) >= 1:
-                    times[1].append(goleiros_disponiveis.pop(0))
+            if goleiros:
+                if len(goleiros) >= 1:
+                    times[0].append(goleiros[0])
+                    jogadores_usados.add(goleiros[0])
+                if len(goleiros) >= 2:
+                    times[1].append(goleiros[1])
+                    jogadores_usados.add(goleiros[1])
 
             # Preencher os dois primeiros times com jogadores de linha
             for i in range(2):
-                max_jogadores = 6 if any("goleiro" in usuario.lower() for usuario in times[i]) else 5
-                while len(times[i]) < max_jogadores and jogadores_restantes:
-                    times[i].append(jogadores_restantes.pop(0))
+                while len(times[i]) < 6 and linha:
+                    jogador = linha.pop(0)
+                    if jogador not in jogadores_usados:
+                        times[i].append(jogador)
+                        jogadores_usados.add(jogador)
 
-            # Criar mais times, se necessário
-            while jogadores_restantes or goleiros_disponiveis:
+            # Jogadores restantes (linha + goleiros não distribuídos)
+            restantes = [j for j in nomes_confirmados if j not in jogadores_usados]
+            random.shuffle(restantes)
+
+            for i in range(2, (len(restantes) // 5) + 3):
                 novo_time = []
-
-                if goleiros_disponiveis:
-                    novo_time.append(goleiros_disponiveis.pop(0))
-                    max_jogadores = 6
-                else:
-                    max_jogadores = 5
-
-                while len(novo_time) < max_jogadores and jogadores_restantes:
-                    novo_time.append(jogadores_restantes.pop(0))
-
-                times.append(novo_time)
+                while restantes and len(novo_time) < 5:
+                    jogador = restantes.pop()
+                    novo_time.append(jogador)
+                if novo_time:
+                    times.append(novo_time)
 
             st.session_state.times_sorteados = times
 
-            # Exibir os times
             cores = ["🟡", "🔵", "🟢", "🟣", "🟠", "🔴"]
-
             for i, time in enumerate(times, 1):
                 cor = cores[(i - 1) % len(cores)]
                 st.markdown(f"### {cor} Time {i}")
