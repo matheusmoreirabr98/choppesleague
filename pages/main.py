@@ -1251,42 +1251,41 @@ else:
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
 
-        # Garante compatibilidade com diferentes estruturas de tupla
         dados = st.session_state["dados_gsheets"]
+
+        # Suporte para 6 ou 7 abas
         if len(dados) == 7:
-            partidas, jogadores_data, usuarios, presencas, avaliacao, mensalidades, _ = dados
+            partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, _ = dados
         else:
-            partidas, jogadores_data, usuarios, presencas, avaliacao, mensalidades = dados
+            partidas, jogadores, usuarios, presencas, avaliacao, mensalidades = dados
 
-        # Votos da avaliação pós-jogo (CSV local)
         df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
-
-        # Mês de referência atual
         mes_referencia = datetime.now().strftime("%m/%Y")
 
-        # Construção das estatísticas
         estatisticas = []
         for email, usuario in usuarios.items():
             nome = usuario["nome"]
             posicao = usuario.get("posicao", "Linha")
 
-            # Contagem de gols
             gols_total = sum(nome in str(g).split(", ") for g in pd.concat([
                 partidas["Gols Borussia"].fillna(""),
                 partidas["Gols Inter"].fillna("")
             ]))
 
-            # Votos
             craques = df_votos["Craque"].tolist().count(nome) if posicao.lower() == "linha" else "-"
             perebas = df_votos["Pereba"].tolist().count(nome) if posicao.lower() == "linha" else "-"
             paredoes = df_votos["Goleiro"].tolist().count(nome) if posicao.lower() == "goleiro" else "-"
 
-            # Presença
-            presencas_usuario = presencas[presencas["Nome"] == nome]
-            qnt_presencas = presencas_usuario["Presença"].str.lower().tolist().count("sim")
-            qnt_ausencias = presencas_usuario["Presença"].str.lower().tolist().count("não")
+            # Último registro de presença do jogador
+            registros_usuario = presencas[presencas["Nome"] == nome]
+            if not registros_usuario.empty:
+                ultimo = registros_usuario.sort_values("Data", ascending=False).iloc[0]
+                presenca = 1 if ultimo["Presença"].strip().lower() == "sim" else 0
+                ausencia = 1 - presenca
+            else:
+                presenca = 0
+                ausencia = 0
 
-            # Mensalidade
             mensalidade_paga = usuario.get("pagamentos", {}).get(mes_referencia, False)
             mensalidade_status = "✅" if mensalidade_paga else "❌"
 
@@ -1297,16 +1296,24 @@ else:
                 "Craques": craques,
                 "Perebas": perebas,
                 "Paredões": paredoes,
-                "Mensalidade": mensalidade_status,
-                "Presenças": qnt_presencas,
-                "Ausências": qnt_ausencias
+                "Presença": presenca,
+                "Ausência": ausencia,
+                "Mensalidade": mensalidade_status
             })
 
         df_estatisticas = pd.DataFrame(estatisticas)
         df_estatisticas.index += 1
         df_estatisticas.index.name = "#"
 
-        st.dataframe(df_estatisticas, use_container_width=True)
+        # Centraliza todas as colunas
+        styled_df = df_estatisticas.style.set_properties(**{
+            'text-align': 'center'
+        }).set_table_styles([
+            dict(selector='th', props=[('text-align', 'center')])
+        ])
+
+        st.dataframe(styled_df, use_container_width=True)
+
 
 
 
