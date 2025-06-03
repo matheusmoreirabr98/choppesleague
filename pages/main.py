@@ -300,7 +300,8 @@ def tela_login():
                 st.markdown(
                     "<div style='margin-top: 2rem;'></div>", unsafe_allow_html=True
                 )
-                submit = st.form_submit_button("Entrar")
+                submit = st.form_submit_button("Entrar", use_container_width=True)
+
 
             if submit:
                 if email in usuarios and usuarios[email]["senha"] == senha:
@@ -316,7 +317,7 @@ def tela_login():
                     st.error("E-mail ou senha inválidos.")
 
         if not st.session_state.modo_recuperacao:
-            if st.button("Esqueci minha senha"):
+            if st.form_submit_button("Esqueci minha senha", use_container_width=True):
                 st.session_state.modo_recuperacao = True
                 st.rerun()
 
