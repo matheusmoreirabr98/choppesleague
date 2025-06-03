@@ -1538,7 +1538,7 @@ else:
         # Lista ordenada pela ordem na planilha
         nomes_confirmados = confirmados["Nome"].tolist()
 
-        if len(nomes_confirmados) <= 15:
+        if len(nomes_confirmados) <= 10:
             st.warning("⚠️ É necessário pelo menos 15 jogadores confirmados para realizar o sorteio.")
             return
 
