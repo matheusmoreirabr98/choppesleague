@@ -26,14 +26,26 @@ def sanitize_df(df):
     return df.fillna("").astype(str)
 
 def salvar_votos(df):
-    # abre a planilha com as credenciais do secrets do Streamlit
+    gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
+    planilha = gc.open("ChoppsLeague")
+    aba = planilha.worksheet("Votação")
+    aba.clear()
+    set_with_dataframe(aba, df)
+
+def carregar_votos():
     gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
     planilha = gc.open("ChoppsLeague")
     aba = planilha.worksheet("Votação")
 
-    # apaga o conteúdo anterior e grava o novo DataFrame
-    aba.clear()
-    set_with_dataframe(aba, df)
+    try:
+        df = get_as_dataframe(aba).dropna(how="all")
+        colunas_necessarias = ["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"]
+        for col in colunas_necessarias:
+            if col not in df.columns:
+                df[col] = ""
+        return df
+    except Exception:
+        return pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
 
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
