@@ -1709,8 +1709,6 @@ else:
 
 
 
-
-
     # Midias
     def tela_galeria_momentos():
         st.title("📸 Galeria de Momentos da Chopp's League")
@@ -1719,44 +1717,29 @@ else:
             "Veja os melhores registros da Chopp's League: gols, resenhas e lembranças 🍻⚽"
         )
 
-        # --- TÓPICOS DA GALERIA ---
-        topicos = {
-            "🏖️ Confraternizações": "midia/confraternizacoes",
-            "🔥 Jogadas Bonitas": "midia/jogadas_bonitas",
-            "😂 Lances Engraçados": "midia/lances_engracados",
-            "🥅 Gols Incríveis": "midia/gols_incriveis",
-            "🎉 Bastidores & Zoações": "midia/bastidores",
-        }
+        link_drive = "https://drive.google.com/drive/u/1/folders/1yNVXxZYnh_RN0eflXUL1U-QhUBpjTE2y"
 
-        for titulo, pasta in topicos.items():
-            st.markdown(f"### {titulo}")
-
-            if not os.path.exists(pasta):
-                st.info("Nenhum conteúdo disponível ainda.")
-                continue
-
-            arquivos = sorted(os.listdir(pasta))
-            imagens = [
-                a for a in arquivos if a.lower().endswith((".png", ".jpg", ".jpeg"))
-            ]
-            videos = [
-                a for a in arquivos if a.lower().endswith((".mp4", ".mov", ".webm"))
-            ]
-
-            col1, col2 = st.columns(2)
-
-            with col1:
-                for img in imagens:
-                    st.image(
-                        os.path.join(pasta, img), caption=img, use_container_width=True
-                    )
-
-            with col2:
-                for vid in videos:
-                    st.video(os.path.join(pasta, vid))
-
-            st.markdown("---")
-
+        st.markdown(
+            f"""
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="{link_drive}" target="_blank" style="
+                    display: inline-block;
+                    background-color: #4CAF50;
+                    color: white;
+                    padding: 12px 24px;
+                    text-align: center;
+                    text-decoration: none;
+                    font-size: 16px;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+                ">
+                    📂 Acessar Álbum no Google Drive
+                </a>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
 
 
