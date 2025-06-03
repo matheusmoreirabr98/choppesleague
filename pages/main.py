@@ -16,39 +16,12 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 import random
 import math
-from openpyxl import load_workbook
-
 
 
 
 
 def sanitize_df(df):
     return df.fillna("").astype(str)
-
-def salvar_votos(df):
-    gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
-    planilha = gc.open("ChoppsLeague")
-    aba = planilha.worksheet("Votação")
-    aba.clear()
-    set_with_dataframe(aba, df)
-
-def salvar_votos(df):
-    df = df.fillna("").astype(str)  # limpa e converte pra string
-    gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
-    planilha = gc.open("ChoppsLeague")
-    aba = planilha.worksheet("Votação")
-    aba.clear()
-    set_with_dataframe(aba, df)
-
-    try:
-        df = get_as_dataframe(aba).dropna(how="all")
-        colunas_necessarias = ["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"]
-        for col in colunas_necessarias:
-            if col not in df.columns:
-                df[col] = ""
-        return df
-    except Exception:
-        return pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
 
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
@@ -160,7 +133,7 @@ def load_data_gsheets():
     sh = gc.open(NOME_PLANILHA)
 
     # Lista das abas obrigatórias
-    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças", "Votação",]
+    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças"]
     abas_existentes = [w.title for w in sh.worksheets()]
 
     # Cria as abas que estiverem faltando
@@ -173,7 +146,6 @@ def load_data_gsheets():
     jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how="all")
     usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how="all")
     presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how="all")
-    votacao = get_as_dataframe(sh.worksheet("Votação")).dropna(how="all")
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
@@ -182,13 +154,13 @@ def load_data_gsheets():
             if pd.notna(row["email"]):
                 usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios, presencas, votacao
+    return partidas, jogadores, usuarios, presencas
 
 
 # -----------------------------------------
 # Salvar dados nas planilhas
 # -----------------------------------------
-def save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao):
+def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
@@ -196,7 +168,6 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao):
     partidas = sanitize_df(partidas)
     jogadores = sanitize_df(jogadores)
     presencas = sanitize_df(presencas)
-    votacao = sanitize_df(votacao)
 
     # Salvar partidas
     sheet_partidas = sh.worksheet("Partidas")
@@ -233,8 +204,8 @@ def load_data():
 time.sleep(1)
 
 
-def save_data(partidas, jogadores, usuarios, presencas, votacao):
-    save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao)
+def save_data(partidas, jogadores, usuarios, presencas):
+    save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
 
 # Sessões iniciais
@@ -283,7 +254,7 @@ def tela_login():
         "Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True
     )
 
-    partidas, jogadores, usuarios, presencas, votacao = load_data()  # ← lê os usuários direto da planilha
+    partidas, jogadores, usuarios, presencas = load_data()  # ← lê os usuários direto da planilha
 
     # LOGIN
     if aba == "Login":
@@ -352,13 +323,13 @@ def tela_login():
                         st.error("As novas senhas não coincidem.")
                     else:
                         # primeiro carrega os dados ATUALIZADOS da planilha
-                        partidas, jogadores, usuarios, presencas, votacao = load_data()
+                        partidas, jogadores, usuarios, presencas = load_data()
 
                         # depois altera a senha na versão correta de `usuarios`
                         usuarios[email]["senha"] = nova_senha
 
                         # agora salva com a senha atualizada
-                        save_data(partidas, jogadores, usuarios, presencas, votacao)
+                        save_data(partidas, jogadores, usuarios, presencas)
                         st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
                         st.rerun()
@@ -464,9 +435,9 @@ def tela_login():
                         "tipo": "admin" if email in EMAILS_ADMIN else "usuario",
                     }
 
-                    # partidas, jogadores, usuarios, presencas, votacao = load_data()
+                    # partidas, jogadores, usuarios, presencas = load_data()
 
-                    save_data(partidas, jogadores, usuarios, presencas, votacao)
+                    save_data(partidas, jogadores, usuarios, presencas)
 
                     st.success("Cadastro realizado! Agora faça login.")
 
@@ -622,7 +593,7 @@ else:
     pag = st.session_state.pagina_atual
 
     def tela_meu_perfil():
-        _, _, usuarios, _, _ = load_data()
+        _, _, usuarios, _ = load_data()
         st.session_state.usuarios = usuarios
         usuario = usuarios.get(st.session_state.email, {})
 
@@ -669,7 +640,7 @@ else:
             del st.session_state.atualizacao_sucesso  # remove a flag após exibir
 
         if salvar:
-            partidas, jogadores, usuarios, presencas, votacao = load_data()
+            partidas, jogadores, usuarios, presencas = load_data()
             email_antigo = st.session_state.email
 
             if senha_atual != usuarios[email_antigo]["senha"]:
@@ -689,7 +660,7 @@ else:
                     usuarios[email] = usuarios.pop(email_antigo)
                     st.session_state.email = email
 
-                save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao)
+                save_data_gsheets(partidas, jogadores, usuarios, presencas)
 
                 st.success("✅ Informações atualizadas com sucesso!")
                 for campo in [
@@ -704,11 +675,6 @@ else:
 
                 st.session_state.atualizacao_sucesso = True
                 st.rerun()
-
-
-
-
-
 
     # Exibe as páginas conforme tipo
     if pag == "🏠 Tela Principal":
@@ -828,8 +794,8 @@ else:
             )
             df.to_csv(FILE_JOGADORES, index=False)
 
-    def save_data(partidas, jogadores, usuarios, votacao):
-        save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao=[])
+    def save_data(partidas, jogadores, usuarios):
+        save_data_gsheets(partidas, jogadores, usuarios, presencas=[])
 
     # Carrega dados com segurança
     def load_data_safe():
@@ -984,7 +950,7 @@ else:
         # carrega os dados do session_state ou do GSheets
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
-        partidas, jogadores, usuarios, presencas, votacao = st.session_state["dados_gsheets"]
+        partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
         presencas.rename(columns={
             "Nome do Jogador": "Nome",
             "Data da partida": "DataPartida"
@@ -1107,13 +1073,12 @@ else:
             partidas_limpo = partidas.fillna("").astype(str)
             jogadores_limpo = jogadores.fillna("").astype(str)
             presencas_limpo = presencas.fillna("").astype(str)
-            votacao_limpo = votacao.fillna("").astype(str)
 
-            save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo, votacao_limpo)
+            save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo)
             st.success("✅ Partida registrada com sucesso!")
             time.sleep(2)
 
-            st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, votacao)
+            st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
             st.session_state["form_id"] += 1
             st.rerun()
 
@@ -1150,8 +1115,8 @@ else:
                     partidas.drop(columns=["Data_Ordenada"], inplace=True)
 
                     jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
-                    save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao)
-                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, votacao)
+                    save_data_gsheets(partidas, jogadores, usuarios, presencas)
+                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
                     st.success("🗑️ Partida excluída com sucesso!")
                     time.sleep(2)
@@ -1186,8 +1151,8 @@ else:
                     partidas.drop(columns=["Data_Ordenada"], inplace=True)
 
                     jogadores, usuarios, presencas = st.session_state["dados_gsheets"][1:]
-                    save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao)
-                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, votacao)
+                    save_data_gsheets(partidas, jogadores, usuarios, presencas)
+                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas)
 
                     st.success("✅ Partida editada com sucesso!")
                     time.sleep(2)
@@ -1520,7 +1485,6 @@ else:
     # Avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
-        df_votos = carregar_votos()
 
         if "dados_gsheets" not in st.session_state or len(st.session_state["dados_gsheets"]) < 4:
             st.session_state["dados_gsheets"] = load_data()
@@ -1537,7 +1501,7 @@ else:
 
         if not os.path.exists(FILE_VOTOS):
             df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
-            salvar_votos(df_votos)
+            df_votos.to_csv(FILE_VOTOS, index=False)
 
         df_votos = pd.read_csv(FILE_VOTOS)
         if "DataRodada" not in df_votos.columns:
@@ -1652,7 +1616,7 @@ else:
                             "DataRodada": str(data_rodada)
                         }])
                         df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
-                        salvar_votos(df_votos)
+                        df_votos.to_csv(FILE_VOTOS, index=False)
                         st.session_state["voto_registrado"] = True
                         st.rerun()
 
@@ -1707,7 +1671,7 @@ else:
                     st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
                     if st.button("🗑️ Apagar votos desta rodada"):
                         df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
-                        salvar_votos(df_votos)
+                        df_votos.to_csv(FILE_VOTOS, index=False)
                         st.success("✅ Votos da rodada apagados com sucesso. Recarregue a página para atualizar.")
                         # Mostra botão para recarregar
                         st.markdown("<br>", unsafe_allow_html=True)
@@ -1915,7 +1879,7 @@ else:
                     df.to_csv(FILE_FINANCEIRO, index=False)
                     st.success("✅ Registro adicionado com sucesso!")
                     st.rerun()
-
+                    
         if email_usuario in autorizados:
             if st.button("🧹 Limpar registros inválidos"):
                 df = df[df["Descrição"].notna() & df["Data"].notna()]
