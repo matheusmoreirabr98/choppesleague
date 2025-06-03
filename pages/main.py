@@ -1237,6 +1237,19 @@ else:
         # Exibe com colunas ajustadas e célula mais compacta
         st.dataframe(partidas, use_container_width=True, hide_index=False)
 
+    # 🔒 Área restrita para deletar todas as partidas
+    if st.session_state.get("email") == "matheusmoreirabr@hotmail.com":
+        st.markdown("---")
+        with st.expander("⚠️ Área Restrita – Excluir Todas as Partidas"):
+            st.warning("Essa ação apagará **todas** as partidas registradas. Essa ação é irreversível.")
+            if st.button("🗑️ Apagar todas as partidas", type="primary"):
+                partidas = partidas.iloc[0:0]  # Remove todas as linhas do DataFrame
+                jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = st.session_state["dados_gsheets"][1:]
+                save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                st.success("✅ Todas as partidas foram apagadas.")
+                time.sleep(2)
+                st.rerun()
 
 
 
