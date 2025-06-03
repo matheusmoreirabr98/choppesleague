@@ -1879,6 +1879,13 @@ else:
                     df.to_csv(FILE_FINANCEIRO, index=False)
                     st.success("✅ Registro adicionado com sucesso!")
                     st.rerun()
+                    
+        if email_usuario in autorizados:
+            if st.button("🧹 Limpar registros inválidos"):
+                df = df[df["Descrição"].notna() & df["Data"].notna()]
+                df.to_csv(FILE_FINANCEIRO, index=False)
+                st.success("Registros inválidos removidos com sucesso!")
+                st.rerun()
 
 
 
