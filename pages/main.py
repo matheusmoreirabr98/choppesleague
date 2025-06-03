@@ -125,6 +125,21 @@ def init_data_gsheets():
         set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
 
 
+    if "Avaliação Pós-Jogo" not in existentes:
+        df_avaliacao = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
+        sh.add_worksheet(title="Avaliação Pós-Jogo", rows="100", cols="20")
+        set_with_dataframe(sh.worksheet("Avaliação Pós-Jogo"), df_avaliacao)
+
+    if "Mensalidades" not in existentes:
+        df_mensalidades = pd.DataFrame(columns=["Email", "Nome", "Mês", "Pago"])  # ou personalize as colunas
+        sh.add_worksheet(title="Mensalidades", rows="100", cols="20")
+        set_with_dataframe(sh.worksheet("Mensalidades"), df_mensalidades)
+
+    if "Transparência" not in existentes:
+        df_transparencia = pd.DataFrame(columns=["Data", "Tipo", "Descrição", "Valor", "Responsável"])
+        sh.add_worksheet(title="Transparência", rows="100", cols="20")
+        set_with_dataframe(sh.worksheet("Transparência"), df_transparencia)
+
 # -----------------------------------------
 # Carregar dados das planilhas
 # -----------------------------------------
@@ -133,7 +148,10 @@ def load_data_gsheets():
     sh = gc.open(NOME_PLANILHA)
 
     # Lista das abas obrigatórias
-    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças"]
+    abas_necessarias = [
+        "Partidas", "Jogadores", "Usuarios", "Presenças",
+        "Avaliação Pós-Jogo", "Mensalidades", "Transparência"
+    ]    
     abas_existentes = [w.title for w in sh.worksheets()]
 
     # Cria as abas que estiverem faltando
@@ -146,6 +164,9 @@ def load_data_gsheets():
     jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how="all")
     usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how="all")
     presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how="all")
+    avaliacao = get_as_dataframe(sh.worksheet("Avaliação Pós-Jogo")).dropna(how="all")
+    mensalidades = get_as_dataframe(sh.worksheet("Mensalidades")).dropna(how="all")
+    transparencia = get_as_dataframe(sh.worksheet("Transparência")).dropna(how="all")
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
@@ -154,7 +175,7 @@ def load_data_gsheets():
             if pd.notna(row["email"]):
                 usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios, presencas
+    return partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia
 
 
 # -----------------------------------------
