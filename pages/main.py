@@ -1758,7 +1758,9 @@ else:
         with st.form("form_pagamento"):
             for nome, email in nomes_ordenados:
                 pagamentos = usuarios[email].get("pagamentos", {})
-                pago = pagamentos.get(mes_selecionado, False)
+                pago = False
+                if isinstance(pagamentos, dict):
+                    pago = pagamentos.get(mes_selecionado, False)
                 novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"{email}_{mes_selecionado}")
                 pagamentos[mes_selecionado] = novo_status
                 usuarios[email]["pagamentos"] = pagamentos
