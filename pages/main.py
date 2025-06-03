@@ -1588,13 +1588,6 @@ else:
                             "Goleiro": goleiro,
                             "DataRodada": str(data_rodada)
                         }])
-                        
-                        # grava na aba "Avaliação" da planilha
-                        fuso_brasilia = timezone("America/Sao_Paulo")
-                        data_voto = datetime.now(fuso_brasilia).strftime("%d/%m/%Y %H:%M:%S")
-                        linha_planilha = [data_voto, str(data_rodada), votante, craque, pereba, goleiro]
-                        st.session_state["voto_registrado"] = True
-                        st.rerun()
 
 
 
