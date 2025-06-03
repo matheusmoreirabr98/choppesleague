@@ -1245,7 +1245,7 @@ else:
     def tela_jogadores():
         st.markdown(
             """
-            <p style='font-size:16px; line-height:1.6;'>
+            <p style='font-size:18px; line-height:1.6;'>
                 Este painel apresenta as estatísticas dos jogadores
             </p>
             """,
