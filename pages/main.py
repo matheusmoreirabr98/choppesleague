@@ -469,6 +469,7 @@ else:
             "🎲 Sorteio de Times",
             "✅ Confirmar Presença/Ausência",
             "🏅 Avaliação Pós-Jogo",
+            "💰 Controle da Mensalidade",
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
