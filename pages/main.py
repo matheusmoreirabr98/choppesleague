@@ -1015,6 +1015,7 @@ else:
 
         # seleção de data da partida
         data = st.date_input("📅 Data da partida")
+        data = pd.to_datetime(data).normalize()
 
         # define número da nova partida com base nas partidas da mesma data
         partidas_do_dia = partidas[partidas["Data"] == data]
