@@ -1245,13 +1245,18 @@ else:
 
 
     # Estatisticas dos jogadores
-    def tela_jogadores(jogadores=None):
+    def tela_jogadores():
         st.title("👟 Estatísticas dos Jogadores")
 
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
 
-        partidas, _, usuarios, presencas, _, _ = st.session_state["dados_gsheets"]
+        # Garante compatibilidade com diferentes estruturas de tupla
+        dados = st.session_state["dados_gsheets"]
+        if len(dados) == 7:
+            partidas, jogadores_data, usuarios, presencas, avaliacao, mensalidades, _ = dados
+        else:
+            partidas, jogadores_data, usuarios, presencas, avaliacao, mensalidades = dados
 
         # Votos da avaliação pós-jogo (CSV local)
         df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
@@ -1302,6 +1307,7 @@ else:
         df_estatisticas.index.name = "#"
 
         st.dataframe(df_estatisticas, use_container_width=True)
+
 
 
 
