@@ -1757,10 +1757,11 @@ else:
 
         with st.form("form_pagamento"):
             for nome, email in nomes_ordenados:
-                pagamentos = usuarios[email].get("pagamentos", {})
-                pago = False
-                if isinstance(pagamentos, dict):
-                    pago = pagamentos.get(mes_selecionado, False)
+                pagamentos = usuarios.get(email, {}).get("pagamentos", {})
+                if not isinstance(pagamentos, dict):
+                    pagamentos = {}
+
+                pago = pagamentos.get(mes_selecionado, False)
                 novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"{email}_{mes_selecionado}")
                 pagamentos[mes_selecionado] = novo_status
                 usuarios[email]["pagamentos"] = pagamentos
@@ -1772,24 +1773,25 @@ else:
                     "Pago": "Sim" if novo_status else "Não"
                 })
 
-            if st.form_submit_button("💾 Salvar Pagamentos"):
-                # Carregar registros existentes da aba Mensalidades
-                gc = autenticar_gsheets()
-                sh = gc.open(NOME_PLANILHA)
-                aba_mensalidades = sh.worksheet("Mensalidades")
-                dados_existentes = get_as_dataframe(aba_mensalidades).dropna(how="all")
+            # ✅ Submit button dentro do `with`
+            submit = st.form_submit_button("💾 Salvar Pagamentos")
 
-                # Remove registros do mês atual antes de adicionar os novos
-                dados_filtrados = dados_existentes[dados_existentes["Mês"] != mes_selecionado]
-                df_final = pd.concat([dados_filtrados, pd.DataFrame(pagamentos_registrados)], ignore_index=True)
+        if submit:
+            # 🟢 Resto do código de salvar no Sheets
+            gc = autenticar_gsheets()
+            sh = gc.open(NOME_PLANILHA)
+            aba_mensalidades = sh.worksheet("Mensalidades")
+            dados_existentes = get_as_dataframe(aba_mensalidades).dropna(how="all")
 
-                # Salvar no Google Sheets
-                aba_mensalidades.clear()
-                set_with_dataframe(aba_mensalidades, df_final)
+            dados_filtrados = dados_existentes[dados_existentes["Mês"] != mes_selecionado]
+            df_final = pd.concat([dados_filtrados, pd.DataFrame(pagamentos_registrados)], ignore_index=True)
 
-                st.success("✅ Pagamentos atualizados com sucesso.")
-                st.session_state["usuarios"] = usuarios
-                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, df_final, transparencia)
+            aba_mensalidades.clear()
+            set_with_dataframe(aba_mensalidades, df_final)
+
+            st.success("✅ Pagamentos atualizados com sucesso.")
+            st.session_state["usuarios"] = usuarios
+            st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, df_final, transparencia)
 
 
     def usuarios_to_df(usuarios):
