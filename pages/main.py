@@ -1251,7 +1251,7 @@ else:
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
 
-        partidas, _, usuarios, presencas = st.session_state["dados_gsheets"]
+        partidas, _, usuarios, presencas, avaliacao, mensalidades = st.session_state["dados_gsheets"]
 
         # Votos da avaliação pós-jogo (CSV local)
         df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
