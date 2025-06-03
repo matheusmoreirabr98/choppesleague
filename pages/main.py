@@ -1534,14 +1534,13 @@ else:
 
             # ⏬ Título e instruções
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
-            st.markdown("<h8 style='font-weight: bold;'>Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤</h8>", unsafe_allow_html=True)
+            st.markdown("<h10 style='font-weight: bold;'>Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤</h10>", unsafe_allow_html=True)
 
             # ⏬ CAMPO: Craque da Rodada
             craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
 
             # 🥴 Seletor do pereba dentro do formulário (com base no craque escolhido)
             pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
-            pereba_disabled = craque == "-- Selecione --"
 
             # 🔁 Remove o votante da lista de opções
             votante = st.session_state.get("nome", "usuário")
