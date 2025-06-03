@@ -1240,7 +1240,7 @@ else:
         # 🔒 Área restrita para deletar todas as partidas
         if st.session_state.get("email") == "matheusmoreirabr@hotmail.com":
             st.markdown("---")
-            with st.expander("⚠️ Área Restrita – Excluir Todas as Partidas"):
+            with st.expander("⚠️ Excluir Todas as Partidas"):
                 st.warning("Essa ação apagará **todas** as partidas registradas. Essa ação é irreversível.")
                 if st.button("🗑️ Apagar todas as partidas", type="primary"):
                     partidas = partidas.iloc[0:0]  # Remove todas as linhas do DataFrame
