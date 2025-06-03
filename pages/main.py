@@ -1533,7 +1533,7 @@ else:
         nomes_confirmados = confirmados["Nome"].tolist()
 
         if len(nomes_confirmados) <= 10:
-            st.warning("⚠️ É necessário pelo menos 15 jogadores confirmados para realizar o sorteio.")
+            st.warning("⚠️ É necessário pelo menos 10 jogadores confirmados para realizar o sorteio.")
             return
 
         if st.button("🎯 Sortear Times") or "times_sorteados" not in st.session_state:
@@ -2030,26 +2030,31 @@ else:
             unsafe_allow_html=True,
         )
 
-        mensagem = st.text_area(
-            "✉️ Sua mensagem",
-            height=150,
-            placeholder="Digite aqui sua sugestão, reclamação ou comunicado...",
-        )
+        with st.form("form_comunicado"):
+            mensagem = st.text_area(
+                "✉️ Sua mensagem",
+                height=150,
+                placeholder="Digite aqui sua sugestão, reclamação ou comunicado...",
+            )
+            enviar = st.form_submit_button("📤 Gerar link para WhatsApp")
 
-        if mensagem.strip():
-            numero_destino = "5531991159656"  # Brasil + DDD + número
-            texto = f"""Olá, aqui é {nome}!
+        if enviar:
+            if not mensagem.strip():
+                st.warning("Digite uma mensagem antes de gerar o link para o WhatsApp.")
+            else:
+                numero_destino = "5531991159656"  # Brasil + DDD + número
+                texto = f"""Olá, aqui é {nome}!
 
     Email: {email}
 
     📢 Comunicado:
     {mensagem}
     """
-            texto_codificado = urllib.parse.quote(texto)
-            link = f"https://wa.me/{numero_destino}?text={texto_codificado}"
-            st.markdown(f"[📲 Enviar via WhatsApp]({link})", unsafe_allow_html=True)
-        else:
-            st.warning("Digite uma mensagem antes de gerar o link para o WhatsApp.")
+                texto_codificado = urllib.parse.quote(texto)
+                link = f"https://wa.me/{numero_destino}?text={texto_codificado}"
+                st.success("Clique no botão abaixo para abrir o WhatsApp com sua mensagem:")
+                st.markdown(f"[📲 Enviar via WhatsApp]({link})", unsafe_allow_html=True)
+
 
 
 
