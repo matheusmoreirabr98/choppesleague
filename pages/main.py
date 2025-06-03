@@ -1287,7 +1287,7 @@ else:
     set_with_dataframe(aba_jogadores, df_jogadores_atualizados)
 
     st.success("✅ Estatísticas dos jogadores atualizadas com sucesso!")
-    st.dataframe(df_jogadores_atualizados, use_container_width=True)
+    #st.dataframe(df_jogadores_atualizados, use_container_width=True)
 
 
 
