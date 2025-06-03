@@ -628,7 +628,7 @@ else:
     pag = st.session_state.pagina_atual
 
     def tela_meu_perfil():
-        _, _, usuarios, _ = load_data()
+        _, _, usuarios, _, _, _, _ = load_data()
         st.session_state.usuarios = usuarios
         usuario = usuarios.get(st.session_state.email, {})
 
