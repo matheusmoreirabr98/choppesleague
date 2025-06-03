@@ -1207,48 +1207,64 @@ else:
 
 
     # Estatisticas dos jogadores
-    def atualizar_estatisticas_jogadores(jogadores, partidas, votos, presencas, usuarios, mes_referencia="06/2025"):
-        estatisticas = []
+    def tela_jogadores(jogadores=None):
+        st.title("👟 Estatísticas dos Jogadores")
 
-        for _, jogador in jogadores.iterrows():
-            nome = jogador["Nome"]
-            posicao = jogador.get("Posição", "Linha")
+        if "dados_gsheets" not in st.session_state:
+            st.session_state["dados_gsheets"] = load_data()
+
+        partidas, _, usuarios, presencas = st.session_state["dados_gsheets"]
+
+        # Votos da avaliação pós-jogo (CSV local)
+        df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
+
+        # Mês de referência atual
+        mes_referencia = datetime.now().strftime("%m/%Y")
+
+        # Construção das estatísticas
+        estatisticas = []
+        for email, usuario in usuarios.items():
+            nome = usuario["nome"]
+            posicao = usuario.get("posicao", "Linha")
 
             # Contagem de gols
-            gols_total = sum(nome in str(g).split(", ") for g in pd.concat([partidas["Gols Borussia"], partidas["Gols Inter"]]))
+            gols_total = sum(nome in str(g).split(", ") for g in pd.concat([
+                partidas["Gols Borussia"].fillna(""),
+                partidas["Gols Inter"].fillna("")
+            ]))
 
             # Votos
-            craques = votos["Craque"].tolist().count(nome) if posicao.lower() == "linha" else "-"
-            perebas = votos["Pereba"].tolist().count(nome) if posicao.lower() == "linha" else "-"
-            paredoes = votos["Goleiro"].tolist().count(nome) if posicao.lower() == "goleiro" else "-"
+            craques = df_votos["Craque"].tolist().count(nome) if posicao.lower() == "linha" else "-"
+            perebas = df_votos["Pereba"].tolist().count(nome) if posicao.lower() == "linha" else "-"
+            paredoes = df_votos["Goleiro"].tolist().count(nome) if posicao.lower() == "goleiro" else "-"
 
-            # Presenças/ausências
-            presencas_filtradas = presencas[presencas["Nome"] == nome]
-            qnt_presencas = presencas_filtradas["Presença"].str.lower().tolist().count("sim")
-            qnt_ausencias = presencas_filtradas["Presença"].str.lower().tolist().count("não")
+            # Presença
+            presencas_usuario = presencas[presencas["Nome"] == nome]
+            qnt_presencas = presencas_usuario["Presença"].str.lower().tolist().count("sim")
+            qnt_ausencias = presencas_usuario["Presença"].str.lower().tolist().count("não")
 
             # Mensalidade
-            mensalidade = "❌"
-            for email, dados in usuarios.items():
-                if dados.get("nome") == nome and dados.get("pagamentos", {}).get(mes_referencia, False):
-                    mensalidade = "✅"
+            mensalidade_paga = usuario.get("pagamentos", {}).get(mes_referencia, False)
+            mensalidade_status = "✅" if mensalidade_paga else "❌"
 
             estatisticas.append({
                 "Nome": nome,
+                "Posição": posicao,
                 "Gols": gols_total,
                 "Craques": craques,
                 "Perebas": perebas,
                 "Paredões": paredoes,
-                "Mensalidade": mensalidade,
+                "Mensalidade": mensalidade_status,
                 "Presenças": qnt_presencas,
                 "Ausências": qnt_ausencias
             })
 
         df_estatisticas = pd.DataFrame(estatisticas)
+        df_estatisticas.index += 1
+        df_estatisticas.index.name = "#"
 
-        # Merge com planilha original
-        df_atualizado = pd.merge(jogadores, df_estatisticas, on="Nome", how="left")
-        return df_atualizado
+        st.dataframe(df_estatisticas, use_container_width=True)
+
     
 
     # Exemplo de uso dentro da tela de estatísticas
