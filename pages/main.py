@@ -871,7 +871,7 @@ else:
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
 
-        partidas, jogadores, _, _ = st.session_state["dados_gsheets"]
+        partidas, jogadores, _, _, _, _, _ = st.session_state["dados_gsheets"]
         st.markdown(
             "<h5 style='text-align: center; font-weight: bold;'>Bem-vindo à Chopp's League! 🍻</h5>",
             unsafe_allow_html=True,
