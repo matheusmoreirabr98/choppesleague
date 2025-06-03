@@ -1606,6 +1606,9 @@ else:
 
         partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = st.session_state["dados_gsheets"]
 
+        if "Votante" not in avaliacao.columns or "DataRodada" not in avaliacao.columns:
+            avaliacao = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
+
         agora = datetime.now()
         hoje = agora.weekday()
         dias_para_quinta = (3 - hoje) % 7
