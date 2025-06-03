@@ -30,6 +30,13 @@ def carregar_votos():
     aba = "Votação"
     colunas = ["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"]
 
+    if not os.path.exists(caminho_arquivo):
+        # Cria um novo DataFrame e salva como Excel
+        df = pd.DataFrame(columns=colunas)
+        with pd.ExcelWriter(caminho_arquivo, engine="openpyxl") as writer:
+            df.to_excel(writer, sheet_name=aba, index=False)
+        return df
+
     try:
         df = pd.read_excel(caminho_arquivo, sheet_name=aba)
         for col in colunas:
@@ -37,14 +44,7 @@ def carregar_votos():
                 df[col] = ""
     except:
         df = pd.DataFrame(columns=colunas)
-        with pd.ExcelWriter(caminho_arquivo, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
-            df.to_excel(writer, sheet_name=aba, index=False)
     return df
-
-def salvar_votos(df):
-    caminho_arquivo = "ChoppsLeague.xlsx"
-    with pd.ExcelWriter(caminho_arquivo, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
-        df.to_excel(writer, sheet_name="Votação", index=False)
 
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
