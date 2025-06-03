@@ -1714,23 +1714,30 @@ else:
             st.warning("⚠️ Você não tem permissão para acessar esta página.")
             return
 
-        st.markdown("Marque os jogadores que realizaram o pagamento da mensalidade do mês atual.")
-
-        # Carrega usuários do session state
         usuarios = st.session_state.get("usuarios", {})
 
-        # Lista de nomes ordenada
+        # Mês atual
+        hoje = datetime.now()
+        meses = [f"{m:02d}/{hoje.year}" for m in range(1, 13)]
+        mes_atual = f"{hoje.month:02d}/{hoje.year}"
+        mes_selecionado = st.selectbox("📅 Mês de referência", options=meses, index=hoje.month - 1)
+
+        st.markdown("Marque os jogadores que realizaram o pagamento da mensalidade para o mês selecionado.")
+
         nomes_ordenados = sorted([(info.get("nome", ""), email) for email, info in usuarios.items()])
 
         with st.form("form_pagamento"):
             for nome, email in nomes_ordenados:
-                pago = usuarios[email].get("mensalidade_paga", False)
-                novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"check_{email}")
-                usuarios[email]["mensalidade_paga"] = novo_status
+                pagamentos = usuarios[email].get("pagamentos", {})
+                pago = pagamentos.get(mes_selecionado, False)
+                novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"{email}_{mes_selecionado}")
+                pagamentos[mes_selecionado] = novo_status
+                usuarios[email]["pagamentos"] = pagamentos
 
             if st.form_submit_button("💾 Salvar Pagamentos"):
                 st.success("✅ Pagamentos atualizados com sucesso.")
-                st.session_state["usuarios"] = usuarios  # Atualiza o dicionário no session_state
+                st.session_state["usuarios"] = usuarios
+
 
 
 
