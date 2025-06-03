@@ -1816,7 +1816,10 @@ else:
 
     def tela_portal_transparencia():
         st.title("🏦 Portal da Transparência")
-        df = ler_dados()
+        def ler_dados():
+            if "dados_gsheets" not in st.session_state:
+                st.session_state["dados_gsheets"] = load_data()
+            return st.session_state["dados_gsheets"][-1]  # retorna a aba 'Transparência'
 
         # Conversão de datas
         if not df.empty:
@@ -1878,13 +1881,19 @@ else:
                             df.at[idx, "Descrição"] = desc_edit
                             df.at[idx, "Valor"] = valor_edit
                             df.at[idx, "Data"] = data_edit
-                            salvar_dados(df)
+                            # Substitui a aba "Transparência" e salva tudo de novo
+                            partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, _ = st.session_state["dados_gsheets"]
+                            st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
+                            save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
                             st.success("✅ Registro atualizado com sucesso!")
                             st.rerun()
 
                         if apagar:
                             df = df.drop(index=idx).reset_index(drop=True)
-                            salvar_dados(df)
+                            # Substitui a aba "Transparência" e salva tudo de novo
+                            partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, _ = st.session_state["dados_gsheets"]
+                            st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
+                            save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
                             st.success("🗑️ Registro removido com sucesso!")
                             st.rerun()
 
@@ -1908,14 +1917,20 @@ else:
                         "Responsável": email_usuario
                     }])
                     df = pd.concat([df, novo_registro], ignore_index=True)
-                    salvar_dados(df)
+                    # Substitui a aba "Transparência" e salva tudo de novo
+                    partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, _ = st.session_state["dados_gsheets"]
+                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
+                    save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
                     st.success("✅ Registro adicionado com sucesso!")
                     st.rerun()
                     
         if email_usuario in autorizados:
             if st.button("🧹 Limpar registros inválidos"):
                 df = df[df["Descrição"].notna() & df["Data"].notna()]
-                salvar_dados(df)
+                # Substitui a aba "Transparência" e salva tudo de novo
+                partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, _ = st.session_state["dados_gsheets"]
+                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
+                save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, df)
                 st.success("Registros inválidos removidos com sucesso!")
                 st.rerun()
 
