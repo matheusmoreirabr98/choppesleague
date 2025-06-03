@@ -1092,7 +1092,7 @@ else:
             """, unsafe_allow_html=True
         )
 
-        if st.form_submit_button("Registrar", use_container_width=True):
+        if st.button("Registrar"):
             nova = {
                 "Data": data.strftime("%d/%m/%Y"),
                 "Número da Partida": numero_partida,
