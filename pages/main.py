@@ -1246,20 +1246,16 @@ else:
 
     # Estatisticas dos jogadores
     def tela_jogadores():
-        st.title("👟 Estatísticas dos Jogadores")
+        st.title("\U0001F45F Estatísticas dos Jogadores")
 
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
 
         dados = st.session_state["dados_gsheets"]
-
-        # Suporte para 6 ou 7 abas
-        if len(dados) == 7:
-            partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, _ = dados
-        else:
-            partidas, jogadores, usuarios, presencas, avaliacao, mensalidades = dados
+        partidas, jogadores_data, usuarios, presencas, avaliacao, mensalidades, _ = dados
 
         df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
+
         mes_referencia = datetime.now().strftime("%m/%Y")
 
         estatisticas = []
@@ -1276,15 +1272,12 @@ else:
             perebas = df_votos["Pereba"].tolist().count(nome) if posicao.lower() == "linha" else "-"
             paredoes = df_votos["Goleiro"].tolist().count(nome) if posicao.lower() == "goleiro" else "-"
 
-            # Último registro de presença do jogador
-            registros_usuario = presencas[presencas["Nome"] == nome]
-            if not registros_usuario.empty:
-                ultimo = registros_usuario.sort_values("Data", ascending=False).iloc[0]
-                presenca = 1 if ultimo["Presença"].strip().lower() == "sim" else 0
-                ausencia = 1 - presenca
-            else:
-                presenca = 0
-                ausencia = 0
+            presencas_usuario = presencas[presencas["Nome"] == nome]
+            presencas_usuario = presencas_usuario.sort_values("Data", ascending=True)
+            ultima_presenca = presencas_usuario.groupby("DataPartida").last().reset_index()
+
+            qnt_presencas = ultima_presenca["Presença"].str.lower().tolist().count("sim")
+            qnt_ausencias = ultima_presenca["Presença"].str.lower().tolist().count("não")
 
             mensalidade_paga = usuario.get("pagamentos", {}).get(mes_referencia, False)
             mensalidade_status = "✅" if mensalidade_paga else "❌"
@@ -1296,8 +1289,8 @@ else:
                 "Craques": craques,
                 "Perebas": perebas,
                 "Paredões": paredoes,
-                "Presença": presenca,
-                "Ausência": ausencia,
+                "Presença": qnt_presencas,
+                "Ausência": qnt_ausencias,
                 "Mensalidade": mensalidade_status
             })
 
@@ -1305,14 +1298,18 @@ else:
         df_estatisticas.index += 1
         df_estatisticas.index.name = "#"
 
-        # Centraliza todas as colunas
-        styled_df = df_estatisticas.style.set_properties(**{
-            'text-align': 'center'
-        }).set_table_styles([
-            dict(selector='th', props=[('text-align', 'center')])
-        ])
+        # Aplica centralização ao conteúdo da tabela via estilo
+        st.markdown("""
+            <style>
+                .css-1v0mbdj th, .css-1v0mbdj td {
+                    text-align: center !important;
+                    vertical-align: middle !important;
+                }
+            </style>
+        """, unsafe_allow_html=True)
 
-        st.dataframe(styled_df, use_container_width=True)
+        st.dataframe(df_estatisticas, use_container_width=True)
+
 
 
 
