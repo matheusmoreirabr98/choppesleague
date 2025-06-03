@@ -47,6 +47,9 @@ def carregar_votos():
     except Exception:
         return pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
 
+df_votos = sanitize_df(df_votos)
+salvar_votos(df_votos)
+
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
 # CAMINHO_CREDENCIAL = "./credenciais/credenciais.json"
