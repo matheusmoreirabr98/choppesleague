@@ -181,7 +181,7 @@ def load_data_gsheets():
 # -----------------------------------------
 # Salvar dados nas planilhas
 # -----------------------------------------
-def save_data_gsheets(partidas, jogadores, usuarios, presencas):
+def save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
@@ -189,32 +189,46 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     partidas = sanitize_df(partidas)
     jogadores = sanitize_df(jogadores)
     presencas = sanitize_df(presencas)
+    avaliacao = sanitize_df(avaliacao)
+    mensalidades = sanitize_df(mensalidades)
+    transparencia = sanitize_df(transparencia)
 
     # Salvar partidas
-    sheet_partidas = sh.worksheet("Partidas")
-    sheet_partidas.clear()
-    sheet_partidas.update([partidas.columns.tolist()] + partidas.values.tolist())
+    sheet = sh.worksheet("Partidas")
+    sheet.clear()
+    sheet.update([partidas.columns.tolist()] + partidas.values.tolist())
 
     # Salvar jogadores
-    sheet_jogadores = sh.worksheet("Jogadores")
-    sheet_jogadores.clear()
-    sheet_jogadores.update([jogadores.columns.tolist()] + jogadores.values.tolist())
+    sheet = sh.worksheet("Jogadores")
+    sheet.clear()
+    sheet.update([jogadores.columns.tolist()] + jogadores.values.tolist())
 
     # Salvar usuários
-    sheet_usuarios = sh.worksheet("Usuarios")
-    sheet_usuarios.clear()
-
-    usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
-    usuarios_df = usuarios_df.rename(columns={"index": "email"})
-
-    if not usuarios_df.empty:
-        usuarios_df = sanitize_df(usuarios_df)  # também sanitiza aqui
-        sheet_usuarios.update([usuarios_df.columns.tolist()] + usuarios_df.values.tolist())
+    sheet = sh.worksheet("Usuarios")
+    sheet.clear()
+    usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index().rename(columns={"index": "email"})
+    usuarios_df = sanitize_df(usuarios_df)
+    sheet.update([usuarios_df.columns.tolist()] + usuarios_df.values.tolist())
 
     # Salvar presenças
-    sheet_presencas = sh.worksheet("Presenças")
-    sheet_presencas.clear()
-    sheet_presencas.update([presencas.columns.tolist()] + presencas.values.tolist())
+    sheet = sh.worksheet("Presenças")
+    sheet.clear()
+    sheet.update([presencas.columns.tolist()] + presencas.values.tolist())
+
+    # Salvar avaliação pós-jogo
+    sheet = sh.worksheet("Avaliação Pós-Jogo")
+    sheet.clear()
+    sheet.update([avaliacao.columns.tolist()] + avaliacao.values.tolist())
+
+    # Salvar mensalidades
+    sheet = sh.worksheet("Mensalidades")
+    sheet.clear()
+    sheet.update([mensalidades.columns.tolist()] + mensalidades.values.tolist())
+
+    # Salvar transparência
+    sheet = sh.worksheet("Transparência")
+    sheet.clear()
+    sheet.update([transparencia.columns.tolist()] + transparencia.values.tolist())
 
 
 # -----------------------------------------
@@ -225,8 +239,8 @@ def load_data():
 time.sleep(1)
 
 
-def save_data(partidas, jogadores, usuarios, presencas):
-    save_data_gsheets(partidas, jogadores, usuarios, presencas)
+def save_data(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia):
+    save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
 
 
 # Sessões iniciais
@@ -275,7 +289,7 @@ def tela_login():
         "Escolha uma opção:", ["Login", "Cadastro"], key="aba_login", horizontal=True
     )
 
-    partidas, jogadores, usuarios, presencas = load_data()  # ← lê os usuários direto da planilha
+    partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = load_data()  # ← lê os usuários direto da planilha
 
     # LOGIN
     if aba == "Login":
@@ -344,13 +358,13 @@ def tela_login():
                         st.error("As novas senhas não coincidem.")
                     else:
                         # primeiro carrega os dados ATUALIZADOS da planilha
-                        partidas, jogadores, usuarios, presencas = load_data()
+                        partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = load_data()
 
                         # depois altera a senha na versão correta de `usuarios`
                         usuarios[email]["senha"] = nova_senha
 
                         # agora salva com a senha atualizada
-                        save_data(partidas, jogadores, usuarios, presencas)
+                        save_data(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
                         st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
                         st.rerun()
