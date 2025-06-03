@@ -1738,7 +1738,7 @@ else:
 
     # Mensalidade
     def tela_pagamento_mensalidade():
-        st.markdown("<h3>💰 Controle de Pagamentos</h3>", unsafe_allow_html=True)
+        st.markdown("<h3>Controle de Pagamentos</h3>", unsafe_allow_html=True)
 
         email_usuario = st.session_state.get("email", "").lower()
         usuarios_autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
