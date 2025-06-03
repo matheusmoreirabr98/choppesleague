@@ -1485,44 +1485,54 @@ else:
     # Avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
-        
+
         if "dados_gsheets" not in st.session_state or len(st.session_state["dados_gsheets"]) < 4:
             st.session_state["dados_gsheets"] = load_data()
 
-        # Cria arquivo de votos se não existir
+        dados = st.session_state["dados_gsheets"]
+        if len(dados) < 4 or not isinstance(dados[3], pd.DataFrame):
+            st.warning("❌ Dados de presença não carregados corretamente.")
+            return
+
+        presencas = dados[3]
+        if not {"DataPartida", "Presença", "Nome"}.issubset(presencas.columns):
+            st.warning("❌ Colunas ausentes na planilha de presenças.")
+            return
+
         if not os.path.exists(FILE_VOTOS):
             df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
             df_votos.to_csv(FILE_VOTOS, index=False)
 
         df_votos = pd.read_csv(FILE_VOTOS)
-
-        # Garante a coluna DataRodada
         if "DataRodada" not in df_votos.columns:
             df_votos["DataRodada"] = ""
 
         usuarios = st.session_state.get("usuarios", {})
 
-        # Determina a data da quinta-feira da semana atual (rodada)
         agora = datetime.now()
         hoje = agora.weekday()
         dias_para_quinta = (3 - hoje) % 7
         proxima_quinta = agora + timedelta(days=dias_para_quinta)
         data_rodada = proxima_quinta.date()
 
-        # quarta-feira anterior à próxima quinta
         prazo_limite = proxima_quinta - timedelta(days=1)
         prazo_limite = prazo_limite.replace(hour=22, minute=0, second=0, microsecond=0)
 
-        # Filtra jogadores que confirmaram presença para a rodada
+        presencas["Presença"] = presencas["Presença"].fillna("").str.lower()
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+
         confirmados = presencas[
             (presencas["DataPartida"] == data_rodada) &
-            (presencas["Presença"].str.lower() == "sim")
+            (presencas["Presença"] == "sim")
         ]
+
+        if confirmados.empty:
+            st.warning("⚠️ Nenhum jogador confirmou presença para esta rodada.")
+            return
+
         jogadores_presentes = confirmados["Nome"].tolist()
         st.session_state["jogadores_presentes"] = jogadores_presentes
 
-        # Separa goleiros e jogadores de linha
         goleiros = []
         linha = []
         for j in jogadores_presentes:
@@ -1533,6 +1543,7 @@ else:
                     else:
                         linha.append(j)
                     break
+
 
         votante = st.session_state.get("nome", "usuário")
         linha = [j for j in linha if j != votante]
