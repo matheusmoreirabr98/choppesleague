@@ -1243,7 +1243,14 @@ else:
 
     # Estatisticas dos jogadores
     def tela_jogadores():
-        st.title("\U0001F45F Estatísticas dos Jogadores")
+        st.markdown(
+            """
+            <p style='font-size:16px; line-height:1.6;'>
+                Este painel apresenta as estatísticas dos jogadores
+            </p>
+            """,
+            unsafe_allow_html=True
+        )
 
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
