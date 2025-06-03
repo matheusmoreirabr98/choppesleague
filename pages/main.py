@@ -1386,60 +1386,61 @@ else:
                 st.session_state["mudando_ideia"] = True
                 st.rerun()
 
-            presencas_dict = {
-                row["Email"]: {
-                    "nome": row["Nome"],
-                    "presenca": row["Presença"].strip().lower(),
-                    "motivo": row.get("Motivo", "")
-                }
-                for _, row in presencas_df.iterrows()
+        # carrega lista atualizada após envio também
+        presencas_dict = {
+            row["Email"]: {
+                "nome": row["Nome"],
+                "presenca": row["Presença"].strip().lower(),
+                "motivo": row.get("Motivo", "")
             }
-            st.session_state["presencas_confirmadas"] = presencas_dict
+            for _, row in presencas_df.iterrows()
+        }
+        st.session_state["presencas_confirmadas"] = presencas_dict
 
-            presencas = st.session_state["presencas_confirmadas"]
-            todos_usuarios = st.session_state.get("usuarios", {})
+        presencas = st.session_state["presencas_confirmadas"]
+        todos_usuarios = st.session_state.get("usuarios", {})
 
-            linhas_html = ""
-            confirmados = linha_confirmados = goleiros_confirmados = 0
+        linhas_html = ""
+        confirmados = linha_confirmados = goleiros_confirmados = 0
 
-            for email_u, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
-                nome_u = dados_usuario["nome"]
-                posicao_u = dados_usuario.get("posicao", "Linha")
-                status = "❓"
-                motivo = ""
+        for email_u, dados_usuario in sorted(todos_usuarios.items(), key=lambda x: x[1]["nome"]):
+            nome_u = dados_usuario["nome"]
+            posicao_u = dados_usuario.get("posicao", "Linha")
+            status = "❓"
+            motivo = ""
 
-                info = presencas.get(email_u)
-                if info:
-                    if info["presenca"] == "sim":
-                        status = "✅"
-                        confirmados += 1
-                        if "goleiro" in posicao_u.strip().lower():
-                            goleiros_confirmados += 1
-                        else:
-                            linha_confirmados += 1
-                    elif info["presenca"] == "nao":
-                        status = "❌"
-                        motivo = info.get("motivo", "")
+            info = presencas.get(email_u)
+            if info:
+                if info["presenca"] == "sim":
+                    status = "✅"
+                    confirmados += 1
+                    if "goleiro" in posicao_u.strip().lower():
+                        goleiros_confirmados += 1
+                    else:
+                        linha_confirmados += 1
+                elif info["presenca"] == "nao":
+                    status = "❌"
+                    motivo = info.get("motivo", "")
 
-                if status == "❌" and motivo:
-                    linhas_html += f"<li>{status} {nome_u} ({posicao_u}) — <em>{motivo}</em></li>"
-                else:
-                    linhas_html += f"<li>{status} {nome_u} ({posicao_u})</li>"
+            if status == "❌" and motivo:
+                linhas_html += f"<li>{status} {nome_u} ({posicao_u}) — <em>{motivo}</em></li>"
+            else:
+                linhas_html += f"<li>{status} {nome_u} ({posicao_u})</li>"
 
-            st.markdown(f"""
-                <div style="text-align: center; margin-top: 2rem;">
-                    <h6 style="text-align: center;">
-                        📋 Presença da Semana — Confirmados: {confirmados}  
-                        <br>👟 Jogadores de Linha: {linha_confirmados}  
-                        <br>🧤 Goleiros: {goleiros_confirmados}
-                    </h6>
-                    <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
-                        {linhas_html}
-                    </ul>
-                </div>
-            """, unsafe_allow_html=True)
+        st.markdown(f"""
+            <div style="text-align: center; margin-top: 2rem;">
+                <h6 style="text-align: center;">
+                    📋 Presença da Semana — Confirmados: {confirmados}  
+                    <br>👟 Jogadores de Linha: {linha_confirmados}  
+                    <br>🧤 Goleiros: {goleiros_confirmados}
+                </h6>
+                <ul style="list-style-type: none; padding: 0; font-size: 1rem; line-height: 1.6;">
+                    {linhas_html}
+                </ul>
+            </div>
+        """, unsafe_allow_html=True)
 
-        else:
+        if not resposta_enviada:
             presenca = st.radio("Você vai comparecer?", ["✅ Sim", "❌ Não"], horizontal=True)
             motivo = ""
             motivo_outros = ""
