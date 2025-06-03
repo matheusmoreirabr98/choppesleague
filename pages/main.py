@@ -1662,45 +1662,45 @@ else:
                     st.success("✅ Voto registrado com sucesso!")
                     st.rerun()
 
-        df_votos_rodada = avaliacao[avaliacao["DataRodada"] == str(data_rodada)]
+            df_votos_rodada = avaliacao[avaliacao["DataRodada"] == str(data_rodada)]
 
-        def gerar_html_podio(serie, titulo, icone):
-            df = serie.value_counts().reset_index()
-            df.columns = ["Jogador", "Votos"]
-            podium_colors = ["#FFD700", "#C0C0C0", "#CD7F32"]
-            podium_labels = ["🥇", "🥈", "🥉"]
-            podium_html = f"<h3 style='margin-bottom: 20px;'>{icone} {titulo}</h3>"
-            podium_html += "<div style='display: flex; justify-content: center; align-items: end; gap: 40px;'>"
+            def gerar_html_podio(serie, titulo, icone):
+                df = serie.value_counts().reset_index()
+                df.columns = ["Jogador", "Votos"]
+                podium_colors = ["#FFD700", "#C0C0C0", "#CD7F32"]
+                podium_labels = ["🥇", "🥈", "🥉"]
+                podium_html = f"<h3 style='margin-bottom: 20px;'>{icone} {titulo}</h3>"
+                podium_html += "<div style='display: flex; justify-content: center; align-items: end; gap: 40px;'>"
 
-            top_votos = df["Votos"].unique()[:3]
-            for i, votos in enumerate(top_votos):
-                jogadores_empate = df[df["Votos"] == votos]["Jogador"].tolist()
-                nomes = "<br>".join(jogadores_empate)
-                podium_html += (
-                    "<div style='text-align: center;'>"
-                    f"<div style='background-color: {podium_colors[i]}; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 18px; min-width: 100px; box-shadow: 2px 2px 5px #aaa; text-align: center;'>"
-                    f"{podium_labels[i]}<br>{nomes}<br>{votos} voto(s)"
-                    "</div></div>"
-                )
+                top_votos = df["Votos"].unique()[:3]
+                for i, votos in enumerate(top_votos):
+                    jogadores_empate = df[df["Votos"] == votos]["Jogador"].tolist()
+                    nomes = "<br>".join(jogadores_empate)
+                    podium_html += (
+                        "<div style='text-align: center;'>"
+                        f"<div style='background-color: {podium_colors[i]}; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 18px; min-width: 100px; box-shadow: 2px 2px 5px #aaa; text-align: center;'>"
+                        f"{podium_labels[i]}<br>{nomes}<br>{votos} voto(s)"
+                        "</div></div>"
+                    )
 
-            podium_html += "</div>"
-            return podium_html
+                podium_html += "</div>"
+                return podium_html
 
-        st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
-        st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
-        st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada", "🧤"), unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada", "🧤"), unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
 
-        if st.session_state.get("email", "").lower() == "matheusmoreirabr@hotmail.com":
-            with st.expander("⚠️ Apagar votos da rodada atual"):
-                st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
-                if st.button("🗑️ Apagar votos desta rodada"):
-                    avaliacao = avaliacao[avaliacao["DataRodada"] != str(data_rodada)]
-                    save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
-                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
-                    st.success("✅ Votos da rodada apagados com sucesso.")
-                    if st.button("🔄 Recarregar página"):
-                        st.rerun()
+            if st.session_state.get("email", "").lower() == "matheusmoreirabr@hotmail.com":
+                with st.expander("⚠️ Apagar votos da rodada atual"):
+                    st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
+                    if st.button("🗑️ Apagar votos desta rodada"):
+                        avaliacao = avaliacao[avaliacao["DataRodada"] != str(data_rodada)]
+                        save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                        st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                        st.success("✅ Votos da rodada apagados com sucesso.")
+                        if st.button("🔄 Recarregar página"):
+                            st.rerun()
 
 
 
