@@ -1511,7 +1511,6 @@ else:
     # Tela de sorteio
 
     def tela_sorteio():
-        st.title("🎲 Sorteio de Times")
         st.markdown("Selecione a data da partida para sortear os times.")
 
         if "dados_gsheets" not in st.session_state:
