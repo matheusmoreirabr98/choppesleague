@@ -1601,30 +1601,10 @@ else:
 
     # Avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
-        FILE_VOTOS = "votacao.csv"
-
-        if "dados_gsheets" not in st.session_state or len(st.session_state["dados_gsheets"]) < 4:
+        if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
 
-        dados = st.session_state["dados_gsheets"]
-        if len(dados) < 4 or not isinstance(dados[3], pd.DataFrame):
-            st.warning("❌ Dados de presença não carregados corretamente.")
-            return
-
-        presencas = dados[3]
-        if not {"DataPartida", "Presença", "Nome"}.issubset(presencas.columns):
-            st.warning("❌ Colunas ausentes na planilha de presenças.")
-            return
-
-        if not os.path.exists(FILE_VOTOS):
-            df_votos = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
-            df_votos.to_csv(FILE_VOTOS, index=False)
-
-        df_votos = pd.read_csv(FILE_VOTOS)
-        if "DataRodada" not in df_votos.columns:
-            df_votos["DataRodada"] = ""
-
-        usuarios = st.session_state.get("usuarios", {})
+        partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = st.session_state["dados_gsheets"]
 
         agora = datetime.now()
         hoje = agora.weekday()
@@ -1632,168 +1612,92 @@ else:
         proxima_quinta = agora + timedelta(days=dias_para_quinta)
         data_rodada = proxima_quinta.date()
 
-        prazo_limite = proxima_quinta - timedelta(days=1)
-        prazo_limite = prazo_limite.replace(hour=22, minute=0, second=0, microsecond=0)
-
         presencas["Presença"] = presencas["Presença"].fillna("").str.lower()
         presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
 
-        confirmados = presencas[
-            (presencas["DataPartida"] == data_rodada) &
-            (presencas["Presença"] == "sim")
-        ]
-
-        if confirmados.empty:
-            st.warning("⚠️ Nenhum jogador confirmou presença para esta rodada.")
-            return
-
+        confirmados = presencas[(presencas["DataPartida"] == data_rodada) & (presencas["Presença"] == "sim")]
         jogadores_presentes = confirmados["Nome"].tolist()
-        st.session_state["jogadores_presentes"] = jogadores_presentes
-
-        goleiros = []
-        linha = []
-        for j in jogadores_presentes:
-            for _, info in usuarios.items():
-                if info["nome"] == j:
-                    if info.get("posicao", "Linha").strip().lower() == "goleiro":
-                        goleiros.append(j)
-                    else:
-                        linha.append(j)
-                    break
-
 
         votante = st.session_state.get("nome", "usuário")
-        linha = [j for j in linha if j != votante]
-        goleiros = [g for g in goleiros if g != votante]
 
-        ja_votou = not df_votos[
-            (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
-        ].empty
+        if votante not in jogadores_presentes:
+            st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
+            return
 
-        if not ja_votou:
-            if votante not in jogadores_presentes:
-                st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
-                return
+        linha = [j for j in jogadores_presentes if usuarios.get(email := next((e for e, d in usuarios.items() if d["nome"] == j), None), {}).get("posicao", "linha").lower() != "goleiro"]
+        goleiros = [j for j in jogadores_presentes if j not in linha]
 
-            # ⏬ Título e instruções
+        ja_votou = not avaliacao[(avaliacao["Votante"] == votante) & (avaliacao["DataRodada"] == str(data_rodada))].empty
+
+        if ja_votou:
+            st.success("✅ Você já votou nesta rodada.")
+        else:
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
             st.markdown("<p style='font-size:14px;'>Vote no <strong>craque</strong>, <strong>pereba</strong> e <strong>melhor goleiro</strong> da rodada</p>", unsafe_allow_html=True)
 
-            # ⏬ CAMPO: Craque da Rodada
-            craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
+            craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + [p for p in linha if p != votante])
+            pereba_opcoes = [j for j in linha if j != craque and j != votante]
+            pereba = st.selectbox("🥴 Pereba da rodada", options=["-- Selecione --"] + pereba_opcoes)
+            goleiro = st.selectbox("🧤 Melhor goleiro", options=["-- Selecione --"] + [g for g in goleiros if g != votante])
 
-            # 🥴 Seletor do pereba dentro do formulário (com base no craque escolhido)
-            pereba_opcoes = ["-- Selecione --"] + [j for j in linha if j != craque]
-            pereba_disabled = craque == "-- Selecione --"
+            if st.button("Votar"):
+                if craque == "-- Selecione --" or pereba == "-- Selecione --" or goleiro == "-- Selecione --":
+                    st.error("⚠️ Preencha todas as categorias antes de votar.")
+                elif craque == pereba:
+                    st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
+                else:
+                    novo_voto = pd.DataFrame([{
+                        "Votante": votante,
+                        "Craque": craque,
+                        "Pereba": pereba,
+                        "Goleiro": goleiro,
+                        "DataRodada": str(data_rodada)
+                    }])
+                    avaliacao = pd.concat([avaliacao, novo_voto], ignore_index=True)
+                    save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                    st.success("✅ Voto registrado com sucesso!")
+                    st.rerun()
 
-            # 🔁 Remove o votante da lista de opções
-            votante = st.session_state.get("nome", "usuário")
-            linha = [j for j in linha if j != votante]
-            goleiros = [g for g in goleiros if g != votante]
+        df_votos_rodada = avaliacao[avaliacao["DataRodada"] == str(data_rodada)]
 
-            # 🟢 Verifica se já votou
-            ja_votou = not df_votos[
-                (df_votos["Votante"] == votante) & (df_votos["DataRodada"] == str(data_rodada))
-            ].empty
+        def gerar_html_podio(serie, titulo, icone):
+            df = serie.value_counts().reset_index()
+            df.columns = ["Jogador", "Votos"]
+            podium_colors = ["#FFD700", "#C0C0C0", "#CD7F32"]
+            podium_labels = ["🥇", "🥈", "🥉"]
+            podium_html = f"<h3 style='margin-bottom: 20px;'>{icone} {titulo}</h3>"
+            podium_html += "<div style='display: flex; justify-content: center; align-items: end; gap: 40px;'>"
 
-            if ja_votou:
-                st.success("✅ Você já votou nesta rodada.")
-                return
+            top_votos = df["Votos"].unique()[:3]
+            for i, votos in enumerate(top_votos):
+                jogadores_empate = df[df["Votos"] == votos]["Jogador"].tolist()
+                nomes = "<br>".join(jogadores_empate)
+                podium_html += (
+                    "<div style='text-align: center;'>"
+                    f"<div style='background-color: {podium_colors[i]}; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 18px; min-width: 100px; box-shadow: 2px 2px 5px #aaa; text-align: center;'>"
+                    f"{podium_labels[i]}<br>{nomes}<br>{votos} voto(s)"
+                    "</div></div>"
+                )
 
-            if votante not in jogadores_presentes:
-                st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
-                return
+            podium_html += "</div>"
+            return podium_html
 
-            # ⏬ CAMPO: Pereba (só habilita se craque for selecionado)
-            if craque and craque != "-- Selecione --":
-                pereba_opcoes = [j for j in linha if j != craque]
-            else:
-                pereba_opcoes = []
+        st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
+        st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
+        st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada", "🧤"), unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
 
-            # Agrupando visualmente
-            with st.container():
-                pereba = st.selectbox("🥴 Pereba da rodada", options=["-- Selecione --"] + pereba_opcoes, index=0, key="pereba")
-                goleiro = st.selectbox("🧤 Melhor goleiro", options=["-- Selecione --"] + goleiros, index=0, key="goleiro")
-
-                if st.button("Votar"):
-                    if (
-                        craque == "-- Selecione --"
-                        or pereba == "-- Selecione --"
-                        or goleiro == "-- Selecione --"
-                    ):
-                        st.error("⚠️ Preencha todas as categorias antes de votar.")
-                    elif craque == pereba:
-                        st.error("⚠️ O craque e o pereba devem ser jogadores diferentes.")
-                    else:
-                        novo_voto = pd.DataFrame([{
-                            "Votante": votante,
-                            "Craque": craque,
-                            "Pereba": pereba,
-                            "Goleiro": goleiro,
-                            "DataRodada": str(data_rodada)
-                        }])
-                        df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
-                        df_votos.to_csv(FILE_VOTOS, index=False)
-                        st.session_state["voto_registrado"] = True
+        if st.session_state.get("email", "").lower() == "matheusmoreirabr@hotmail.com":
+            with st.expander("⚠️ Apagar votos da rodada atual"):
+                st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
+                if st.button("🗑️ Apagar votos desta rodada"):
+                    avaliacao = avaliacao[avaliacao["DataRodada"] != str(data_rodada)]
+                    save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                    st.success("✅ Votos da rodada apagados com sucesso.")
+                    if st.button("🔄 Recarregar página"):
                         st.rerun()
-
-        # Exibir resultados da rodada atual
-        if ja_votou:
-            df_votos_rodada = df_votos[df_votos["DataRodada"] == str(data_rodada)]
-
-            def gerar_html_podio(serie, titulo, icone):
-                df = serie.value_counts().reset_index()
-                df.columns = ["Jogador", "Votos"]
-                podium_colors = ["#FFD700", "#C0C0C0", "#CD7F32"]
-                podium_labels = ["🥇", "🥈", "🥉"]
-
-                podium_html = f"<h3 style='margin-bottom: 20px;'>{icone} {titulo}</h3>"
-                podium_html += "<div style='display: flex; justify-content: center; align-items: end; gap: 40px;'>"
-
-                top_votos = df["Votos"].unique()[:3]
-
-                for i, votos in enumerate(top_votos):
-                    jogadores_empate = df[df["Votos"] == votos]["Jogador"].tolist()
-                    nomes = "<br>".join(jogadores_empate)
-                    podium_html += (
-                        "<div style='text-align: center;'>"
-                        f"<div style='background-color: {podium_colors[i]};"
-                        f"padding: 10px 15px;"
-                        f"border-radius: 8px;"
-                        f"font-weight: bold;"
-                        f"font-size: 18px;"
-                        f"min-width: 100px;"
-                        f"box-shadow: 2px 2px 5px #aaa;"
-                        f"text-align: center;'>"
-                        f"{podium_labels[i]}<br>{nomes}<br>{votos} voto(s)"
-                        "</div></div>"
-                    )
-
-                podium_html += "</div>"
-                return podium_html
-            # ✅ Mensagem se já votou (inclusive após envio)
-            if ja_votou or st.session_state.get("voto_registrado"):
-                st.success("✅ Você já votou nesta rodada.")
-            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada", "🧤"), unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-
-            # Opção de apagar votos da rodada - acesso restrito
-            email_autorizado = "matheusmoreirabr@hotmail.com"
-            email_usuario = st.session_state.get("email", "")
-
-            if email_usuario.lower() == email_autorizado:
-                with st.expander("⚠️ Apagar votos da rodada atual"):
-                    st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
-                    if st.button("🗑️ Apagar votos desta rodada"):
-                        df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
-                        df_votos.to_csv(FILE_VOTOS, index=False)
-                        st.success("✅ Votos da rodada apagados com sucesso. Recarregue a página para atualizar.")
-                        # Mostra botão para recarregar
-                        st.markdown("<br>", unsafe_allow_html=True)
-                        if st.button("🔄 Recarregar página"):
-                            st.rerun()
 
 
 
