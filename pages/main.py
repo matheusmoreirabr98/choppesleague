@@ -1485,6 +1485,8 @@ else:
     # Avaliação pós-jogo
     def tela_avaliacao_pos_jogo():
         FILE_VOTOS = "votacao.csv"
+        if "dados_gsheets" not in st.session_state or len(st.session_state["dados_gsheets"]) < 4:
+            st.session_state["dados_gsheets"] = load_data()
 
         # Cria arquivo de votos se não existir
         if not os.path.exists(FILE_VOTOS):
@@ -1498,11 +1500,6 @@ else:
             df_votos["DataRodada"] = ""
 
         usuarios = st.session_state.get("usuarios", {})
-        dados = st.session_state.get("dados_gsheets", [])
-        if len(dados) < 4:
-            st.warning("❌ Dados de presença não carregados. Tente novamente mais tarde.")
-            return
-        presencas = dados[3]
 
         # Determina a data da quinta-feira da semana atual (rodada)
         agora = datetime.now()
@@ -1668,6 +1665,13 @@ else:
                         st.markdown("<br>", unsafe_allow_html=True)
                         if st.button("🔄 Recarregar página"):
                             st.rerun()
+
+
+
+
+
+
+
 
     # Midias
     def tela_galeria_momentos():
