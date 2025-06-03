@@ -1816,10 +1816,14 @@ else:
 
     def tela_portal_transparencia():
         st.title("🏦 Portal da Transparência")
+
+        # Corrige: define df logo após leitura dos dados
         def ler_dados():
             if "dados_gsheets" not in st.session_state:
                 st.session_state["dados_gsheets"] = load_data()
             return st.session_state["dados_gsheets"][-1]  # retorna a aba 'Transparência'
+
+        df = ler_dados()  # <-- ESTA LINHA FALTAVA NO SEU CÓDIGO
 
         # Conversão de datas
         if not df.empty:
