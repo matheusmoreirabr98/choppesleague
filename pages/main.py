@@ -1711,7 +1711,7 @@ else:
 
     # Midias
     def tela_galeria_momentos():
-        st.title("📸 Galeria de Momentos da Chopp's League")
+        st.markdown("<h3>📸 Galeria de Momentos da Chopp's League</h3>", unsafe_allow_html=True)
 
         st.markdown(
             "Veja os melhores registros da Chopp's League: gols, resenhas e lembranças 🍻⚽"
