@@ -1861,12 +1861,6 @@ else:
             if not pd.api.types.is_datetime64_any_dtype(df_exibicao["Data"]):
                 df_exibicao["Data"] = pd.to_datetime(df_exibicao["Data"], errors="coerce")
             df_exibicao["Data"] = df_exibicao["Data"].dt.strftime("%d/%m/%Y")
-
-            # 🟢 Substitui email por nome
-            df_exibicao["Jogador"] = df_exibicao["Email"].map(lambda x: usuarios.get(x, {}).get("nome", x))
-            colunas = ["Jogador"] + [col for col in df_exibicao.columns if col not in ["Jogador", "Email"]]
-            df_exibicao = df_exibicao[colunas]
-
             st.dataframe(df_exibicao.sort_values("Data", ascending=False), use_container_width=True)
 
             if email_usuario in autorizados:
