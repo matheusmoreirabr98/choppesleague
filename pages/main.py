@@ -960,7 +960,7 @@ else:
                 </p>
             </div>
 
-            <div style="text-align: left; min-width: 100px;">
+            <div style="text-align: center; min-width: 100px;">
                 <p style="font-size: 25px;">
                     {inter_vitorias} - 🏆<br>
                     {gols_inter} - ⚽
