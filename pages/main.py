@@ -1251,7 +1251,7 @@ else:
         if "dados_gsheets" not in st.session_state:
             st.session_state["dados_gsheets"] = load_data()
 
-        partidas, _, usuarios, presencas, avaliacao, mensalidades = st.session_state["dados_gsheets"]
+        partidas, _, usuarios, presencas, _, _ = st.session_state["dados_gsheets"]
 
         # Votos da avaliação pós-jogo (CSV local)
         df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
@@ -1297,35 +1297,11 @@ else:
                 "Ausências": qnt_ausencias
             })
 
-            df_estatisticas = pd.DataFrame(estatisticas)
-            df_estatisticas.index += 1
-            df_estatisticas.index.name = "#"
+        df_estatisticas = pd.DataFrame(estatisticas)
+        df_estatisticas.index += 1
+        df_estatisticas.index.name = "#"
 
-            st.dataframe(df_estatisticas, use_container_width=True)
-
-        
-
-            # Exemplo de uso dentro da tela de estatísticas
-            if "dados_gsheets" not in st.session_state:
-                st.session_state["dados_gsheets"] = load_data()
-
-            partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = st.session_state["dados_gsheets"]
-
-            # Carrega votos do CSV
-            df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
-
-            # Gera e exibe a nova planilha
-            #df_jogadores_atualizados = atualizar_estatisticas_jogadores(jogadores, partidas, presencas, usuarios)
-
-            # Atualiza aba "Jogadores"
-            gc = autenticar_gsheets()
-            sh = gc.open(NOME_PLANILHA)
-            aba_jogadores = sh.worksheet("Jogadores")
-            aba_jogadores.clear()
-            #set_with_dataframe(aba_jogadores, df_jogadores_atualizados)
-
-            st.success("✅ Estatísticas dos jogadores atualizadas com sucesso!")
-            #st.dataframe(df_jogadores_atualizados, use_container_width=True)
+        st.dataframe(df_estatisticas, use_container_width=True)
 
 
 
