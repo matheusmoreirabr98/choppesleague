@@ -347,7 +347,7 @@ def tela_login():
                     type="password",
                     key="conf_nova_senha_final",
                 )
-                confirmar = st.form_submit_button("Atualizar senha")
+                confirmar = st.form_submit_button("Atualizar senha", use_container_width=True)
 
                 if confirmar:
                     if email not in usuarios:
