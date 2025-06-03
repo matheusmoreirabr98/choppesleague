@@ -25,26 +25,15 @@ from openpyxl import load_workbook
 def sanitize_df(df):
     return df.fillna("").astype(str)
 
-def carregar_votos():
-    caminho_arquivo = "ChoppsLeague.xlsx"
-    aba = "Votação"
-    colunas = ["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"]
+def salvar_votos(df):
+    # abre a planilha com as credenciais do secrets do Streamlit
+    gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
+    planilha = gc.open("ChoppsLeague")
+    aba = planilha.worksheet("Votação")
 
-    if not os.path.exists(caminho_arquivo):
-        # Cria um novo DataFrame e salva como Excel
-        df = pd.DataFrame(columns=colunas)
-        with pd.ExcelWriter(caminho_arquivo, engine="openpyxl") as writer:
-            df.to_excel(writer, sheet_name=aba, index=False)
-        return df
-
-    try:
-        df = pd.read_excel(caminho_arquivo, sheet_name=aba)
-        for col in colunas:
-            if col not in df.columns:
-                df[col] = ""
-    except:
-        df = pd.DataFrame(columns=colunas)
-    return df
+    # apaga o conteúdo anterior e grava o novo DataFrame
+    aba.clear()
+    set_with_dataframe(aba, df)
 
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
