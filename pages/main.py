@@ -325,9 +325,11 @@ def tela_login():
                 unsafe_allow_html=True,
             )
 
-            if st.button("🔙 Voltar para o login"):
-                st.session_state.modo_recuperacao = False
-                st.rerun()
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("🔙 Voltar para o login", use_container_width=True):
+                    st.session_state.modo_recuperacao = False
+                    st.rerun()
 
             email = st.text_input("E-mail cadastrado", key="rec_email_final")
 
