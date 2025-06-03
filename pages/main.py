@@ -1779,6 +1779,8 @@ else:
             df_vazio.to_csv(FILE_FINANCEIRO, index=False)
 
         df = pd.read_csv(FILE_FINANCEIRO)
+        if not df.empty:
+            df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
 
         # Conversão de datas
         if not df.empty:
@@ -1807,6 +1809,8 @@ else:
             st.info("Nenhum registro financeiro até o momento.")
         else:
             df_exibicao = df.copy()
+            if not pd.api.types.is_datetime64_any_dtype(df_exibicao["Data"]):
+                df_exibicao["Data"] = pd.to_datetime(df_exibicao["Data"], errors="coerce")
             df_exibicao["Data"] = df_exibicao["Data"].dt.strftime("%d/%m/%Y")
             st.dataframe(df_exibicao.sort_values("Data", ascending=False), use_container_width=True)
 
@@ -1858,7 +1862,7 @@ else:
 
                 if submit:
                     novo_registro = pd.DataFrame([{
-                        "Data": data,
+                        "Data": pd.to_datetime(data),
                         "Tipo": tipo,
                         "Descrição": descricao,
                         "Valor": valor,
