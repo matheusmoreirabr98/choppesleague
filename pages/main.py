@@ -1283,15 +1283,15 @@ else:
             mensalidade_status = "✅" if mensalidade_paga else "❌"
 
             estatisticas.append({
-                "Nome": nome,
-                "Posição": posicao,
-                "Gols": gols_total,
-                "Craques": craques,
-                "Perebas": perebas,
-                "Paredões": paredoes,
-                "Presença": qnt_presencas,
-                "Ausência": qnt_ausencias,
-                "Mensalidade": mensalidade_status
+                "👤": nome,
+                "🎯": posicao,
+                "⚽": gols_total,
+                "⭐": craques,
+                "🐢": perebas,
+                "🧤": paredoes,
+                "✅": qnt_presencas,
+                "❌": qnt_ausencias,
+                "💰": mensalidade_status
             })
 
         df_estatisticas = pd.DataFrame(estatisticas)
