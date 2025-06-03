@@ -314,8 +314,25 @@ def tela_login():
                 else:
                     st.error("E-mail ou senha inválidos.")
 
-        if not st.session_state.modo_recuperacao:
-            if st.button("Esqueci minha senha"):
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            st.markdown("""
+                <style>
+                .stButton>button {
+                    background-color: #e63946;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 8px;
+                    padding: 0.5rem 1rem;
+                    border: none;
+                }
+                .stButton>button:hover {
+                    background-color: #c9182c;
+                }
+                </style>
+            """, unsafe_allow_html=True)
+
+            if st.button("Esqueci minha senha", use_container_width=True):
                 st.session_state.modo_recuperacao = True
                 st.rerun()
 
