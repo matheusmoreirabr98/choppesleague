@@ -1794,11 +1794,12 @@ else:
             st.dataframe(df_exibicao, use_container_width=True)
 
             for idx, row in df_sorted.iterrows():
-                with st.expander(f"{row['Data']} - {row['Tipo']} - {row['Descrição']} (R$ {row['Valor']:.2f})"):
+                with st.expander(f"{row['Data'].strftime('%d/%m/%Y')} - {row['Tipo']} - {row['Descrição']} (R$ {row['Valor']:.2f})"):
                     st.markdown(f"**Responsável:** {row['Responsável']}")
+
                     if autorizado:
                         with st.form(f"editar_registro_{idx}"):
-                            # Converte com fallback seguro
+                            # Garantir valor de data válido
                             data_valida = pd.to_datetime(row["Data"], errors="coerce")
                             if pd.isna(data_valida):
                                 data_valida = datetime.today()
@@ -1806,7 +1807,13 @@ else:
                             novo_tipo = st.selectbox("Tipo", ["Entrada", "Saída"], index=0 if row["Tipo"] == "Entrada" else 1, key=f"tipo_{idx}")
                             nova_desc = st.text_input("Descrição", value=row["Descrição"], key=f"desc_{idx}")
                             novo_valor = st.number_input("Valor (R$)", value=float(row["Valor"]), step=0.01, key=f"valor_{idx}")
-                            salvar_edicao = st.form_submit_button("💾 Salvar alterações")
+
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                salvar_edicao = st.form_submit_button("💾 Salvar alterações")
+                            with col2:
+                                excluir = st.form_submit_button("🗑️ Excluir registro")
+
                             if salvar_edicao:
                                 df.at[idx, "Data"] = nova_data
                                 df.at[idx, "Tipo"] = novo_tipo
@@ -1814,6 +1821,12 @@ else:
                                 df.at[idx, "Valor"] = novo_valor
                                 df.to_csv(FILE_FINANCEIRO, index=False)
                                 st.success("✅ Registro atualizado com sucesso!")
+                                st.rerun()
+
+                            if excluir:
+                                df = df.drop(index=idx).reset_index(drop=True)
+                                df.to_csv(FILE_FINANCEIRO, index=False)
+                                st.success("🗑️ Registro excluído com sucesso!")
                                 st.rerun()
 
         if autorizado:
@@ -1838,6 +1851,7 @@ else:
                     df.to_csv(FILE_FINANCEIRO, index=False)
                     st.success("✅ Registro adicionado com sucesso!")
                     st.rerun()
+
 
 
 
