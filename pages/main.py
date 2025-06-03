@@ -1335,7 +1335,7 @@ else:
 
     # Presença/Ausência
     def tela_presenca_login():
-        _, _, usuarios_atualizados, _ = load_data()
+        _, _, usuarios_atualizados, _, _, _, _ = load_data()
         st.session_state["usuarios"] = usuarios_atualizados
 
         nome = st.session_state.get("nome", "usuário")
