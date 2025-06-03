@@ -1640,9 +1640,9 @@ else:
             # ✅ Mensagem se já votou (inclusive após envio)
             if ja_votou or st.session_state.get("voto_registrado"):
                 st.success("✅ Você já votou nesta rodada.")
-            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craque da Chopp's League (Top 3)", "🏆"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
             st.markdown("<br>", unsafe_allow_html=True)
 
             # Opção de apagar votos da rodada - acesso restrito

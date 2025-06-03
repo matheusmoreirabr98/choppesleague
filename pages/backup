@@ -16,7 +16,7 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 import time
 import random
 import math
-
+from pytz import timezone
 
 
 
@@ -1589,8 +1589,12 @@ else:
                             "Goleiro": goleiro,
                             "DataRodada": str(data_rodada)
                         }])
-                        df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
-                        df_votos.to_csv(FILE_VOTOS, index=False)
+                        
+                        # grava na aba "Avaliação" da planilha
+                        fuso_brasilia = timezone("America/Sao_Paulo")
+                        data_voto = datetime.now(fuso_brasilia).strftime("%d/%m/%Y %H:%M:%S")
+                        linha_planilha = [data_voto, str(data_rodada), votante, craque, pereba, goleiro]
+                        aba_avaliacao.append_row(linha_planilha)
                         st.session_state["voto_registrado"] = True
                         st.rerun()
 
