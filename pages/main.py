@@ -315,60 +315,60 @@ def tela_login():
                     st.error("E-mail ou senha inválidos.")
 
         if not st.session_state.modo_recuperacao:
-            if "esqueci_senha" in st.session_state or st.query_params.get("esqueci_senha"):
+            if st.button("Esqueci minha senha", use_container_width=True):
                 st.session_state.modo_recuperacao = True
                 st.rerun()
 
-            if st.session_state.modo_recuperacao:
-                st.markdown(
-                    "<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>",
-                    unsafe_allow_html=True,
-                )
+        if st.session_state.modo_recuperacao:
+            st.markdown(
+                "<h3 style='margin-top: 1rem;'>🔁 Atualize sua senha</h3>",
+                unsafe_allow_html=True,
+            )
 
-                col1, col2, col3 = st.columns([1, 2, 1])
-                with col2:
-                    if st.button("🔙 Voltar para o login", use_container_width=True):
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("🔙 Voltar para o login", use_container_width=True):
+                    st.session_state.modo_recuperacao = False
+                    st.rerun()
+
+            email = st.text_input("E-mail cadastrado", key="rec_email_final")
+
+            if email in usuarios and usuarios[email].get("dica_palavra_chave"):
+                st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
+
+            with st.form("form_esqueci"):
+                palavra_chave_rec = st.text_input(
+                    "Palavra-chave", key="palavra_chave_rec_final"
+                )
+                nova_senha = st.text_input(
+                    "Nova senha", type="password", key="nova_senha_final"
+                )
+                confirmar_nova_senha = st.text_input(
+                    "Confirme a nova senha",
+                    type="password",
+                    key="conf_nova_senha_final",
+                )
+                confirmar = st.form_submit_button("Atualizar senha", use_container_width=True)
+
+                if confirmar:
+                    if email not in usuarios:
+                        st.error("E-mail não encontrado.")
+                    elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
+                        st.error("Palavra-chave incorreta.")
+                    elif nova_senha != confirmar_nova_senha:
+                        st.error("As novas senhas não coincidem.")
+                    else:
+                        # primeiro carrega os dados ATUALIZADOS da planilha
+                        partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = load_data()
+
+                        # depois altera a senha na versão correta de `usuarios`
+                        usuarios[email]["senha"] = nova_senha
+
+                        # agora salva com a senha atualizada
+                        save_data(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                        st.success("Senha atualizada com sucesso! Agora faça login.")
                         st.session_state.modo_recuperacao = False
                         st.rerun()
-
-                email = st.text_input("E-mail cadastrado", key="rec_email_final")
-
-                if email in usuarios and usuarios[email].get("dica_palavra_chave"):
-                    st.info(f"💡 Dica: {usuarios[email]['dica_palavra_chave']}")
-
-                with st.form("form_esqueci"):
-                    palavra_chave_rec = st.text_input(
-                        "Palavra-chave", key="palavra_chave_rec_final"
-                    )
-                    nova_senha = st.text_input(
-                        "Nova senha", type="password", key="nova_senha_final"
-                    )
-                    confirmar_nova_senha = st.text_input(
-                        "Confirme a nova senha",
-                        type="password",
-                        key="conf_nova_senha_final",
-                    )
-                    confirmar = st.form_submit_button("Atualizar senha", use_container_width=True)
-
-                    if confirmar:
-                        if email not in usuarios:
-                            st.error("E-mail não encontrado.")
-                        elif palavra_chave_rec != usuarios[email]["palavra_chave"]:
-                            st.error("Palavra-chave incorreta.")
-                        elif nova_senha != confirmar_nova_senha:
-                            st.error("As novas senhas não coincidem.")
-                        else:
-                            # primeiro carrega os dados ATUALIZADOS da planilha
-                            partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = load_data()
-
-                            # depois altera a senha na versão correta de `usuarios`
-                            usuarios[email]["senha"] = nova_senha
-
-                            # agora salva com a senha atualizada
-                            save_data(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
-                            st.success("Senha atualizada com sucesso! Agora faça login.")
-                            st.session_state.modo_recuperacao = False
-                            st.rerun()
 
     # CADASTRO
     elif aba == "Cadastro":
