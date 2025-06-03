@@ -1532,10 +1532,12 @@ else:
                 st.warning("⚠️ Apenas jogadores que confirmaram presença na rodada podem votar.")
                 return
 
+
+
             # ⏬ Título e instruções
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
-            st.markdown("<h10 style='font-weight: bold;'>**Vote no craque, pereba e paredão da rodada**</h10>", unsafe_allow_html=True)
-
+            st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
+            
             # ⏬ CAMPO: Craque da Rodada
             craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
 
@@ -1589,63 +1591,11 @@ else:
                             "Goleiro": goleiro,
                             "DataRodada": str(data_rodada)
                         }])
+                        df_votos = pd.concat([df_votos, novo_voto], ignore_index=True)
+                        df_votos.to_csv(FILE_VOTOS, index=False)
+                        st.success("✅ Voto registrado com sucesso!")
+                        st.rerun()
 
-                    # Exibir resultados da rodada atual
-                    if ja_votou or st.session_state.get("voto_registrado"):
-                        df_votos_rodada = df_votos[df_votos["DataRodada"] == str(data_rodada)]
-
-                        def gerar_html_podio(serie, titulo, icone):
-                            df = serie.value_counts().reset_index()
-                            df.columns = ["Jogador", "Votos"]
-                            podium_colors = ["#FFD700", "#C0C0C0", "#CD7F32"]
-                            podium_labels = ["🥇", "🥈", "🥉"]
-
-                            podium_html = f"<h3 style='margin-bottom: 20px;'>{icone} {titulo}</h3>"
-                            podium_html += "<div style='display: flex; justify-content: center; align-items: end; gap: 40px;'>"
-
-                            top_votos = df["Votos"].unique()[:3]
-
-                            for i, votos in enumerate(top_votos):
-                                jogadores_empate = df[df["Votos"] == votos]["Jogador"].tolist()
-                                nomes = "<br>".join(jogadores_empate)
-                                podium_html += (
-                                    "<div style='text-align: center;'>"
-                                    f"<div style='background-color: {podium_colors[i]};"
-                                    f"padding: 10px 15px;"
-                                    f"border-radius: 8px;"
-                                    f"font-weight: bold;"
-                                    f"font-size: 18px;"
-                                    f"min-width: 100px;"
-                                    f"box-shadow: 2px 2px 5px #aaa;"
-                                    f"text-align: center;'>"
-                                    f"{podium_labels[i]}<br>{nomes}<br>{votos} voto(s)"
-                                    "</div></div>"
-                                )
-
-                            podium_html += "</div>"
-                            return podium_html
-
-                        st.success("✅ Você já votou nesta rodada.")
-                        st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
-                        st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
-                        st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
-                        st.markdown("<br>", unsafe_allow_html=True)
-
-                        # Opção de apagar votos da rodada - acesso restrito
-                        email_autorizado = "matheusmoreirabr@hotmail.com"
-                        email_usuario = st.session_state.get("email", "")
-
-                        if email_usuario.lower() == email_autorizado:
-                            with st.expander("⚠️ Apagar votos da rodada atual"):
-                                st.markdown("Esta ação irá remover **todos os votos registrados** para a rodada atual. Não poderá ser desfeita.")
-                                if st.button("🗑️ Apagar votos desta rodada"):
-                                    df_votos = df_votos[df_votos["DataRodada"] != str(data_rodada)]
-                                    df_votos.to_csv(FILE_VOTOS, index=False)
-                                    st.success("✅ Votos da rodada apagados com sucesso. Recarregue a página para atualizar.")
-                                    # Mostra botão para recarregar
-                                    st.markdown("<br>", unsafe_allow_html=True)
-                                    if st.button("🔄 Recarregar página"):
-                                        st.rerun()
 
 
 
