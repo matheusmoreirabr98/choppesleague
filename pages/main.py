@@ -483,6 +483,7 @@ else:
             "👟 Estatísticas dos Jogadores",
             "✅ Confirmar Presença/Ausência",
             "🏅 Avaliação Pós-Jogo",
+            "🏦 Portal da Transparência",
             "📸 Galeria de Momentos",
             "💬 Fórum",
             "📣 Comunicado à Gestão",
