@@ -997,7 +997,8 @@ else:
         # garante que colunas estejam no formato correto
         if not partidas.empty:
             partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
-            presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+            presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], utc=True, errors="coerce").dt.tz_localize(None).dt.normalize()
+            data = pd.to_datetime(data).normalize()
             # Detecta automaticamente a coluna de presença e padroniza
             coluna_presenca = None
             for col in presencas.columns:
