@@ -946,10 +946,10 @@ else:
                 margin-top: 20px;
                 flex-wrap: wrap;
             ">
-            <div style="text-align: center; min-width: 100px;">
+            <div style="text-align: right; min-width: 100px;">
                 <p style="font-size: 25px;">
-                    🏆 - {borussia_vitorias}<br>
-                    ⚽ - {gols_borussia}
+                    {borussia_vitorias} - 🏆<br>
+                    {gols_borussia} - ⚽
                 </p>
             </div>
 
@@ -960,7 +960,7 @@ else:
                 </p>
             </div>
 
-            <div style="text-align: center; min-width: 100px;">
+            <div style="text-align: left; min-width: 100px;">
                 <p style="font-size: 25px;">
                     {inter_vitorias} - 🏆<br>
                     {gols_inter} - ⚽
@@ -997,7 +997,7 @@ else:
         # garante que colunas estejam no formato correto
         if not partidas.empty:
             partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
-            presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.normalize()
+            presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
             # Detecta automaticamente a coluna de presença e padroniza
             coluna_presenca = None
             for col in presencas.columns:
@@ -1014,7 +1014,6 @@ else:
 
         # seleção de data da partida
         data = st.date_input("📅 Data da partida")
-        data = pd.to_datetime(data).normalize()
 
         # define número da nova partida com base nas partidas da mesma data
         partidas_do_dia = partidas[partidas["Data"] == data]
@@ -1237,6 +1236,7 @@ else:
 
         # Exibe com colunas ajustadas e célula mais compacta
         st.dataframe(partidas, use_container_width=True, hide_index=False)
+
 
 
 
@@ -1512,8 +1512,7 @@ else:
         data_partida = st.date_input("📅 Data da Partida")
         data_partida = pd.to_datetime(data_partida).date()
 
-        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.normalize()
-        data = pd.to_datetime(data).normalize()
+        presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
         confirmados = presencas[(presencas["DataPartida"] == data_partida) & (presencas["Presença"].str.lower() == "sim")]
 
         nomes_confirmados = confirmados["Nome"].tolist()
