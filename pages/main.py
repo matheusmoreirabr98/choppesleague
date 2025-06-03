@@ -157,7 +157,7 @@ def load_data_gsheets():
     sh = gc.open(NOME_PLANILHA)
 
     # Lista das abas obrigatórias
-    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças"]
+    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças", "Votação",]
     abas_existentes = [w.title for w in sh.worksheets()]
 
     # Cria as abas que estiverem faltando
@@ -170,6 +170,7 @@ def load_data_gsheets():
     jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how="all")
     usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how="all")
     presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how="all")
+    votacao = get_as_dataframe(sh.worksheet("Votação")).dropna(how="all")
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
@@ -178,13 +179,13 @@ def load_data_gsheets():
             if pd.notna(row["email"]):
                 usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios, presencas
+    return partidas, jogadores, usuarios, presencas, votacao
 
 
 # -----------------------------------------
 # Salvar dados nas planilhas
 # -----------------------------------------
-def save_data_gsheets(partidas, jogadores, usuarios, presencas):
+def save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao):
     gc = autenticar_gsheets()
     sh = gc.open(NOME_PLANILHA)
 
@@ -192,6 +193,7 @@ def save_data_gsheets(partidas, jogadores, usuarios, presencas):
     partidas = sanitize_df(partidas)
     jogadores = sanitize_df(jogadores)
     presencas = sanitize_df(presencas)
+    votacao = sanitize_df(votacao)
 
     # Salvar partidas
     sheet_partidas = sh.worksheet("Partidas")
@@ -228,8 +230,8 @@ def load_data():
 time.sleep(1)
 
 
-def save_data(partidas, jogadores, usuarios, presencas):
-    save_data_gsheets(partidas, jogadores, usuarios, presencas)
+def save_data(partidas, jogadores, usuarios, presencas, votacao):
+    save_data_gsheets(partidas, jogadores, usuarios, presencas, votacao)
 
 
 # Sessões iniciais
