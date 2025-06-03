@@ -1277,7 +1277,7 @@ else:
     df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
 
     # Gera e exibe a nova planilha
-    df_jogadores_atualizados = atualizar_estatisticas_jogadores(jogadores, partidas, df_votos, presencas, usuarios)
+    df_jogadores_atualizados = atualizar_estatisticas_jogadores(jogadores, partidas, presencas, usuarios)
 
     # Atualiza aba "Jogadores"
     gc = autenticar_gsheets()
