@@ -1794,7 +1794,8 @@ else:
             st.dataframe(df_exibicao, use_container_width=True)
 
             for idx, row in df_sorted.iterrows():
-                with st.expander(f"{row['Data'].strftime('%d/%m/%Y')} - {row['Tipo']} - {row['Descrição']} (R$ {row['Valor']:.2f})"):
+                wdata_formatada = row["Data"].strftime('%d/%m/%Y') if not pd.isna(row["Data"]) else "--/--/----"
+                with st.expander(f"{data_formatada} - {row['Tipo']} - {row['Descrição']} (R$ {row['Valor']:.2f})"):
                     st.markdown(f"**Responsável:** {row['Responsável']}")
 
                     if autorizado:
