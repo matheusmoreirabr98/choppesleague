@@ -317,28 +317,10 @@ def tela_login():
                     st.error("E-mail ou senha inválidos.")
 
         if not st.session_state.modo_recuperacao:
-               st.markdown("""
-                    <style>
-                        .stButton > button {
-                            background-color: #e63946;
-                            color: white;
-                            padding: 0.6rem 1rem;
-                            border: none;
-                            border-radius: 8px;
-                            font-weight: bold;
-                            width: 100%;
-                            cursor: pointer;
-                            transition: background-color 0.3s ease;
-                        }
-                        .stButton > button:hover {
-                            background-color: #c9182c;
-                        }
-                    </style>
-                """, unsafe_allow_html=True)
-
-        if st.button("Esqueci minha senha", use_container_width=True):
-            st.session_state.modo_recuperacao = True
-            st.rerun()
+            with st.container():
+                if st.button("Esqueci minha senha", use_container_width=True):
+                    st.session_state.modo_recuperacao = True
+                    st.rerun()
 
             if st.session_state.modo_recuperacao:
                 st.markdown(
@@ -388,11 +370,6 @@ def tela_login():
                             st.success("Senha atualizada com sucesso! Agora faça login.")
                             st.session_state.modo_recuperacao = False
                             st.rerun()
-
-
-
-
-
 
     # CADASTRO
     elif aba == "Cadastro":
