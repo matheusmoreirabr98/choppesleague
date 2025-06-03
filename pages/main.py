@@ -32,10 +32,13 @@ def salvar_votos(df):
     aba.clear()
     set_with_dataframe(aba, df)
 
-def carregar_votos():
+def salvar_votos(df):
+    df = df.fillna("").astype(str)  # limpa e converte pra string
     gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
     planilha = gc.open("ChoppsLeague")
     aba = planilha.worksheet("Votação")
+    aba.clear()
+    set_with_dataframe(aba, df)
 
     try:
         df = get_as_dataframe(aba).dropna(how="all")
@@ -46,9 +49,6 @@ def carregar_votos():
         return df
     except Exception:
         return pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
-
-df_votos = sanitize_df(df_votos)
-salvar_votos(df_votos)
 
 # Constantes
 NOME_PLANILHA = "ChoppsLeague"
