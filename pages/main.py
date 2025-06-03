@@ -125,21 +125,6 @@ def init_data_gsheets():
         set_with_dataframe(sh.worksheet("Presenças"), df_presencas)
 
 
-    if "Avaliação Pós-Jogo" not in existentes:
-        df_avaliacao = pd.DataFrame(columns=["Votante", "Craque", "Pereba", "Goleiro", "DataRodada"])
-        sh.add_worksheet(title="Avaliação Pós-Jogo", rows="100", cols="20")
-        set_with_dataframe(sh.worksheet("Avaliação Pós-Jogo"), df_avaliacao)
-
-    if "Mensalidades" not in existentes:
-        df_mensalidades = pd.DataFrame(columns=["Email", "Nome", "Mês", "Pago"])  # ou personalize as colunas
-        sh.add_worksheet(title="Mensalidades", rows="100", cols="20")
-        set_with_dataframe(sh.worksheet("Mensalidades"), df_mensalidades)
-
-    if "Transparência" not in existentes:
-        df_transparencia = pd.DataFrame(columns=["Data", "Tipo", "Descrição", "Valor", "Responsável"])
-        sh.add_worksheet(title="Transparência", rows="100", cols="20")
-        set_with_dataframe(sh.worksheet("Transparência"), df_transparencia)
-
 # -----------------------------------------
 # Carregar dados das planilhas
 # -----------------------------------------
@@ -148,10 +133,7 @@ def load_data_gsheets():
     sh = gc.open(NOME_PLANILHA)
 
     # Lista das abas obrigatórias
-    abas_necessarias = [
-        "Partidas", "Jogadores", "Usuarios", "Presenças",
-        "Avaliação Pós-Jogo", "Mensalidades", "Transparência"
-    ]    
+    abas_necessarias = ["Partidas", "Jogadores", "Usuarios", "Presenças"]
     abas_existentes = [w.title for w in sh.worksheets()]
 
     # Cria as abas que estiverem faltando
@@ -164,9 +146,6 @@ def load_data_gsheets():
     jogadores = get_as_dataframe(sh.worksheet("Jogadores")).dropna(how="all")
     usuarios_df = get_as_dataframe(sh.worksheet("Usuarios")).dropna(how="all")
     presencas = get_as_dataframe(sh.worksheet("Presenças")).dropna(how="all")
-    avaliacao = get_as_dataframe(sh.worksheet("Avaliação Pós-Jogo")).dropna(how="all")
-    mensalidades = get_as_dataframe(sh.worksheet("Mensalidades")).dropna(how="all")
-    transparencia = get_as_dataframe(sh.worksheet("Transparência")).dropna(how="all")
 
     # Converter para dicionário com e-mail como chave
     usuarios = {}
@@ -175,7 +154,7 @@ def load_data_gsheets():
             if pd.notna(row["email"]):
                 usuarios[row["email"]] = row.drop(labels="email").to_dict()
 
-    return partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia
+    return partidas, jogadores, usuarios, presencas
 
 
 # -----------------------------------------
@@ -1288,27 +1267,27 @@ else:
 
     
 
-        # Exemplo de uso dentro da tela de estatísticas
-        if "dados_gsheets" not in st.session_state:
-            st.session_state["dados_gsheets"] = load_data()
+    # Exemplo de uso dentro da tela de estatísticas
+    if "dados_gsheets" not in st.session_state:
+        st.session_state["dados_gsheets"] = load_data()
 
-        partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
+    partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
 
-        # Carrega votos do CSV
-        df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
+    # Carrega votos do CSV
+    df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
 
-        # Gera e exibe a nova planilha
-        #df_jogadores_atualizados = atualizar_estatisticas_jogadores(jogadores, partidas, presencas, usuarios)
+    # Gera e exibe a nova planilha
+    #df_jogadores_atualizados = atualizar_estatisticas_jogadores(jogadores, partidas, presencas, usuarios)
 
-        # Atualiza aba "Jogadores"
-        gc = autenticar_gsheets()
-        sh = gc.open(NOME_PLANILHA)
-        aba_jogadores = sh.worksheet("Jogadores")
-        aba_jogadores.clear()
-        #set_with_dataframe(aba_jogadores, df_jogadores_atualizados)
+    # Atualiza aba "Jogadores"
+    gc = autenticar_gsheets()
+    sh = gc.open(NOME_PLANILHA)
+    aba_jogadores = sh.worksheet("Jogadores")
+    aba_jogadores.clear()
+    #set_with_dataframe(aba_jogadores, df_jogadores_atualizados)
 
-        st.success("✅ Estatísticas dos jogadores atualizadas com sucesso!")
-        #st.dataframe(df_jogadores_atualizados, use_container_width=True)
+    st.success("✅ Estatísticas dos jogadores atualizadas com sucesso!")
+    #st.dataframe(df_jogadores_atualizados, use_container_width=True)
 
 
 
