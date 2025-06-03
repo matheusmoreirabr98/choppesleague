@@ -1750,69 +1750,69 @@ else:
 
 
 
-def tela_portal_transparencia():
-    st.title("🏦 Portal da Transparência")
+    def tela_portal_transparencia():
+        st.title("🏦 Portal da Transparência")
 
-    FILE_FINANCEIRO = "financeiro.csv"
-    if not os.path.exists(FILE_FINANCEIRO):
-        df_vazio = pd.DataFrame(columns=["Data", "Tipo", "Descrição", "Valor", "Responsável"])
-        df_vazio.to_csv(FILE_FINANCEIRO, index=False)
+        FILE_FINANCEIRO = "financeiro.csv"
+        if not os.path.exists(FILE_FINANCEIRO):
+            df_vazio = pd.DataFrame(columns=["Data", "Tipo", "Descrição", "Valor", "Responsável"])
+            df_vazio.to_csv(FILE_FINANCEIRO, index=False)
 
-    df = pd.read_csv(FILE_FINANCEIRO)
+        df = pd.read_csv(FILE_FINANCEIRO)
 
-    # Conversão de datas
-    if not df.empty:
-        df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
+        # Conversão de datas
+        if not df.empty:
+            df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
 
-    st.markdown("### 💸 Entradas e Saídas")
-    col1, col2 = st.columns(2)
-    with col1:
-        entradas = df[df["Tipo"] == "Entrada"]
-        total_entradas = entradas["Valor"].sum()
-        st.metric("Total Arrecadado", f"R$ {total_entradas:,.2f}")
-    with col2:
-        saidas = df[df["Tipo"] == "Saída"]
-        total_saidas = saidas["Valor"].sum()
-        st.metric("Total Gasto", f"R$ {total_saidas:,.2f}")
+        st.markdown("### 💸 Entradas e Saídas")
+        col1, col2 = st.columns(2)
+        with col1:
+            entradas = df[df["Tipo"] == "Entrada"]
+            total_entradas = entradas["Valor"].sum()
+            st.metric("Total Arrecadado", f"R$ {total_entradas:,.2f}")
+        with col2:
+            saidas = df[df["Tipo"] == "Saída"]
+            total_saidas = saidas["Valor"].sum()
+            st.metric("Total Gasto", f"R$ {total_saidas:,.2f}")
 
-    saldo = total_entradas - total_saidas
-    st.success(f"💰 **Saldo atual: R$ {saldo:,.2f}**")
+        saldo = total_entradas - total_saidas
+        st.success(f"💰 **Saldo atual: R$ {saldo:,.2f}**")
 
-    st.markdown("---")
-    st.markdown("### 📜 Histórico Financeiro")
-    if df.empty:
-        st.info("Nenhum registro financeiro até o momento.")
-    else:
-        df_sorted = df.sort_values("Data", ascending=False)
-        df_sorted["Data"] = df_sorted["Data"].dt.strftime("%d/%m/%Y")
-        st.dataframe(df_sorted, use_container_width=True)
-
-    # Se for usuário autorizado, permitir adicionar entradas e saídas
-    email_usuario = st.session_state.get("email", "").lower()
-    autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
-
-    if email_usuario in autorizados:
         st.markdown("---")
-        st.markdown("### ➕ Adicionar novo registro")
-        with st.form("form_financeiro"):
-            tipo = st.selectbox("Tipo", ["Entrada", "Saída"])
-            descricao = st.text_input("Descrição")
-            valor = st.number_input("Valor (R$)", min_value=0.0, step=0.01, format="%.2f")
-            data = st.date_input("Data", value=datetime.now())
-            submit = st.form_submit_button("💾 Registrar")
+        st.markdown("### 📜 Histórico Financeiro")
+        if df.empty:
+            st.info("Nenhum registro financeiro até o momento.")
+        else:
+            df_sorted = df.sort_values("Data", ascending=False)
+            df_sorted["Data"] = df_sorted["Data"].dt.strftime("%d/%m/%Y")
+            st.dataframe(df_sorted, use_container_width=True)
 
-            if submit:
-                novo_registro = pd.DataFrame([{
-                    "Data": data,
-                    "Tipo": tipo,
-                    "Descrição": descricao,
-                    "Valor": valor,
-                    "Responsável": email_usuario
-                }])
-                df = pd.concat([df, novo_registro], ignore_index=True)
-                df.to_csv(FILE_FINANCEIRO, index=False)
-                st.success("✅ Registro adicionado com sucesso!")
-                st.rerun()
+        # Se for usuário autorizado, permitir adicionar entradas e saídas
+        email_usuario = st.session_state.get("email", "").lower()
+        autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
+
+        if email_usuario in autorizados:
+            st.markdown("---")
+            st.markdown("### ➕ Adicionar novo registro")
+            with st.form("form_financeiro"):
+                tipo = st.selectbox("Tipo", ["Entrada", "Saída"])
+                descricao = st.text_input("Descrição")
+                valor = st.number_input("Valor (R$)", min_value=0.0, step=0.01, format="%.2f")
+                data = st.date_input("Data", value=datetime.now())
+                submit = st.form_submit_button("💾 Registrar")
+
+                if submit:
+                    novo_registro = pd.DataFrame([{
+                        "Data": data,
+                        "Tipo": tipo,
+                        "Descrição": descricao,
+                        "Valor": valor,
+                        "Responsável": email_usuario
+                    }])
+                    df = pd.concat([df, novo_registro], ignore_index=True)
+                    df.to_csv(FILE_FINANCEIRO, index=False)
+                    st.success("✅ Registro adicionado com sucesso!")
+                    st.rerun()
 
 
 
