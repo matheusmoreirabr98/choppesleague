@@ -1206,15 +1206,13 @@ else:
 
 
         if "Gols Borussia" in partidas.columns and "Gols Inter" in partidas.columns:
-            partidas = partidas.dropna(subset=["Gols Borussia", "Gols Inter"])
+            partidas = partidas[partidas["Gols Borussia"].notna() & partidas["Gols Inter"].notna()]
+
 
             # Resto do seu código segue aqui
         else:
             st.warning("⚠️ Ainda não há partidas registradas com gols.")
             return
-
-        # Limpa dados incompletos
-        partidas = partidas.dropna(subset=["Data", "Número da Partida"]).reset_index(drop=True)
 
         # Estilo para reduzir a altura da célula
         st.markdown(
