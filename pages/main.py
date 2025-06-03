@@ -1108,8 +1108,11 @@ else:
             partidas_limpo = partidas.fillna("").astype(str)
             jogadores_limpo = jogadores.fillna("").astype(str)
             presencas_limpo = presencas.fillna("").astype(str)
+            avaliacao_limpo = avaliacao.fillna("").astype(str)
+            mensalidades_limpo = mensalidades.fillna("").astype(str)
+            transparencia_limpo = transparencia.fillna("").astype(str)
 
-            save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo)
+            save_data_gsheets(partidas_limpo, jogadores_limpo, usuarios, presencas_limpo, avaliacao_limpo, mensalidades_limpo, transparencia_limpo)
             st.success("✅ Partida registrada com sucesso!")
             time.sleep(2)
 
