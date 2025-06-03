@@ -1743,8 +1743,7 @@ else:
 
 
 
-
-    # Mensalidades
+    # Mensalidade
     def tela_pagamento_mensalidade():
         st.markdown("<h3>💰 Controle de Pagamento da Mensalidade</h3>", unsafe_allow_html=True)
 
@@ -1785,11 +1784,23 @@ else:
                 })
 
             if st.form_submit_button("💾 Salvar Pagamentos"):
-                mensalidades_df = pd.DataFrame(pagamentos_registrados)
+                # Carregar registros existentes da aba Mensalidades
+                gc = autenticar_gsheets()
+                sh = gc.open(NOME_PLANILHA)
+                aba_mensalidades = sh.worksheet("Mensalidades")
+                dados_existentes = get_as_dataframe(aba_mensalidades).dropna(how="all")
+
+                # Remove registros do mês atual antes de adicionar os novos
+                dados_filtrados = dados_existentes[dados_existentes["Mês"] != mes_selecionado]
+                df_final = pd.concat([dados_filtrados, pd.DataFrame(pagamentos_registrados)], ignore_index=True)
+
+                # Salvar no Google Sheets
+                aba_mensalidades.clear()
+                set_with_dataframe(aba_mensalidades, df_final)
+
                 st.success("✅ Pagamentos atualizados com sucesso.")
                 st.session_state["usuarios"] = usuarios
-                save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades_df, transparencia)
-                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades_df, transparencia)
+                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, df_final, transparencia)
 
 
     def usuarios_to_df(usuarios):
@@ -1802,69 +1813,119 @@ else:
 
 
 
-    def tela_pagamento_mensalidade():
-        st.markdown("<h3>💰 Controle de Pagamento da Mensalidade</h3>", unsafe_allow_html=True)
 
+    def tela_portal_transparencia():
+        st.title("🏦 Portal da Transparência")
+
+        FILE_FINANCEIRO = "financeiro.csv"
+        if not os.path.exists(FILE_FINANCEIRO):
+            df_vazio = pd.DataFrame(columns=["Data", "Tipo", "Descrição", "Valor", "Responsável"])
+            df_vazio.to_csv(FILE_FINANCEIRO, index=False)
+
+        df = pd.read_csv(FILE_FINANCEIRO)
+        if not df.empty:
+            df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
+
+        # Conversão de datas
+        if not df.empty:
+            df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
+
+        st.markdown("### 💸 Entradas e Saídas")
+        col1, col2 = st.columns(2)
+        with col1:
+            entradas = df[df["Tipo"] == "Entrada"]
+            total_entradas = entradas["Valor"].sum()
+            st.metric("Total Arrecadado", f"R$ {total_entradas:,.2f}")
+        with col2:
+            saidas = df[df["Tipo"] == "Saída"]
+            total_saidas = saidas["Valor"].sum()
+            st.metric("Total Gasto", f"R$ {total_saidas:,.2f}")
+
+        saldo = total_entradas - total_saidas
+        st.success(f"💰 **Saldo atual: R$ {saldo:,.2f}**")
+
+        st.markdown("---")
+        st.markdown("### 📜 Histórico Financeiro")
         email_usuario = st.session_state.get("email", "").lower()
-        usuarios_autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
+        autorizados = ["matheusmoreirabr@hotmail.com", "lucasbotelho97@hotmail.com"]
 
-        if email_usuario not in usuarios_autorizados:
-            st.warning("⚠️ Você não tem permissão para acessar esta página.")
-            return
+        if df.empty:
+            st.info("Nenhum registro financeiro até o momento.")
+        else:
+            df_exibicao = df.copy()
+            if not pd.api.types.is_datetime64_any_dtype(df_exibicao["Data"]):
+                df_exibicao["Data"] = pd.to_datetime(df_exibicao["Data"], errors="coerce")
+            df_exibicao["Data"] = df_exibicao["Data"].dt.strftime("%d/%m/%Y")
+            st.dataframe(df_exibicao.sort_values("Data", ascending=False), use_container_width=True)
 
-        partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = st.session_state.get("dados_gsheets", load_data())
+            if email_usuario in autorizados:
+                st.markdown("### ✏️ Editar ou Apagar Registros")
+                # Remove registros com campos obrigatórios nulos
+                df_validos = df[df["Descrição"].notna() & df["Data"].notna()]
 
-        hoje = datetime.now()
-        meses = [f"{m:02d}/{hoje.year}" for m in range(1, 13)]
-        mes_atual = f"{hoje.month:02d}/{hoje.year}"
-        mes_selecionado = st.selectbox("📅 Mês de referência", options=meses, index=hoje.month - 1)
+                # Gera opções seguras
+                opcoes = df_validos.index.astype(str) + " - " + df_validos["Descrição"] + " - " + df_validos["Data"].dt.strftime("%d/%m/%Y")
+                escolha = st.selectbox("Selecione um registro:", ["-- Selecione --"] + list(opcoes))
+                if escolha != "-- Selecione --":
+                    idx = int(escolha.split(" - ")[0])
+                    registro = df.loc[idx]
 
-        st.markdown(f"<p><strong>Mês selecionado:</strong> {mes_selecionado}</p>", unsafe_allow_html=True)
-        st.markdown("Marque os jogadores que realizaram o pagamento da mensalidade para o mês selecionado.")
+                    with st.form("editar_registro"):
+                        tipo_edit = st.selectbox("Tipo", ["Entrada", "Saída"], index=["Entrada", "Saída"].index(registro["Tipo"]))
+                        desc_edit = st.text_input("Descrição", value=registro["Descrição"])
+                        valor_edit = st.number_input("Valor (R$)", min_value=0.0, value=registro["Valor"], step=0.01, format="%.2f")
+                        data_edit = st.date_input("Data", value=pd.to_datetime(registro["Data"]))
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            atualizar = st.form_submit_button("💾 Atualizar")
+                        with col2:
+                            apagar = st.form_submit_button("🗑️ Apagar")
 
-        nomes_ordenados = sorted([(info.get("nome", ""), email) for email, info in usuarios.items()])
+                        if atualizar:
+                            df.at[idx, "Tipo"] = tipo_edit
+                            df.at[idx, "Descrição"] = desc_edit
+                            df.at[idx, "Valor"] = valor_edit
+                            df.at[idx, "Data"] = data_edit
+                            df.to_csv(FILE_FINANCEIRO, index=False)
+                            st.success("✅ Registro atualizado com sucesso!")
+                            st.rerun()
 
-        pagamentos_registrados = []
+                        if apagar:
+                            df = df.drop(index=idx).reset_index(drop=True)
+                            df.to_csv(FILE_FINANCEIRO, index=False)
+                            st.success("🗑️ Registro removido com sucesso!")
+                            st.rerun()
 
-        with st.form("form_pagamento"):
-            for nome, email in nomes_ordenados:
-                pagamentos = usuarios[email].get("pagamentos", {})
-                pago = pagamentos.get(mes_selecionado, False)
-                novo_status = st.checkbox(f"{nome} ({email})", value=pago, key=f"{email}_{mes_selecionado}")
-                pagamentos[mes_selecionado] = novo_status
-                usuarios[email]["pagamentos"] = pagamentos
+        # Adicionar novo registro
+        if email_usuario in autorizados:
+            st.markdown("---")
+            st.markdown("### ➕ Adicionar novo registro")
+            with st.form("form_financeiro"):
+                tipo = st.selectbox("Tipo", ["Entrada", "Saída"])
+                descricao = st.text_input("Descrição")
+                valor = st.number_input("Valor (R$)", min_value=0.0, step=0.01, format="%.2f")
+                data = st.date_input("Data", value=datetime.now())
+                submit = st.form_submit_button("💾 Registrar")
 
-                pagamentos_registrados.append({
-                    "Nome": nome,
-                    "Email": email,
-                    "Mês": mes_selecionado,
-                    "Pago": "Sim" if novo_status else "Não"
-                })
-
-            if st.form_submit_button("💾 Salvar Pagamentos"):
-                mensalidades_df = pd.DataFrame(pagamentos_registrados)
-                st.success("✅ Pagamentos atualizados com sucesso.")
-                st.session_state["usuarios"] = usuarios
-
-                # salvar acumulando na aba 'Mensalidades'
-                gc = autenticar_gsheets()
-                sh = gc.open(NOME_PLANILHA)
-                aba_mensalidades = sh.worksheet("Mensalidades")
-                dados_existentes = get_as_dataframe(aba_mensalidades).dropna(how="all")
-
-                dados_atualizados = pd.concat([dados_existentes, mensalidades_df], ignore_index=True)
-                aba_mensalidades.clear()
-                set_with_dataframe(aba_mensalidades, dados_atualizados)
-
-                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, dados_atualizados, transparencia)
-
-
-        def usuarios_to_df(usuarios):
-            usuarios_df = pd.DataFrame.from_dict(usuarios, orient="index").reset_index()
-            usuarios_df = usuarios_df.rename(columns={"index": "email"})
-            return usuarios_df
-
-
+                if submit:
+                    novo_registro = pd.DataFrame([{
+                        "Data": pd.to_datetime(data),
+                        "Tipo": tipo,
+                        "Descrição": descricao,
+                        "Valor": valor,
+                        "Responsável": email_usuario
+                    }])
+                    df = pd.concat([df, novo_registro], ignore_index=True)
+                    df.to_csv(FILE_FINANCEIRO, index=False)
+                    st.success("✅ Registro adicionado com sucesso!")
+                    st.rerun()
+                    
+        if email_usuario in autorizados:
+            if st.button("🧹 Limpar registros inválidos"):
+                df = df[df["Descrição"].notna() & df["Data"].notna()]
+                df.to_csv(FILE_FINANCEIRO, index=False)
+                st.success("Registros inválidos removidos com sucesso!")
+                st.rerun()
 
 
 
