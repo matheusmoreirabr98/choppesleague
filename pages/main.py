@@ -977,7 +977,6 @@ else:
 
 
     # Tela de registro das partidas
-    # Tela de registro das partidas
     def registrar_partidas():
         st.markdown("<h5 style='text-align: center; font-weight: bold;'>Registrar Estatísticas da Partida</h5>", unsafe_allow_html=True)
         st.markdown("---")
@@ -997,8 +996,9 @@ else:
 
         # garante que colunas estejam no formato correto
         if not partidas.empty:
-            partidas["📅 Data"] = pd.to_datetime(partidas["📅 Data"], dayfirst=True, errors='coerce').dt.date
+            partidas["Data"] = pd.to_datetime(partidas["Data"], dayfirst=True, errors='coerce').dt.date
             presencas["DataPartida"] = pd.to_datetime(presencas["DataPartida"], errors="coerce").dt.date
+            # Detecta automaticamente a coluna de presença e padroniza
             coluna_presenca = None
             for col in presencas.columns:
                 if col.strip().lower() == "presença":
@@ -1012,10 +1012,14 @@ else:
                 st.error("❌ Coluna 'Presença' não encontrada na planilha. Verifique o nome exato.")
                 st.stop()
 
+        # seleção de data da partida
         data = st.date_input("📅 Data da partida")
-        partidas_do_dia = partidas[partidas["📅 Data"] == data]
+
+        # define número da nova partida com base nas partidas da mesma data
+        partidas_do_dia = partidas[partidas["Data"] == data]
         numero_partida = len(partidas_do_dia) + 1
 
+        # filtra jogadores presentes
         jogadores_presentes_data = presencas[
             (presencas["DataPartida"] == data) & (presencas["Presença"] == "sim")
         ]["Nome"].tolist()
@@ -1038,8 +1042,6 @@ else:
                 key=f"gols_borussia_{st.session_state['form_id']}",
                 help="Máximo 2 jogadores"
             )
-            if not gols_borussia:
-                gols_borussia = ["Ninguém marcou"]
             if "Ninguém marcou" in gols_borussia and len(gols_borussia) > 1:
                 st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
                 gols_borussia = ["Ninguém marcou"]
@@ -1058,8 +1060,6 @@ else:
                 key=f"gols_inter_{st.session_state['form_id']}",
                 help="Máximo 2 jogadores"
             )
-            if not gols_inter:
-                gols_inter = ["Ninguém marcou"]
             if "Ninguém marcou" in gols_inter and len(gols_inter) > 1:
                 st.warning("Não é permitido selecionar jogadores junto com 'Ninguém marcou'.")
                 gols_inter = ["Ninguém marcou"]
@@ -1092,14 +1092,14 @@ else:
             """, unsafe_allow_html=True
         )
 
-        if st.button("Registrar", use_container_width=True):
+        if st.button("Registrar"):
             nova = {
-                "📅 Data": data.strftime("%d/%m/%Y"),
-                "#️⃣ Número": numero_partida,
-                "Borussia": placar_borussia,
-                "⚽ Gols Borussia": ", ".join(gols_borussia),
-                "Inter": placar_inter,
-                "⚽ Gols Inter": ", ".join(gols_inter),
+                "Data": data.strftime("%d/%m/%Y"),
+                "Número da Partida": numero_partida,
+                "Placar Borussia": placar_borussia,
+                "Gols Borussia": ", ".join(gols_borussia),
+                "Placar Inter": placar_inter,
+                "Gols Inter": ", ".join(gols_inter),
             }
 
             partidas = pd.concat([partidas, pd.DataFrame([nova])], ignore_index=True)
@@ -1236,20 +1236,6 @@ else:
 
         # Exibe com colunas ajustadas e célula mais compacta
         st.dataframe(partidas, use_container_width=True, hide_index=False)
-
-        # 🔒 Área restrita para deletar todas as partidas
-        if st.session_state.get("email") == "matheusmoreirabr@hotmail.com":
-            st.markdown("---")
-            with st.expander("⚠️ Excluir Todas as Partidas"):
-                st.warning("Essa ação apagará **todas** as partidas registradas. Essa ação é irreversível.")
-                if st.button("🗑️ Apagar todas as partidas", type="primary"):
-                    partidas = partidas.iloc[0:0]  # Remove todas as linhas do DataFrame
-                    jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia = st.session_state["dados_gsheets"][1:]
-                    save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
-                    st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
-                    st.success("✅ Todas as partidas foram apagadas.")
-                    time.sleep(2)
-                    st.rerun()
 
 
 
