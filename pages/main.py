@@ -1816,15 +1816,7 @@ else:
 
     def tela_portal_transparencia():
         st.title("🏦 Portal da Transparência")
-
-        FILE_FINANCEIRO = "financeiro.csv"
-        if not os.path.exists(FILE_FINANCEIRO):
-            df_vazio = pd.DataFrame(columns=["Data", "Tipo", "Descrição", "Valor", "Responsável"])
-            df_vazio.to_csv(FILE_FINANCEIRO, index=False)
-
-        df = pd.read_csv(FILE_FINANCEIRO)
-        if not df.empty:
-            df["Data"] = pd.to_datetime(df["Data"], errors="coerce")
+        df = ler_dados()
 
         # Conversão de datas
         if not df.empty:
@@ -1886,13 +1878,13 @@ else:
                             df.at[idx, "Descrição"] = desc_edit
                             df.at[idx, "Valor"] = valor_edit
                             df.at[idx, "Data"] = data_edit
-                            df.to_csv(FILE_FINANCEIRO, index=False)
+                            salvar_dados(df)
                             st.success("✅ Registro atualizado com sucesso!")
                             st.rerun()
 
                         if apagar:
                             df = df.drop(index=idx).reset_index(drop=True)
-                            df.to_csv(FILE_FINANCEIRO, index=False)
+                            salvar_dados(df)
                             st.success("🗑️ Registro removido com sucesso!")
                             st.rerun()
 
@@ -1916,14 +1908,14 @@ else:
                         "Responsável": email_usuario
                     }])
                     df = pd.concat([df, novo_registro], ignore_index=True)
-                    df.to_csv(FILE_FINANCEIRO, index=False)
+                    salvar_dados(df)
                     st.success("✅ Registro adicionado com sucesso!")
                     st.rerun()
                     
         if email_usuario in autorizados:
             if st.button("🧹 Limpar registros inválidos"):
                 df = df[df["Descrição"].notna() & df["Data"].notna()]
-                df.to_csv(FILE_FINANCEIRO, index=False)
+                salvar_dados(df)
                 st.success("Registros inválidos removidos com sucesso!")
                 st.rerun()
 
