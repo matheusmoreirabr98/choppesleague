@@ -1534,7 +1534,7 @@ else:
 
             # ⏬ Título e instruções
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
-            st.markdown("<h6 style='font-weight: bold;'>Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤</h6>")
+            st.markdown("<h6 style='font-weight: bold;'>Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤</h6>", unsafe_allow_html=True)
 
             # ⏬ CAMPO: Craque da Rodada
             craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
