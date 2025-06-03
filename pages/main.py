@@ -1534,7 +1534,7 @@ else:
 
             # ⏬ Título e instruções
             st.markdown("<h5 style='font-weight: bold;'>😎 Tá na hora do veredito!</h5>", unsafe_allow_html=True)
-            st.markdown("Vote no **craque**, **pereba** e **melhor goleiro** da rodada 🏆🥴🧤")
+            st.markdown("<p style='font-size:14px;'>Vote no <strong>craque</strong>, <strong>pereba</strong> e <strong>melhor goleiro</strong> da rodada</p>", unsafe_allow_html=True)
 
             # ⏬ CAMPO: Craque da Rodada
             craque = st.selectbox("⭐ Craque da rodada", options=["-- Selecione --"] + linha, index=0, key="craque")
@@ -1594,11 +1594,6 @@ else:
                         st.session_state["voto_registrado"] = True
                         st.rerun()
 
-
-
-
-        
-
         # Exibir resultados da rodada atual
         if ja_votou:
             df_votos_rodada = df_votos[df_votos["DataRodada"] == str(data_rodada)]
@@ -1636,9 +1631,9 @@ else:
             # ✅ Mensagem se já votou (inclusive após envio)
             if ja_votou or st.session_state.get("voto_registrado"):
                 st.success("✅ Você já votou nesta rodada.")
-            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craque da Chopp's League (Top 3)", "🏆"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Pereba da Chopp's League (Top 3)", "🐢"), unsafe_allow_html=True)
-            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Melhor Goleiro da Rodada (Top 3)", "🧤"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Craque"], "Craques da rodada (Top 3)", "🏆"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Pereba"], "Perebas da rodada (Top 3)", "🐢"), unsafe_allow_html=True)
+            st.markdown(gerar_html_podio(df_votos_rodada["Goleiro"], "Goleiro da Rodada", "🧤"), unsafe_allow_html=True)
             st.markdown("<br>", unsafe_allow_html=True)
 
             # Opção de apagar votos da rodada - acesso restrito
