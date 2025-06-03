@@ -1812,7 +1812,7 @@ else:
 
 
     def tela_portal_transparencia():
-        st.title("🏦 Portal da Transparência")
+        st.title("Caixa da Chopp's League")
 
         # Corrige: define df logo após leitura dos dados
         def ler_dados():
