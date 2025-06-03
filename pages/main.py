@@ -1207,6 +1207,79 @@ else:
 
 
     # Estatisticas dos jogadores
+    def atualizar_estatisticas_jogadores(jogadores, partidas, votos, presencas, usuarios, mes_referencia="06/2025"):
+        estatisticas = []
+
+        for _, jogador in jogadores.iterrows():
+            nome = jogador["Nome"]
+            posicao = jogador.get("Posição", "Linha")
+
+            # Contagem de gols
+            gols_total = sum(nome in str(g).split(", ") for g in pd.concat([partidas["Gols Borussia"], partidas["Gols Inter"]]))
+
+            # Votos
+            craques = votos["Craque"].tolist().count(nome) if posicao.lower() == "linha" else "-"
+            perebas = votos["Pereba"].tolist().count(nome) if posicao.lower() == "linha" else "-"
+            paredoes = votos["Goleiro"].tolist().count(nome) if posicao.lower() == "goleiro" else "-"
+
+            # Presenças/ausências
+            presencas_filtradas = presencas[presencas["Nome"] == nome]
+            qnt_presencas = presencas_filtradas["Presença"].str.lower().tolist().count("sim")
+            qnt_ausencias = presencas_filtradas["Presença"].str.lower().tolist().count("não")
+
+            # Mensalidade
+            mensalidade = "❌"
+            for email, dados in usuarios.items():
+                if dados.get("nome") == nome and dados.get("pagamentos", {}).get(mes_referencia, False):
+                    mensalidade = "✅"
+
+            estatisticas.append({
+                "Nome": nome,
+                "Gols": gols_total,
+                "Craques": craques,
+                "Perebas": perebas,
+                "Paredões": paredoes,
+                "Mensalidade": mensalidade,
+                "Presenças": qnt_presencas,
+                "Ausências": qnt_ausencias
+            })
+
+        df_estatisticas = pd.DataFrame(estatisticas)
+
+        # Merge com planilha original
+        df_atualizado = pd.merge(jogadores, df_estatisticas, on="Nome", how="left")
+        return df_atualizado
+    
+
+    # Exemplo de uso dentro da tela de estatísticas
+    if "dados_gsheets" not in st.session_state:
+        st.session_state["dados_gsheets"] = load_data()
+
+    partidas, jogadores, usuarios, presencas = st.session_state["dados_gsheets"]
+
+    # Carrega votos do CSV
+    df_votos = pd.read_csv("votacao.csv") if os.path.exists("votacao.csv") else pd.DataFrame(columns=["Craque", "Pereba", "Goleiro", "DataRodada"])
+
+    # Gera e exibe a nova planilha
+    df_jogadores_atualizados = atualizar_estatisticas_jogadores(jogadores, partidas, df_votos, presencas, usuarios)
+
+    # Atualiza aba "Jogadores"
+    gc = autenticar_gsheets()
+    sh = gc.open(NOME_PLANILHA)
+    aba_jogadores = sh.worksheet("Jogadores")
+    aba_jogadores.clear()
+    set_with_dataframe(aba_jogadores, df_jogadores_atualizados)
+
+    st.success("✅ Estatísticas dos jogadores atualizadas com sucesso!")
+    st.dataframe(df_jogadores_atualizados, use_container_width=True)
+
+
+
+
+
+
+
+    # Presença/Ausência
     def tela_presenca_login():
         _, _, usuarios_atualizados, _ = load_data()
         st.session_state["usuarios"] = usuarios_atualizados
