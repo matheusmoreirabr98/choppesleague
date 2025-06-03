@@ -1236,6 +1236,14 @@ else:
 
         # Exibe com colunas ajustadas e célula mais compacta
         st.dataframe(partidas, use_container_width=True, hide_index=False)
+        # Botão para excluir todas as partidas (apenas para email autorizado)
+        if st.session_state.get("email") == "matheusmoreirabr@hotmail.com":
+            if st.button("🗑️ Excluir todas as partidas", use_container_width=True):
+                partidas = partidas.iloc[0:0]  # limpa todas as linhas
+                save_data_gsheets(partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                st.success("Todas as partidas foram excluídas com sucesso!")
+                st.session_state["dados_gsheets"] = (partidas, jogadores, usuarios, presencas, avaliacao, mensalidades, transparencia)
+                st.rerun()
 
 
 
